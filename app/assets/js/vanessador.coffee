@@ -1,0 +1,1 @@
+nono = angular.module('nono', [])

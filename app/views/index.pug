@@ -1,0 +1,26 @@
+extends layout
+
+block nav
+  nav.navbar.navbar-inverse.navbar-fixed-top(roles="navigation")
+    div.container
+      div.navbar-header
+        button.navbar-toogle(type="button" data-toogle="collapse" data-targe="#bs")
+          span.sr-only Toogle Navigation
+          span.icon-bar
+          span.icon-bar
+          span.icon-bar
+        a.navbar-brand(href="#") Vanessador
+    div#bs.collapse.navbar-collapse
+      ul.nav.navbar-nav
+        - var a = [{url:"/users/signup", text: "signup"}, {url:"/users/login", text: "login"}]
+        - for(var _li in a)
+          li.sidebar-brand
+            a.nav.navbar-nav(href=""+a[_li].url)= a[_li].text
+
+block content
+  div(ng-controller="vanessadorCtrl")
+
+block scripts
+  script(src="https://opensource.keycdn.com/angularjs/1.6.2/angular.min.js")
+  != js("index", {'data-turbolinks-track':true})
+
