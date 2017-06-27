@@ -1,6 +1,5 @@
 AppManager::login = ->
-        @app.post '/login', [beforeLogin], (req, res) ->
-                passport.authenticate('local-login', (err, user, info) ->
-                        if err then res.send err
-                        res.json user
-                )(req, res)
+        @app.get '/auth/firebase', passport.authenticate('firebaseauth', { })
+
+        _callback = passport.authenticate('firebaseauth', { failureRedirect: '/login'})
+        @app.get '/auth/firebase/callback', _callback, (req, res) -> res.json({message: "logged"})

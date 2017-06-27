@@ -1,3 +1,5 @@
+
+
 # Initialize Firebase application
 # Your configuration must have an API key
 # and messagingSenderId, created on https://console.firebase.google.com
@@ -27,6 +29,8 @@ firebase_init = (projectName) ->
                                                         cfg = makeConfig projectName,apiKey,messagingSenderId
                                                         # console.log cfg
                                                         firebase.initializeApp cfg
-                                                        resolve firebase.app()
+                                                        passport_config = { firebaseProjectId: projectName, authorizationURL: 'localhost:3000/auth', callbackURL: 'localhost:3000/auth/firebase/callback'}
+                                                        console.log "HERE"
+                                                        resolve passport_config
                                         .catch (err) ->
                                                 reject e 

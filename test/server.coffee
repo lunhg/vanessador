@@ -17,7 +17,7 @@ describe chalk.green('Vanessador app'), ->
         it 'should POST /login', ->
                 new Promise (resolve, reject) ->
                         agent.post("/login") 
-                                .auth('email=SEU_EMAIL', "password=SUA_SENHA")
+                                .auth('email=lunhg@gmail.com', "password=..senha123")
                                 #.expect 200
                                 #.expect('Content-Type', /json/)
                                 .expect (res) ->

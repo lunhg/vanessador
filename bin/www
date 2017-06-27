@@ -1,5 +1,5 @@
 #!/usr/bin/env /home/pi/.nvm/versions/node/v8.0.0/bin/node
-var AppManager, __firebase__, atob, beforeLogin, body_parser, chalk, compression, connect_assets, express, firebase, firebase_init, foreach, fs, getAuth, http, makeConfig, marked, morgan, node_uuid, onMsg, parseBasic, passport, passport_custom, path, pug, request_json;
+var AppManager, __firebase__, atob, body_parser, chalk, compression, connect_assets, express, firebase, firebase_init, foreach, fs, http, makeConfig, marked, morgan, node_uuid, onMsg, passport, passport_custom, passport_firebase_auth, path, pug, request_json;
 
 fs = require('fs');
 
@@ -33,6 +33,8 @@ passport = require('passport');
 
 passport_custom = require('passport-custom');
 
+passport_firebase_auth = require('passport-firebase-auth');
+
 pug = require('pug');
 
 request_json = require('request-json');
@@ -62,12 +64,18 @@ firebase_init = function(projectName) {
         console.log("OK");
         console.log("Checking messagingSenderId for " + projectName + "...");
         return require('keytar').findPassword(projectName + ".firebase.messagingSenderId").then(function(messagingSenderId) {
-          var cfg;
+          var cfg, passport_config;
           console.log("OK");
           if (messagingSenderId !== null) {
             cfg = makeConfig(projectName, apiKey, messagingSenderId);
             firebase.initializeApp(cfg);
-            return resolve(firebase.app());
+            passport_config = {
+              firebaseProjectId: projectName,
+              authorizationURL: 'localhost:3000/auth',
+              callbackURL: 'localhost:3000/auth/firebase/callback'
+            };
+            console.log("HERE");
+            return resolve(passport_config);
           }
         })["catch"](function(err) {
           return reject(e);
@@ -76,76 +84,6 @@ firebase_init = function(projectName) {
     });
   });
 };
-
-parseBasic = function(result) {
-  return new Promise(function(resolve, reject) {
-    var c, i, len, o, r;
-    o = {};
-    for (i = 0, len = result.length; i < len; i++) {
-      r = result[i];
-      c = r.split("=");
-      o[c[0]] = c[1];
-    }
-    return resolve(o);
-  });
-};
-
-getAuth = function(req) {
-  return new Promise(function(resolve, reject) {
-    var bytes;
-    bytes = req.headers.authorization.split("Basic ")[1];
-    return resolve(atob(bytes).split(":"));
-  });
-};
-
-beforeLogin = function(req, res, next) {
-  if (firebase.auth().currentUser) {
-    return redirect('/dashboard');
-  } else {
-    return next();
-  }
-};
-
-passport.use('local-dashboard', new passport_custom(function(req, done) {
-  return firebase.auth().onAuthStateChanged(function(user) {
-    if (user) {
-      return done(null, user);
-    } else {
-      return done(true);
-    }
-  });
-}));
-
-passport.use("local-login", new passport_custom(function(req, done) {
-  return getAuth(req).then(parseBasic).then(function(result) {
-    return firebase.auth().signInWithEmailAndPassword(result.email, result.password).then(function(x) {
-      var user;
-      user = firebase.auth().currentUser;
-      return done(null, user);
-    })["catch"](function(error) {
-      return done(error.code, error.message);
-    });
-  });
-}));
-
-passport.use('local-logout', new passport_custom(function(req, done) {
-  var onError, onSignout;
-  onSignout = function() {
-    return done(null);
-  };
-  onError = function(error) {
-    return done(error);
-  };
-  return firebase.auth().signOut().then(onSignout, onError);
-}));
-
-passport.serializeUser(function(user, done) {
-  return done(null, user.uid);
-});
-
-passport.deserializeUser(function(id, done) {
-  return done(id);
-});
 
 AppManager = (function() {
   function AppManager(app1) {
@@ -175,6 +113,23 @@ AppManager = (function() {
 
 })();
 
+AppManager.prototype.passport = function(obj) {
+  var FirebaseStrategy;
+  FirebaseStrategy = passport_firebase_auth.Strategy;
+  passport.use(new FirebaseStrategy(obj, function(accessToken, refreshToken, decodedToken, cb) {
+
+    /* TODO */
+  }));
+  passport.serializeUser(function(user, done) {
+    return done(null, user.uid);
+  });
+  return passport.deserializeUser(function(id, done) {
+    return User.findById(id).exec(function(err, user) {
+      return done(null, user.id);
+    });
+  });
+};
+
 AppManager.prototype.init = function() {
   this.app.use(morgan(':method :url :status Content-Lenght: :res[content-length]  time: :response-time ms'));
   this.app.use(compression());
@@ -191,36 +146,36 @@ AppManager.prototype.init = function() {
 
 AppManager.prototype.index = function() {
   return this.app.get('/', function(req, res) {
-    return passport.authenticate('local-dashboard', function(err, user, info) {
-      if (!err) {
-        return res.render('index', {
-          user: user
-        });
+    return firebase.auth().onAuthStateChanged(function(user) {
+      if (user) {
+        return res.render('index', user);
       } else {
         return res.render('index');
       }
-    })(req, res);
-  });
-};
-
-AppManager.prototype.signup = function() {
-  return this.app.post('/signup', function(req, res) {
-    return passport.authenticate('local-signup', function(err, user, info) {
-      if (err) {
-        res.send(err);
-      }
-      return res.json(user);
-    })(req, res);
+    });
   });
 };
 
 AppManager.prototype.login = function() {
-  return this.app.post('/login', [beforeLogin], function(req, res) {
-    return passport.authenticate('local-login', function(err, user, info) {
+  var _callback;
+  this.app.get('/auth/firebase', passport.authenticate('firebaseauth', {}));
+  _callback = passport.authenticate('firebaseauth', {
+    failureRedirect: '/login'
+  });
+  return this.app.get('/auth/firebase/callback', _callback, function(req, res) {
+    return res.json({
+      message: "logged"
+    });
+  });
+};
+
+AppManager.prototype.logout = function() {
+  return this.app.post('/logout', function(req, res) {
+    return passport.authenticate('local-logout', function(err, user, info) {
       if (err) {
         res.send(err);
       }
-      return res.json(user);
+      return res.json("logged out");
     })(req, res);
   });
 };
@@ -231,39 +186,39 @@ onMsg = function(addr) {
 
 __firebase__ = require("../package.json").firebase;
 
-firebase_init(__firebase__.project.name).then(function(firebase_app) {
+firebase_init(__firebase__.project.name).then(function(firebasePassportConfig) {
   var app, app_manager, server;
-  if (firebase_app) {
-    app = express();
-    app_manager = new AppManager(app);
-    app_manager.init();
-    app_manager.index();
-    app_manager.signup();
-    app_manager.login();
-    server = http.createServer(app);
-    server.on('error', function(error) {
-      var bind, fn;
-      if (error.syscall === 'listen') {
-        throw error;
-      }
-      bind = typeof port === 'string' ? 'Pipe ' + port : 'Port ' + port;
-      fn = function(msg) {
-        console.error(chalk.red(bind + ' ' + msg));
-        return process.exit(1);
-      };
-      if (error.code === 'EACCES') {
-        return fn('requires elevated privileges');
-      } else if (error.code === 'EADDRINUSE') {
-        return fn('is already in use');
-      } else {
-        throw error;
-      }
-    });
-    server.on('listening', function() {
-      var addr;
-      addr = server.address();
-      return console.log(chalk.cyan(onMsg(addr)));
-    });
-    return server.listen(app.get('port'), 'localhost');
-  }
+  console.log(firebasePassportConfig);
+  app = express();
+  app_manager = new AppManager(app);
+  app_manager.init();
+  app_manager.passport(firebasePassportConfig);
+  app_manager.index();
+  app_manager.login();
+  app_manager.logout();
+  server = http.createServer(app);
+  server.on('error', function(error) {
+    var bind, fn;
+    if (error.syscall === 'listen') {
+      throw error;
+    }
+    bind = typeof port === 'string' ? 'Pipe ' + port : 'Port ' + port;
+    fn = function(msg) {
+      console.error(chalk.red(bind + ' ' + msg));
+      return process.exit(1);
+    };
+    if (error.code === 'EACCES') {
+      return fn('requires elevated privileges');
+    } else if (error.code === 'EADDRINUSE') {
+      return fn('is already in use');
+    } else {
+      throw error;
+    }
+  });
+  server.on('listening', function() {
+    var addr;
+    addr = server.address();
+    return console.log(chalk.cyan(onMsg(addr)));
+  });
+  return server.listen(app.get('port'), 'localhost');
 });

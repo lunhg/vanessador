@@ -1,8 +1,7 @@
 AppManager::index = ->
         @app.get '/', (req, res) ->
-                passport.authenticate('local-dashboard', (err, user, info) ->
-                        if not err
-                                res.render 'index', user: user
+                firebase.auth().onAuthStateChanged (user) ->
+                        if user
+                                res.render 'index', user
                         else
                                 res.render 'index'
-                )(req, res)

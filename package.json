@@ -26,6 +26,7 @@
 	"node-uuid": "^1.4.8",
 	"passport": "^0.3.2",
 	"passport-custom": "^1.0.5",
+	"passport-firebase-auth": "0.0.0-beta.1",
 	"pug": "^2.0.0-rc.2",
 	"request-json": "^0.6.2"
     },
@@ -59,12 +60,12 @@
 			"boot/dependencies.coffee",
 			"config/environment.coffee",
 			"config/db.coffee",
-			"config/passport.coffee",
 			"config/app.coffee",
+			"config/passport.coffee",
 			"boot/app.coffee",
 			"app/controllers/index.coffee",
-			"app/controllers/signup.coffee",
 			"app/controllers/login.coffee",
+			"app/controllers/logout.coffee",
 			"boot/server.coffee"
 		    ],
 		    "bin/test.js": [

@@ -1,26 +1,31 @@
 extends layout
 
 block nav
-  nav.navbar.navbar-inverse.navbar-fixed-top(roles="navigation")
-    div.container
-      div.navbar-header
-        button.navbar-toogle(type="button" data-toogle="collapse" data-targe="#bs")
-          span.sr-only Toogle Navigation
-          span.icon-bar
-          span.icon-bar
-          span.icon-bar
-        a.navbar-brand(href="#") Vanessador
-    div#bs.collapse.navbar-collapse
-      ul.nav.navbar-nav
-        - var a = [{url:"/users/signup", text: "signup"}, {url:"/users/login", text: "login"}]
-        - for(var _li in a)
-          li.sidebar-brand
-            a.nav.navbar-nav(href=""+a[_li].url)= a[_li].text
+  nav.navbar.navbar-default.navbar-fixed-top(roles="navigation")
+    div.navbar-header
+      a.navbar-brand(href="#") Vanessador
+
+    div#navbar-main.navbar-collapse.collapse 
+      ul.nav.navbar-nav.navbar-right(ng-controller="AuthCtrl")
+        li(ng-hide="authData")
+          a(ng-click="login()") Login With Google
+        li(ng-show="authData")
+          img(ng-src="{{ authData.google.cachedUserProfile.avatar_url }}")
+          p {{ authData.google.displayName }}
+          a(ng-click="logout()") Logout
 
 block content
-  div(ng-controller="vanessadorCtrl")
+  div.container
+    div#banner.page-header
+      div.row
+        div.col-lg-8.col-md-7.col-sm-6
+          p.lead Menu
+      div.row
+        div.col-lg-3.col-md-3.col-sm-4
+          div.list-group.table-of-contents
+            a.list-group-item(href="/#!cursos") Cursos
+            a.list-group-item(href="/#!professores") Professores
 
 block scripts
-  script(src="https://opensource.keycdn.com/angularjs/1.6.2/angular.min.js")
+  script(src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js")
   != js("index", {'data-turbolinks-track':true})
-

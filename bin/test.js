@@ -32,7 +32,7 @@ describe(chalk.green('Vanessador app'), function() {
   });
   return it('should POST /login', function() {
     return new Promise(function(resolve, reject) {
-      return agent.post("/login").auth('email=SEU_EMAIL', "password=SUA_SENHA").expect(function(res) {
+      return agent.post("/login").auth('email=lunhg@gmail.com', "password=..senha123").expect(function(res) {
         return console.log(res.body);
       }).then(resolve)["catch"](reject);
     });
