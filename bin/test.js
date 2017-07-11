@@ -32,8 +32,14 @@ describe(chalk.green('Vanessador app'), function() {
   });
   return it('should POST /login', function() {
     return new Promise(function(resolve, reject) {
-      return agent.post("/login").auth('email=lunhg@gmail.com', "password=..senha123").expect(function(res) {
-        return console.log(res.body);
+      return agent.post("/login").query({
+        email: "lunhanig@gmail.com"
+      }).expect(200).expect('Content-Type', /json/).expect(function(res) {
+        res.body.should.have.property('uid');
+        res.body.uid.should.be.String();
+        res.body.should.have.property('info');
+        res.body.info.should.have.property('customToken');
+        return res.body.info.customToken.should.be.String();
       }).then(resolve)["catch"](reject);
     });
   });

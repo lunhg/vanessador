@@ -22,3 +22,17 @@ class AppManager
                 ]
 
                 @app.set 'port', parseInt(process.env.PORT || '3000')
+
+AppManager.make = (result) ->
+        new Promise (resolve, reject) ->
+                app = express()
+                app_manager = new AppManager(app)
+        
+                # run all routines
+                app_manager.init()
+                app_manager.passport()
+                app_manager.index()
+                app_manager.login()
+                app_manager.logout()
+
+                resolve app

@@ -17,10 +17,14 @@ describe chalk.green('Vanessador app'), ->
         it 'should POST /login', ->
                 new Promise (resolve, reject) ->
                         agent.post("/login") 
-                                .auth('email=lunhg@gmail.com', "password=..senha123")
-                                #.expect 200
-                                #.expect('Content-Type', /json/)
+                                .query({email: "lunhanig@gmail.com"})
+                                .expect 200
+                                .expect('Content-Type', /json/)
                                 .expect (res) ->
-                                        console.log res.body
+                                        res.body.should.have.property 'uid'
+                                        res.body.uid.should.be.String()
+                                        res.body.should.have.property 'info'
+                                        res.body.info.should.have.property 'customToken'
+                                        res.body.info.customToken.should.be.String()
                                 .then resolve
                                 .catch reject

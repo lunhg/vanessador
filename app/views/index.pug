@@ -6,19 +6,22 @@ block nav
       a.navbar-brand(href="#") Vanessador
 
     div#navbar-main.navbar-collapse.collapse 
-      ul.nav.navbar-nav.navbar-right(ng-controller="AuthCtrl")
-        li(ng-hide="authData")
-          a(ng-click="login()") Login With Google
-        li(ng-show="authData")
-          img(ng-src="{{ authData.google.cachedUserProfile.avatar_url }}")
-          p {{ authData.google.displayName }}
-          a(ng-click="logout()") Logout
+      form.navbar-form.navbar-right(ng-controller="AuthCtrl")
+        div.form-group
+          input#loginEmail.form-control(ng-hide="authData" type="email" value="youremail@gmail.com") 
+        a.btn.btn-default(ng-hide="authData" ng-click="login()") Login With Google
+
+      div(ng-show="authData")
+        img(ng-src="{{ authData.google.cachedUserProfile.avatar_url }}")
+        p {{ authData.google.displayName }}
+        a(ng-click="logout()") Logout
 
 block content
   div.container
     div#banner.page-header
       div.row
-        div.col-lg-8.col-md-7.col-sm-6
+        div.col-lg-8.col-md-7.col-sm-6(ng-controller="AuthCtrl")
+          br
           p.lead Menu
       div.row
         div.col-lg-3.col-md-3.col-sm-4

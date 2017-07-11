@@ -5,7 +5,9 @@ onAuth = ($scope, $http) ->
         $scope.error = null
         
         onErr  = (err) ->  $scope.error = err
-        onUser = (user) -> $scope.firebaseUser = user
+        onUser = (response) ->
+                console.log response
+                
         
         onSignout = ->
                 $scope.firebaseUser = null
@@ -13,8 +15,12 @@ onAuth = ($scope, $http) ->
                 
         $scope.login = ->
                 $http({
-                        method:'GET'
-                        url: '/auth'
+                        method:'POST'
+                        url: '/login'
+                        headers:
+                                'Content-Type': 'multipart/form-data'
+                        data:
+                                email: document.getElementById('loginEmail').text
                 }).then(onUser).catch(onErr)
 
         $scope.logout = ->            

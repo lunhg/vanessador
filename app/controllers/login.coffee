@@ -1,5 +1,11 @@
 AppManager::login = ->
-        @app.get '/auth/firebase', passport.authenticate('firebaseauth', { })
-
-        _callback = passport.authenticate('firebaseauth', { failureRedirect: '/login'})
-        @app.get '/auth/firebase/callback', _callback, (req, res) -> res.json({message: "logged"})
+        @app.post '/login', (req, res) ->
+                passport.authenticate('firebase-admin-login', (err, uid, info) ->
+                        if err
+                                res.json err
+                        else
+                                res.json {
+                                        uid: uid
+                                        info: info
+                                }
+                )(req, res)
