@@ -18,10 +18,9 @@ block nav
               - for(var federation in a)
                 li 
                   a(ng-click="login"+a[federation]+"()")= a[federation]
-                    img(width="32" heigth="32" ng-src="{{ icon"+a[federation]+" }}")
-              
-           
-          li.dropdown.open(ng-show="user")
+  
+   
+          li(ng-show="user")
             a.btn.btn-default(ng-click="logout()") Logout
 
 block content
@@ -35,6 +34,8 @@ block content
           p.lead serviços sociais
     div.bs-component(ng-show="user")
       blockquote
+        img(width="16" heigth="16" ng-src="{{ iconGoogle }}")
+        img(width="16" heigth="16" ng-src="{{ user.photoUrl }}")
         p Email {{ user.email }}
 
 block scripts
