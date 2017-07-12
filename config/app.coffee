@@ -23,7 +23,7 @@ class AppManager
 
                 @app.set 'port', parseInt(process.env.PORT || '3000')
 
-AppManager.make = (result) ->
+AppManager.init = (result) ->
         new Promise (resolve, reject) ->
                 app = express()
                 app_manager = new AppManager(app)

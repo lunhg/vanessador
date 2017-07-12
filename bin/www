@@ -1,5 +1,5 @@
 #!/usr/bin/env /home/pi/.nvm/versions/node/v8.0.0/bin/node
-var AppManager, FirebaseAdmin, ServerManager, __firebase__, atob, body_parser, chalk, compression, connect_assets, express, firebase_admin, firebase_manager, foreach, fs, getAuth, http, marked, morgan, node_uuid, onMsg, parseBasic, passport, passport_custom, passport_firebase_auth, path, pug, request_json;
+var AppManager, ServerManager, atob, body_parser, chalk, compression, connect_assets, express, firebase_admin, foreach, fs, getAuth, http, keytar, marked, morgan, node_uuid, onMsg, parseBasic, passport, passport_custom, passport_firebase_auth, path, pug, request_json;
 
 fs = require('fs');
 
@@ -39,38 +39,12 @@ pug = require('pug');
 
 request_json = require('request-json');
 
+keytar = require('keytar');
+
 
 /* SETUP NODE_ENV */
 
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
-
-FirebaseAdmin = (function() {
-  function FirebaseAdmin(projectName) {
-    this.projectName = projectName;
-  }
-
-  FirebaseAdmin.prototype.init = function() {
-    var url;
-    url = "https://" + this.projectName + ".firebaseio.com";
-    return new Promise(function(resolve, reject) {
-      var fa, serviceAccount;
-      serviceAccount = require((path.join(__dirname)) + "/../firebase.json");
-      console.log(url);
-      fa = firebase_admin.initializeApp({
-        credential: firebase_admin.credential.cert(serviceAccount),
-        databaseURL: url
-      });
-      if (fa) {
-        return resolve();
-      } else {
-        return reject();
-      }
-    });
-  };
-
-  return FirebaseAdmin;
-
-})();
 
 AppManager = (function() {
   function AppManager(app1) {
@@ -100,7 +74,7 @@ AppManager = (function() {
 
 })();
 
-AppManager.make = function(result) {
+AppManager.init = function(result) {
   return new Promise(function(resolve, reject) {
     var app, app_manager;
     app = express();
@@ -138,26 +112,22 @@ AppManager.prototype.passport = function() {
   /* TODO */
 };
 
-passport.use('firebase-admin-login', new passport_custom(function(req, done) {
-  var onErr, onUser;
-  onErr = function(error) {
-    console.log(error);
-    return done(error.code, null, {
-      message: error.message
-    });
-  };
-  onUser = function(userRecord) {
-    var uid;
-    uid = userRecord.toJSON().uid;
-    return firebase_admin.auth().createCustomToken(uid).then(function(customToken) {
-      console.log(customToken);
-      return done(null, uid, {
-        customToken: customToken
+passport.use('firebase-login', new passport_custom(function(req, done) {
+  return firebase_admin.auth().getUser(req.query.uid).then(function(userRecord) {
+    var user;
+    user = userRecord.toJSON();
+    console.log(user);
+    if (user.accessToken === req.query.accessToken) {
+      return done(null, userRecord.toJSON(), {
+        message: "User " + user.uid + " logged"
       });
-    })["catch"](onErr);
-  };
-  return getAuth(req).then(function(email) {
-    return firebase_admin.auth().getUserByEmail(email).then(onUser)["catch"](onErr)["catch"](onErr);
+    } else {
+      return done(true);
+    }
+  })["catch"](function(err) {
+    return done(err.code, null, {
+      message: err.message
+    });
   });
 }));
 
@@ -219,19 +189,35 @@ AppManager.prototype.init = function() {
 };
 
 AppManager.prototype.index = function() {
-  return this.app.get('/', function(req, res) {
+  this.app.get('/', function(req, res) {
     return res.render('index');
+  });
+  return this.app.get('/config', function(req, res) {
+    var projectName;
+    projectName = require((path.join(__dirname)) + "/../package.json").firebase.project.name;
+    return keytar.findPassword(projectName + ".firebase.apiKey").then(function(apiKey) {
+      return keytar.findPassword(projectName + ".firebase.messagingSenderId").then(function(messagingSenderId) {
+        return res.json({
+          apiKey: apiKey,
+          authDomain: projectName + ".firebaseapp.com",
+          databaseURL: "https://" + projectName + ".firebaseio.com",
+          projectId: projectName,
+          storageBucket: projectName + ".appspot.com",
+          messagingSenderId: messagingSenderId
+        });
+      });
+    });
   });
 };
 
 AppManager.prototype.login = function() {
-  return this.app.post('/login', function(req, res) {
-    return passport.authenticate('firebase-admin-login', function(err, uid, info) {
+  return this.app.post('/auth/callback', function(req, res) {
+    return passport.authenticate('firebase-login', function(err, user, info) {
       if (err) {
         return res.json(err);
       } else {
         return res.json({
-          uid: uid,
+          user: user,
           info: info
         });
       }
@@ -250,15 +236,11 @@ AppManager.prototype.logout = function() {
   });
 };
 
-__firebase__ = require("../package.json").firebase;
-
-firebase_manager = new FirebaseAdmin(__firebase__.project.name);
-
 onMsg = function(addr) {
   return "===* Vanessador server ready *===\n* Express/Firebase Server\n* started at " + (Date.now()) + "\n* available in\n  " + addr.address + ":" + addr.port + "\n=================================";
 };
 
-firebase_manager.init().then(AppManager.make).then(ServerManager.make).then(function(addr) {
+AppManager.init().then(ServerManager.make).then(function(addr) {
   return console.log(chalk.cyan(onMsg(addr)));
 })["catch"](function(e) {
   return console.log(e);

@@ -12,19 +12,14 @@ describe chalk.green('Vanessador app'), ->
                                                 resolve()
                                         else
                                                 reject err
-                                
-                        
-        it 'should POST /login', ->
+
+        it 'should GET /config', ->
                 new Promise (resolve, reject) ->
-                        agent.post("/login") 
-                                .query({email: "lunhanig@gmail.com"})
+                        agent.get("/config") 
                                 .expect 200
                                 .expect('Content-Type', /json/)
                                 .expect (res) ->
-                                        res.body.should.have.property 'uid'
-                                        res.body.uid.should.be.String()
-                                        res.body.should.have.property 'info'
-                                        res.body.info.should.have.property 'customToken'
-                                        res.body.info.customToken.should.be.String()
+                                        res.body.should.have.property 'apiKey'
+                                        res.body.should.have.property 'messagingSenderId'
                                 .then resolve
                                 .catch reject

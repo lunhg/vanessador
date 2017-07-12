@@ -23,27 +23,18 @@ AppManager::passport = ->
         
         #passport.deserializeUser (id, done)->  User.findById(id).exec (err, user) -> done null, user.id
 
-        passport.use 'firebase-admin-login', new passport_custom (req, done) ->
-                onErr = (error) ->
-                        console.log error
-                        done error.code, null, message: error.message
-                        
-                onUser = (userRecord) ->
-                        uid = userRecord.toJSON().uid
-                        firebase_admin.auth()
-                                .createCustomToken(uid)
-                                .then (customToken) ->
-                                        console.log customToken
-                                        done null, uid, customToken: customToken
-                                .catch onErr
-                                
-                getAuth(req).then (email) ->
-                        firebase_admin.auth()
-                                .getUserByEmail(email)
-                                .then onUser
-                                .catch onErr
-                        .catch onErr
-                        
+        passport.use 'firebase-login', new passport_custom (req, done) ->
+                firebase_admin.auth()
+                        .getUser(req.query.uid)
+                        .then (userRecord) ->
+                                user = userRecord.toJSON()
+                                console.log user
+                                if user.accessToken is req.query.accessToken
+                                        done null, userRecord.toJSON(), message: "User #{user.uid} logged"
+                                else
+                                        done true
+                                        
+                        .catch (err) -> done err.code, null, message: err.message
         
         passport.serializeUser (user, done) -> done null, user.uid
 

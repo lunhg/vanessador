@@ -1,6 +1,6 @@
 # before starting the app, lets connect to firebase
-__firebase__ = require("../package.json").firebase
-firebase_manager = new FirebaseAdmin __firebase__.project.name
+#__firebase__ = require("../package.json").firebase
+#firebase_manager = new FirebaseAdmin __firebase__.project.name
 
 onMsg = (addr) ->"""
 ===* Vanessador server ready *===
@@ -11,8 +11,9 @@ onMsg = (addr) ->"""
 ================================="""
 
 
-firebase_manager.init()
-        .then(AppManager.make)
+#firebase_manager.init()
+        #.then(
+AppManager.init()
         .then(ServerManager.make)
         .then (addr) -> console.log chalk.cyan onMsg addr
         .catch (e) -> console.log e 
