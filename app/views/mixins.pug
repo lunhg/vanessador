@@ -1,0 +1,20 @@
+mixin title(t, _href) 
+  div.navbar-header
+    a.navbar-brand(href=""+_href)= t
+      img.img-responsive.navbar-left(width="32" height="32" src="/assets/images/34-vassoura.jpg")
+
+mixin menudown(id, ng_show, label)
+  li.dropdown(ng-show=""+ng_show ng-click="onDropmenu(\""+id+"\")" id=""+id)
+    a.dropdown-toogle(data-toogle="dropdown" href="#" aria-expanded="true")= label
+      if ng_show === 'user'      
+        img.img-responsive.img-circle.navbar-right(width="32" heigth="32" ng-src="{{ user.photoURL }}")
+      if ng_show === 'user === null'
+        span.caret
+    ul.dropdown-menu(aria-labelledby=""+id)
+      block 
+
+mixin inputform(form)
+  div.form-group
+    input.form-control(id="input_typeform_"+form.id type=""+form.type placeholder=""+form.placeholder style="width: "+form.width+"px;")
+  button.btn.btn-default(ng-click="searchForm({completed:true,limit:10})")= form.label
+  img(ng-show="onLoading == true" src="/assets/images/loading.gif" style="width: 40px; heigth: 40px")

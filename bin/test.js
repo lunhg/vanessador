@@ -28,11 +28,38 @@ describe(chalk.green('Vanessador app'), function() {
       });
     });
   });
-  return it('should GET /config', function() {
+  it('should GET /config', function() {
     return new Promise(function(resolve, reject) {
       return agent.get("/config").expect(200).expect('Content-Type', /json/).expect(function(res) {
         res.body.should.have.property('apiKey');
         return res.body.should.have.property('messagingSenderId');
+      }).then(resolve)["catch"](reject);
+    });
+  });
+  it('should GET /templates', function() {
+    return new Promise(function(resolve, reject) {
+      return agent.get("/templates").expect(200).expect('Content-Type', /json/).expect(function(res) {
+        console.log(res.body);
+        res.body.should.have.property('cursos');
+        return res.body.should.have.property('alunos');
+      }).then(resolve)["catch"](reject);
+    });
+  });
+  return it('should GET /typeform/data-api', function() {
+    return new Promise(function(resolve, reject) {
+      return agent.get("/typeform/data-api").query({
+        uuid: 'lD2u6E'
+      }).query({
+        completed: true
+      }).query({
+        limit: 10
+      }).expect(200).expect('Content-Type', /json/).expect(function(res) {
+        res.body.should.have.property('stats');
+        res.body.stats.should.have.property('responses');
+        res.body.stats.responses.should.have.property('showing');
+        res.body.stats.responses.should.have.property('total');
+        res.body.stats.responses.should.have.property('completed');
+        return res.body.should.have.property('questions');
       }).then(resolve)["catch"](reject);
     });
   });

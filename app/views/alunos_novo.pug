@@ -1,0 +1,17 @@
+h1 Novo alunx
+div.col-lg-6
+  div.well.bs-component
+    form.form-horizontal
+      fieldset
+        legend Novo Aluno
+        - var form = {'inputEmail':{'type':'text', 'placeholder':'Email'}, 'inputNome':{'type':'text', 'placeholder': 'nome'}}
+        - for(var key in form)
+          - var val = form[key]
+            div.form-group
+              label.col-lg-2.control-label(for=""+key)= val.placeholder 
+              div.col-lg-10 
+                input.form-control(type=""+val.type id=""+key placeholder=""+val.placeholder) 
+
+        button(type="reset" class="btn btn-default") Redefinir 
+        button(type="submit" class="btn btn-success" ng-click="onNovoAluno()")
+

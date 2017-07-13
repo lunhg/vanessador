@@ -1,97 +1,97 @@
 {
-    "name": "vanessador",
-    "version": "0.0.1",
-    "description": "a firebase app with typeform requests",
-    "main": "bin/www",
-    "scripts": {
-	"build:firebase": "grunt build:firebase:apiKey build:firebase:messagingSenderId",
-	"build": "grunt --verbose",
-	"test": "mocha --timeout 3000 bin/test.js",
-	"serve": "./bin/www &",
-	"start": "killall node ; npm run build ; npm run serve ; sleep 5 ; npm test"
-    },
-    "repository": {
-	"type": "git",
-	"url": "https://www.github.com/lunhg/vanessador.git"
-    },
-    "author": [
-	"Guilherme Lunhani <lunhg@gmail.com>"
-    ],
-    "license": "SEE LICENSE IN LICENSE.md",
-    "dependencies": {
-	"atob": "^2.0.3",
-	"body-parser": "^1.17.2",
-	"chalk": "^2.0.1",
-	"compression": "^1.6.2",
-	"connect-assets": "^5.4.0",
-	"express": "^4.15.3",
-	"firebase-admin": "^5.0.0",
-	"foreach": "^2.0.5",
-	"marked": "^0.3.6",
-	"morgan": "^1.8.2",
-	"node-uuid": "^1.4.8",
-	"passport": "^0.3.2",
-	"passport-custom": "^1.0.5",
-	"passport-firebase-auth": "0.0.0-beta.1",
-	"pug": "^2.0.0-rc.2",
-	"request-json": "^0.6.2",
-	"keytar": "^4.0.3"
-    },
-    "devDependencies": {
-	"chalk": "^2.0.1",
-	"check_node": "^1.0.0",
-	"grunt": "^1.0.1",
-	"grunt-banner": "^0.6.0",
-	"grunt-contrib-coffee": "^1.0.0",
-	"mocha": "^3.4.2",
-	"require-from-package": "0.0.4",
-	"should": "^11.2.1",
-	"supertest": "^3.0.0",
-	"syncprompt": "^1.0.3"
-    },
-    "firebase": {
-	"project": {
-	    "name": "vanessador-46e68"
-	}
-    },
-    "options": {
-	"coffee": {
-	    "compileJoin": {
-		"options": {
-		    "join": true,
-		    "bare": true
-		},
-		"files": {
-		    "bin/www": [
-			"boot/dependencies.coffee",
-			"config/environment.coffee",
-			"config/app.coffee",
-			"config/passport.coffee",
-			"config/server.coffee",
-			"boot/app.coffee",
-			"app/controllers/index.coffee",
-			"app/controllers/login.coffee",
-			"app/controllers/logout.coffee",
-			"boot/server.coffee"
-		    ],
-		    "bin/test.js": [
-			"boot/devDependencies.coffee",
-			"test/server.coffee"
-		    ]
-		}
-	    }
-	},
-	"usebanner": {
-	    "www": {
-		"options": {
-		    "position": "top",
-		    "banner": "#!/usr/bin/env <%= pkg.node_version %>",
-		    "linebreak": true
-		},
-		"files": {
-		    "src": "bin/www"
-		}
-	    }
-	}
-    }
+			"name": "vanessador",
+			"version": "0.0.1",
+			"description": "a firebase app with typeform requests",
+			"main": "bin/www",
+			"scripts": {
+						"build:firebase": "grunt build:firebase:apiKey build:firebase:messagingSenderId",
+						"build": "grunt --verbose",
+						"test": "mocha --timeout 3000 bin/test.js",
+						"serve": "./bin/www &",
+						"start": "killall node ; npm run build ; npm run serve ; sleep 5 ; npm test"
+			},
+			"repository": {
+						"type": "git",
+						"url": "https://www.github.com/lunhg/vanessador.git"
+			},
+			"author": [
+						"Guilherme Lunhani <lunhg@gmail.com>"
+			],
+			"license": "SEE LICENSE IN LICENSE.md",
+			"dependencies": {
+						"atob": "^2.0.3",
+						"body-parser": "^1.17.2",
+						"chalk": "^2.0.1",
+						"compression": "^1.6.2",
+						"connect-assets": "^5.4.0",
+						"express": "^4.15.3",
+						"firebase-admin": "^5.0.0",
+						"foreach": "^2.0.5",
+						"keytar": "^4.0.3",
+						"marked": "^0.3.6",
+						"morgan": "^1.8.2",
+						"node-uuid": "^1.4.8",
+						"passport": "^0.3.2",
+						"passport-custom": "^1.0.5",
+						"passport-firebase-auth": "0.0.0-beta.1",
+						"pug": "^2.0.0-rc.2",
+						"request-json": "^0.6.2"
+			},
+			"devDependencies": {
+						"chalk": "^2.0.1",
+						"check_node": "^1.0.0",
+						"grunt": "^1.0.1",
+						"grunt-banner": "^0.6.0",
+						"grunt-contrib-coffee": "^1.0.0",
+						"mocha": "^3.4.2",
+						"require-from-package": "0.0.4",
+						"should": "^11.2.1",
+						"supertest": "^3.0.0",
+						"syncprompt": "^1.0.3"
+			},
+			"firebase": {
+						"project": {
+									"name": "vanessador-46e68"
+						}
+			},
+			"options": {
+						"coffee": {
+									"compileJoin": {
+												"options": {
+															"join": true,
+															"bare": true
+												},
+												"files": {
+															"bin/www": [
+																		"boot/dependencies.coffee",
+																		"config/environment.coffee",
+																		"config/app.coffee",
+																		"config/passport.coffee",
+																		"config/server.coffee",
+																		"boot/app.coffee",
+																		"app/controllers/index.coffee",
+																		"app/controllers/login.coffee",
+																		"app/controllers/logout.coffee",
+																		"boot/server.coffee"
+															],
+															"bin/test.js": [
+																		"boot/devDependencies.coffee",
+																		"test/server.coffee"
+															]
+												}
+									}
+						},
+						"usebanner": {
+									"www": {
+												"options": {
+															"position": "top",
+															"banner": "#!/usr/bin/env <%= pkg.node_version %>",
+															"linebreak": true
+												},
+												"files": {
+															"src": "bin/www"
+												}
+									}
+						}
+			}
 }

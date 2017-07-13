@@ -23,6 +23,8 @@ firebase_admin = require('firebase-admin');
 
 foreach = require('foreach');
 
+keytar = require('keytar');
+
 marked = require('marked');
 
 morgan = require('morgan');
@@ -38,8 +40,6 @@ passport_firebase_auth = require('passport-firebase-auth');
 pug = require('pug');
 
 request_json = require('request-json');
-
-keytar = require('keytar');
 
 
 /* SETUP NODE_ENV */
@@ -189,10 +189,11 @@ AppManager.prototype.init = function() {
 };
 
 AppManager.prototype.index = function() {
+  var getTemplate;
   this.app.get('/', function(req, res) {
     return res.render('index');
   });
-  return this.app.get('/config', function(req, res) {
+  this.app.get('/config', function(req, res) {
     var projectName;
     projectName = require((path.join(__dirname)) + "/../package.json").firebase.project.name;
     return keytar.findPassword(projectName + ".firebase.apiKey").then(function(apiKey) {
@@ -206,6 +207,65 @@ AppManager.prototype.index = function() {
           messagingSenderId: messagingSenderId
         });
       });
+    });
+  });
+  this.app.get('/typeform/data-api', function(req, res) {
+    var projectName, pwd;
+    projectName = require((path.join(__dirname)) + "/../package.json").firebase.project.name;
+    pwd = projectName + ".typeform.apiKey";
+    console.log("Search for  " + pwd);
+    return keytar.findPassword(pwd).then(function(apiKey) {
+      var _url, onGet;
+      _url = "form/" + req.query.uuid + "?key=" + apiKey;
+      _url += "&completed=" + req.query.completed;
+      _url += "&limit=" + req.query.limit;
+      onGet = function(err, _res, body) {
+        if (err) {
+          return res.json(err);
+        } else {
+          console.log(body);
+          return res.json(body);
+        }
+      };
+      return request_json.createClient('https://api.typeform.com/v1/').get(_url, onGet);
+    })["catch"](function(err) {
+      return res.json(err);
+    });
+  });
+  getTemplate = function(p) {
+    return new Promise(function(resolve, reject) {
+      var _p;
+      _p = (path.join(__dirname)) + "/../app/views/" + p + ".pug";
+      return fs.readFile(_p, 'utf8', function(err, content) {
+        if (!err) {
+          return resolve([
+            "" + p, pug.compile(content, {
+              filename: _p,
+              doctype: 'html'
+            })()
+          ]);
+        } else {
+          return reject(err);
+        }
+      });
+    });
+  };
+  return this.app.get('/templates', function(req, res) {
+    var a, i, len, p, ref;
+    a = [];
+    ref = ['_index', 'cursos', 'alunos', 'alunos_novo'];
+    for (i = 0, len = ref.length; i < len; i++) {
+      p = ref[i];
+      a.push(getTemplate(p));
+    }
+    return Promise.all(a).then(function(results) {
+      var j, json, len1;
+      json = {};
+      for (j = 0, len1 = results.length; j < len1; j++) {
+        p = results[j];
+        json[p[0]] = p[1];
+      }
+      return res.json(json);
     });
   });
 };

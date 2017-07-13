@@ -55,6 +55,17 @@ module.exports = (grunt) ->
                                                 console.log "Firebase messagingSenderId created"
                                                 done()
                                         keytar.setPassword("#{pkg.firebase.project.name}.firebase.messagingSenderId",pkg.author,pwd).then onSet
+
+        grunt.registerTask 'build:typeform:apiKey', 'Store firebase messagingSenderId on keychain', ->
+                done = @async()
+                keytar.findPassword("#{pkg.name}.typeform.apiKey")
+                        .then (r) ->
+                                if r is undefined or r is null
+                                        pwd = prompt("Type your #{pkg.firebase.project.name}.typeform.apiKey\n", secure:true)
+                                        onSet = (r)->
+                                                console.log "Firebase messagingSenderId created"
+                                                done()
+                                        keytar.setPassword("#{pkg.firebase.project.name}.typeform.apiKey",pkg.author,pwd).then onSet
                                         
         grunt.initConfig options
         
