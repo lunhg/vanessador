@@ -1,0 +1,18 @@
+div.navbar(ng-show="user === null")
+  h1 Cadastre-se
+  p É professor do ITS? cadastre-se em nosso sistema! 
+    a(href="https://www.typeform.com/") typeform.
+
+  div.navbar-left
+    form.form-horizontal
+      fieldset
+        legend Cadastre-se!
+        - var form = {'input_login_email':{'type':'text', 'placeholder':'email'}, 'input_login_senha':{'type':'password', 'placeholder': ''}}
+        - for(var key in form)
+          - var val = form[key]
+            div.form-group
+              label.col-lg-2.control-label(for=""+key)= val.placeholder 
+              div.col-lg-10 
+                input.form-control(style="width:300px;" type=""+val.type id=""+key placeholder=""+val.placeholder)
+          
+      button.btn.btn-success(type="submit" ng-click="createUserWithEmailAndPassword()") Cadastrar 

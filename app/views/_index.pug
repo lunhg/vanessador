@@ -1,30 +1,10 @@
-div(ng-show="user == null")
+div.navbar(ng-show="user == null")
   h1 Gerencie cursos
-  p O vanessador auxilia alunos e professores em cursos criados através do 
+  p O vanessador auxilia professores do ITS em cursos criados através do 
     a(href="https://www.typeform.com/") typeform.
 
-  div.navbar-left
-    form.form-horizontal
-      fieldset
-        legend Cadastre-se!
-        - var form = {'input_login_email':{'type':'text', 'placeholder':'email'}, 'input_loginsenha':{'type':'password', 'placeholder': ''}}
-        - for(var key in form)
-          - var val = form[key]
-            div.form-group
-              label.col-lg-2.control-label(for=""+key)= val.placeholder 
-              div.col-lg-10 
-                input.form-control(style="width:300px;" type=""+val.type id=""+key placeholder=""+val.placeholder)
-          
-      button.btn.btn-default(type="submit" ng-click="onCreateAluno()") Cadastrar 
+  button.btn.btn-default(type="submit" ng-click="loginEmailAndPassword()") Login 
+  a.btn.btn-default(type="submit" href="#!/signup") Cadastre-se 
 
-  div.navbar-right
-    p Ou registre-se através 
-    - var form = {'input_login_google':{'img':'https://cdn.worldvectorlogo.com/logos/google-icon.svg', 'ng-click': 'onLoginGoogle()'}}
-    - for(var key in form)
-      - var val = form[key]
-        div.form-group
-          label.col-lg-2.control-label(for=""+key)
-          div.col-lg-10 
-            a(ng-click=""+val['ng-click'])
-              img(style="width: 30px; height: 30px;" src=""+val.img)
+  
 

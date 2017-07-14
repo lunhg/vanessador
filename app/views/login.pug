@@ -1,0 +1,23 @@
+div.navbar(ng-show="user === null")
+  h1 Entrar
+  
+  div.navbar-left
+    form.form-horizontal
+      fieldset 
+        - var form = {'input_login_email':{'type':'text', 'placeholder':'email'}, 'input_login_senha':{'type':'password', 'placeholder': ''}}
+        - for(var key in form)
+          - var val = form[key]
+            div.form-group
+              label.col-lg-2.control-label(for=""+key)= val.placeholder 
+              div.col-lg-10 
+                input.form-control(style="width:300px;" type=""+val.type id=""+key placeholder=""+val.placeholder)
+          
+      button.btn.btn-default(type="submit" ng-click="loginEmailAndPassword()") Login 
+
+  ul.nav.navbar-nav.navbar-right Login com um clique?!  
+    - var form = {'input_login_google':{'img':'https://cdn.worldvectorlogo.com/logos/google-icon.svg', 'ng-click': 'onLoginGoogle()'}}
+    - for(var key in form)
+      - var val = form[key]
+        li
+          a.col-lg-10.dropdown-toogle(ng-click=""+val['ng-click'])
+            img.img-responsive(style="width: 30px; height: 30px;" src=""+val.img)

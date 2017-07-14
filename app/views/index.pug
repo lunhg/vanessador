@@ -11,20 +11,29 @@ block nav
   
         // Menu
         div.collapse.navbar-collapse
+          ul.nav.navbar-nav(ng-show="user")
+            li
+              a(href="#!/{{ user.uuid }}/cursos") Cursos
+            li
+              a(href="#!/{{ user.uuid }}/alunos") Alunos
+              
           form.navbar-form.navbar-left(ng-show="user" role="search") 
             +inputform({'id':'uuid','label':'Buscar','type':'text','placeholder':'lD2u6E','width':100})
-          ul.nav.navbar-nav.navbar-right 
-            // Isso vai mostrar apenas se o usuário não estiver logado
-            +menudown('login-menu', "user === null", 'Login')
-              li 
-                a(ng-click="loginGoogle()") Google
-
+          ul.nav.navbar-nav.navbar-right
+            li
+              a(href="#!/login") Login
+            li
+              a(href="#!/signup") Cadastre-se
             // Isso vai mostrar apenas se o usuário estiver logado
             +menudown('user-menu', 'user', '{{ user.displayName }}')
               li
-                a(href="#!/cursos") Cursos
+                a(href="#!/conta") Conta
               li
-                a(href="#!/alunos") Alunos
+                +menudown('config-menu', 'user', 'Configurações')
+                  li
+                    a(href="#!/conta/info") Informação 
+                  li
+                    a(href="#!/conta/formularios") Formulários 
               li
                 a(ng-click="logout()") Logout
 

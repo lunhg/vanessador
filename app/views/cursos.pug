@@ -1,7 +1,7 @@
 div.bs-component
   div.jumbotron
     h1 Cursos
-    p Descrição
+    p Gerencie os cursos de seus alunos
     p
-      a.btn.btn-primary.btn-lg(ng-click="onNovoCurso()") Novo curso 
-    
+      a.btn.btn-primary.btn-lg(ng-show="user" ng-click="onNovoCurso()") Novo curso 
+      a.btn.btn-primary.btn-lg(ng-show="user === null" href="#!/") Cadastre-se 

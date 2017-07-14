@@ -79,11 +79,13 @@ AppManager.init = function(result) {
     var app, app_manager;
     app = express();
     app_manager = new AppManager(app);
-    app_manager.init();
     app_manager.passport();
+    app_manager.boot();
     app_manager.index();
     app_manager.login();
-    app_manager.logout();
+    app_manager.config();
+    app_manager.templates();
+    app_manager.typeform();
     return resolve(app);
   });
 };
@@ -174,8 +176,8 @@ ServerManager.make = function(app) {
   });
 };
 
-AppManager.prototype.init = function() {
-  this.app.use(morgan(':method :url :status Content-Lenght: :res[content-length]  time: :response-time ms'));
+AppManager.prototype.boot = function() {
+  this.app.use(morgan(':method :url :status Content-Lenght: :res[content-length] time: :response-time ms'));
   this.app.use(compression());
   this.app.use(body_parser.json());
   this.app.use(body_parser.urlencoded({
@@ -189,11 +191,28 @@ AppManager.prototype.init = function() {
 };
 
 AppManager.prototype.index = function() {
-  var getTemplate;
-  this.app.get('/', function(req, res) {
+  return this.app.get('/', function(req, res) {
     return res.render('index');
   });
-  this.app.get('/config', function(req, res) {
+};
+
+AppManager.prototype.login = function() {
+  return this.app.post('/auth/callback', function(req, res) {
+    return passport.authenticate('firebase-login', function(err, user, info) {
+      if (err) {
+        return res.json(err);
+      } else {
+        return res.json({
+          user: user,
+          info: info
+        });
+      }
+    })(req, res);
+  });
+};
+
+AppManager.prototype.config = function() {
+  return this.app.get('/config', function(req, res) {
     var projectName;
     projectName = require((path.join(__dirname)) + "/../package.json").firebase.project.name;
     return keytar.findPassword(projectName + ".firebase.apiKey").then(function(apiKey) {
@@ -209,29 +228,10 @@ AppManager.prototype.index = function() {
       });
     });
   });
-  this.app.get('/typeform/data-api', function(req, res) {
-    var projectName, pwd;
-    projectName = require((path.join(__dirname)) + "/../package.json").firebase.project.name;
-    pwd = projectName + ".typeform.apiKey";
-    console.log("Search for  " + pwd);
-    return keytar.findPassword(pwd).then(function(apiKey) {
-      var _url, onGet;
-      _url = "form/" + req.query.uuid + "?key=" + apiKey;
-      _url += "&completed=" + req.query.completed;
-      _url += "&limit=" + req.query.limit;
-      onGet = function(err, _res, body) {
-        if (err) {
-          return res.json(err);
-        } else {
-          console.log(body);
-          return res.json(body);
-        }
-      };
-      return request_json.createClient('https://api.typeform.com/v1/').get(_url, onGet);
-    })["catch"](function(err) {
-      return res.json(err);
-    });
-  });
+};
+
+AppManager.prototype.templates = function() {
+  var getTemplate;
   getTemplate = function(p) {
     return new Promise(function(resolve, reject) {
       var _p;
@@ -253,7 +253,7 @@ AppManager.prototype.index = function() {
   return this.app.get('/templates', function(req, res) {
     var a, i, len, p, ref;
     a = [];
-    ref = ['_index', 'cursos', 'alunos', 'alunos_novo'];
+    ref = ['_index', 'login', 'signup', 'cursos', 'alunos', 'alunos_novo'];
     for (i = 0, len = ref.length; i < len; i++) {
       p = ref[i];
       a.push(getTemplate(p));
@@ -270,29 +270,29 @@ AppManager.prototype.index = function() {
   });
 };
 
-AppManager.prototype.login = function() {
-  return this.app.post('/auth/callback', function(req, res) {
-    return passport.authenticate('firebase-login', function(err, user, info) {
-      if (err) {
-        return res.json(err);
-      } else {
-        return res.json({
-          user: user,
-          info: info
-        });
-      }
-    })(req, res);
-  });
-};
-
-AppManager.prototype.logout = function() {
-  return this.app.post('/logout', function(req, res) {
-    return passport.authenticate('local-logout', function(err, user, info) {
-      if (err) {
-        res.send(err);
-      }
-      return res.json("logged out");
-    })(req, res);
+AppManager.prototype.typeform = function() {
+  return this.app.get('/typeform/data-api', function(req, res) {
+    var projectName, pwd;
+    projectName = require((path.join(__dirname)) + "/../package.json").firebase.project.name;
+    pwd = projectName + ".typeform.apiKey";
+    console.log("Search for  " + pwd);
+    return keytar.findPassword(pwd).then(function(apiKey) {
+      var _url, onGet;
+      _url = "form/" + req.query.uuid + "?key=" + apiKey;
+      _url += "&completed=" + req.query.completed;
+      _url += "&limit=" + req.query.limit;
+      onGet = function(err, _res, body) {
+        if (err) {
+          return res.json(err);
+        } else {
+          console.log(body);
+          return res.json(body);
+        }
+      };
+      return request_json.createClient('https://api.typeform.com/v1/').get(_url, onGet);
+    })["catch"](function(err) {
+      return res.json(err);
+    });
   });
 };
 

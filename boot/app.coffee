@@ -1,8 +1,9 @@
-AppManager::init = -> # Favicon
+AppManager::boot = ->
+        # Favicon
         #app.use favicon(app.get('assets path')[4])
         
         # Logger
-        @app.use morgan(':method :url :status Content-Lenght: :res[content-length]  time: :response-time ms')
+        @app.use morgan(':method :url :status Content-Lenght: :res[content-length] time: :response-time ms')
         
         # Compression
         @app.use compression()
