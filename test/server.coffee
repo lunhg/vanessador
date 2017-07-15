@@ -31,10 +31,13 @@ describe chalk.green('Vanessador app'), ->
                                 .expect('Content-Type', /json/)
                                 .expect (res) ->
                                         console.log res.body
-                                        res.body.should.have.property 'cursos'
-                                        res.body.should.have.property 'alunos'
+                                        res.body.should.have.property '_index'
+                                        res.body.should.have.property 'signup'
+                                        res.body.should.have.property 'login'
+                                        res.body.should.have.property 'resetPassword'
                                 .then resolve
-                                .catch reject
+                                .catch reject   
+                                                                      
                                 
         it 'should GET /typeform/data-api', ->
                 new Promise (resolve, reject) ->

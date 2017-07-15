@@ -40,8 +40,10 @@ describe(chalk.green('Vanessador app'), function() {
     return new Promise(function(resolve, reject) {
       return agent.get("/templates").expect(200).expect('Content-Type', /json/).expect(function(res) {
         console.log(res.body);
-        res.body.should.have.property('cursos');
-        return res.body.should.have.property('alunos');
+        res.body.should.have.property('_index');
+        res.body.should.have.property('signup');
+        res.body.should.have.property('login');
+        return res.body.should.have.property('resetPassword');
       }).then(resolve)["catch"](reject);
     });
   });

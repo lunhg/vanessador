@@ -31,7 +31,6 @@ hgroup,
 main,
 menu,
 nav,
-section,
 summary {
   display: block;
 }
@@ -116,6 +115,26 @@ samp {
   font-family: monospace, monospace;
   font-size: 1em;
 }
+
+section {
+    width: 100%;
+    padding: 0 7%;
+    display: table;
+    margin: 0;
+    max-width: none;
+    background-color: #FFFFFF;
+    height: 100vh;
+    
+    &:nth-of-type(2n) {
+	background-color: #FE4B74;
+    }
+}
+
+.background-red {
+    background-color: #0A3901;
+    color: #FFFFFF
+}
+
 button,
 input,
 optgroup,
@@ -195,6 +214,9 @@ td,
 th {
   padding: 0;
 }
+
+
+
 /*! Source: https://github.com/h5bp/html5-boilerplate/blob/master/src/css/main.css */
 @media print {
   *,

@@ -11,43 +11,50 @@ block nav
   
         // Menu
         div.collapse.navbar-collapse
-          ul.nav.navbar-nav(ng-show="user")
+          ul.nav.navbar-nav(ng-show="user === null")
             li
-              a(href="#!/{{ user.uuid }}/cursos") Cursos
+              a(href="#!/sobre") Sobre
             li
-              a(href="#!/{{ user.uuid }}/alunos") Alunos
+              a(href="https://www.github.com/lunhg/vanessador") Contribua
+
+          ul.nav.navbar-nav(ng-show="user != null")
+            li
+              a(href="#!/tutorial") Tutorial 
+            li
+              +menudown({'id': 'cursos-menu', 'label': 'Cursos'})
+                li
+                  a(href="#!/{{ user.uuid }}/cursos/novo") Registrar novo curso
+                li
+                  a(href="#!/{{ user.uuid }}/cursos") Procure um curso
+            li
+              +menudown({'id': 'alunos-menu', 'label': 'Alunos'})
+                li
+                  a(href="#!/{{ user.uuid }}/alunos/novo") Registrar novo aluno
+                li
+                  a(href="#!/{{ user.uuid }}/alunos") Procure um aluno
               
-          form.navbar-form.navbar-left(ng-show="user" role="search") 
-            +inputform({'id':'uuid','label':'Buscar','type':'text','placeholder':'lD2u6E','width':100})
-          ul.nav.navbar-nav.navbar-right
+              
+  
+          ul.nav.navbar-nav.navbar-right(ng-show="user == null")
             li
-              a(href="#!/login") Login
-            li
-              a(href="#!/signup") Cadastre-se
-            // Isso vai mostrar apenas se o usuário estiver logado
-            +menudown('user-menu', 'user', '{{ user.displayName }}')
+              a(href="#!/login" ng-show="user == null") Login
+            li(ng-show="user === null")
+              a(href="#!/signup" ng-show="user == null") Cadastre-se
+
+          ul.nav.navbar-nav.navbar-right(ng-show="user != null")
+            +menudown({'id': 'user-menu', 'label': '{{ user.displayName || user.email }}'})
               li
                 a(href="#!/conta") Conta
-              li
-                +menudown('config-menu', 'user', 'Configurações')
-                  li
-                    a(href="#!/conta/info") Informação 
-                  li
-                    a(href="#!/conta/formularios") Formulários 
               li
                 a(ng-click="logout()") Logout
 
 
 block content
-  div.container(ng-controller="AuthCtrl")
-    div.row
-      div.col-lg-12
-        div.page-header 
-          div.jumbotron
-            <ng-view></ng-view>
-      
-  
-  
+  div.alert.alert-dismissible(ng-show="popup != null" class="alert-{{ popup.type }}") {{ popup.msg }}
+  <ng-view></ng-view>
+
+
+
 block scripts
   script(src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js")
   script(src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-route.min.js")

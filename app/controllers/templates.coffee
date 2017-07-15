@@ -11,7 +11,7 @@ AppManager::templates = ->
                                         
         @app.get '/templates', (req, res) ->
                 a = []
-                a.push getTemplate(p) for p in ['_index', 'login', 'signup', 'cursos', 'alunos', 'alunos_novo']
+                a.push getTemplate(p) for p in ['_index', 'login', 'signup', 'resetPassword', 'confirmResetPassword']
                 Promise.all(a).then (results) ->
                         json = {}
                         json[p[0]] = p[1] for p in results

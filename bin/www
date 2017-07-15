@@ -253,7 +253,7 @@ AppManager.prototype.templates = function() {
   return this.app.get('/templates', function(req, res) {
     var a, i, len, p, ref;
     a = [];
-    ref = ['_index', 'login', 'signup', 'cursos', 'alunos', 'alunos_novo'];
+    ref = ['_index', 'login', 'signup', 'resetPassword', 'confirmResetPassword'];
     for (i = 0, len = ref.length; i < len; i++) {
       p = ref[i];
       a.push(getTemplate(p));
