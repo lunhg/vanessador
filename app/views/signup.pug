@@ -1,18 +1,20 @@
-div.navbar(ng-show="user === null")
+section.col-md-12.centralize-area(ng-show="user === null")
+  br
+  br
+  br
   h1 Cadastre-se
-  p e seja umx vanessadora 
-    a(href="https://www.typeform.com/") typeform.
-
-  div.navbar-left
-    form.form-horizontal
-      fieldset
-        legend Cadastre-se!
-        - var form = {'input_login_email':{'type':'text', 'placeholder':'email'}}
-        - for(var key in form)
-          - var val = form[key]
-            div.form-group
-              label.col-lg-2.control-label(for=""+key)= val.placeholder 
-              div.col-lg-10 
-                input.form-control(style="width:300px;" type=""+val.type id=""+key placeholder=""+val.placeholder)
-          
-      button.btn.btn-success(type="submit" ng-click="createUserWithEmailAndPassword()") Cadastrar 
+  br
+  br
+  br
+  form
+    fieldset
+      - var form = {'input_signup_email':{'type':'text', 'placeholder':'email', 'ng-click': 'createUserWithEmailAndPassword' }}
+      - for(var key in form)
+        - var val = form[key]
+        div.form-group
+          label.col-lg-2.control-label(for=""+key)= val.placeholder 
+          div.col-lg-10
+            input.form-control(type=""+val.type id=""+key placeholder=""+val.placeholder)
+    br
+    br
+    a.btn.btn-success(ng-click=val['ng-click']+"()") Cadastrar 

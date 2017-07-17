@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>auth-ctrl.coffee</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>auth-ctrl.coffee</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              <p>Controlador de autenticacao
+TODO Separar os controles    </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-title">onAuth</span> = <span class="hljs-params">($rootScope, $http, $location)</span> -&gt;</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>checkout $rootScope.popup as red</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function">        <span class="hljs-title">onAlertDanger</span> = -&gt;</span>
+                <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'popup'</span>).classList.remove(<span class="hljs-string">"alert-success"</span>)
+                <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'popup'</span>).classList.add(<span class="hljs-string">"alert-danger"</span>)</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>checkout $rootScope.popup as green</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function">        <span class="hljs-title">onAlertSuccess</span> = -&gt;</span>
+                <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'popup'</span>).classList.remove(<span class="hljs-string">"alert-danger"</span>)
+                <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'popup'</span>).classList.add(<span class="hljs-string">"alert-success"</span>)</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>checkout $rootScope.popup message and type</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function">        <span class="hljs-title">onErr</span>  = <span class="hljs-params">(err)</span> -&gt;</span>
+                $rootScope.popup = <span class="hljs-string">"Error <span class="hljs-subst">#{err.code}</span>: <span class="hljs-subst">#{err.message}</span>"</span>
+                onAlertDanger()
+                $location.path( <span class="hljs-string">"/"</span> ).replace()</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>checkout $rootScope.popup message success on signout</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function">        <span class="hljs-title">onSignout</span> = -&gt;</span>
+                $rootScope.popup = <span class="hljs-string">"Saiu com sucesso do sistema"</span>
+                onAlertSuccess()
+                $location.path( <span class="hljs-string">"/"</span> ).replace()</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>checkout $rootScope.popup message success on login</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function">        <span class="hljs-title">onLogin</span> = <span class="hljs-params">(result)</span> -&gt;</span>
+                $rootScope.popup = <span class="hljs-string">"Login feito com sucesso"</span>
+                onAlertSuccess()
+                $location.path( <span class="hljs-string">"/"</span> ).replace()</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>checkout $rootScope.popup message success on login</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function">        <span class="hljs-title">onConfirmEmailVerify</span> = -&gt;</span>
+                $rootScope.popup = <span class="hljs-string">"Enviamos um email de confirmação para <span class="hljs-subst">#{firebase.auth().currentUser}</span>"</span>
+                onAlertSuccess()
+                $location.path( <span class="hljs-string">"/"</span> ).replace()</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p>checkout $rootScope.popup message success on reset password</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function">        <span class="hljs-title">onResetPasswordSendEmail</span> = -&gt;</span>
+                $rootScope.popup = <span class="hljs-string">"Enviamos um email de confirmação para <span class="hljs-subst">#{email}</span>"</span>
+                onAlertSuccess()
+                $location.path( <span class="hljs-string">"/"</span> ).replace()</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p>on Update password</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function">        <span class="hljs-title">onUpdatePassword</span> = -&gt;</span>
+                $rootScope.popup = <span class="hljs-string">"Senha redefinida com sucesso"</span>
+                onAlertSuccess()
+                $location.path( <span class="hljs-string">"/"</span> ).replace()</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <p>on reauthentication, need to be logged or reauthenticated</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function">        <span class="hljs-title">onReauthenticate</span> = <span class="hljs-params">(user, p1)</span> -&gt;</span> user.updatePassword(p1).<span class="hljs-keyword">then</span>(onUpdatePassword).<span class="hljs-keyword">catch</span> onErr</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <p>Reset Password</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function">        <span class="hljs-title">onResetPassword</span> = <span class="hljs-params">(data)</span> -&gt;</span>
+                <span class="hljs-keyword">if</span> <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'reset_login_password'</span>).value <span class="hljs-keyword">is</span> <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'reset_login_password_confirm'</span>).value
+                        user = firebase.auth().currentUser
+                        pwd  = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'reset_login_password_confirm'</span>).value</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              <p>Funcao auxiliar par $rootScope.confirmResetPassword</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function">        <span class="hljs-title">onConfirmResetPassword</span> = <span class="hljs-params">(config)</span> -&gt;</span>
+                <span class="hljs-keyword">if</span> query.apiKey <span class="hljs-keyword">is</span> config.apiKey
+                        firebase.auth().applyActionCode(query.oobCode).<span class="hljs-keyword">then</span>(onResetPasswod)
+                <span class="hljs-keyword">else</span>
+                        <span class="hljs-built_in">console</span>.log <span class="hljs-string">'apiKey incorrect'</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-13">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-13">&#182;</a>
+              </div>
+              <p>Random Password</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function">        <span class="hljs-title">randomPassword</span> = <span class="hljs-params">(n)</span> -&gt;</span>
+                c = <span class="hljs-string">'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!?_-'</span>.split <span class="hljs-string">''</span>
+                (c[Math.floor(Math.random() * c.length)] <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> [<span class="hljs-number">0.</span>.n<span class="hljs-number">-1</span>]).join(<span class="hljs-string">''</span>)</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-14">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-14">&#182;</a>
+              </div>
+              <p>Funcao para enviar email de verificação após criar conta</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function">        <span class="hljs-title">onSendEmailVerify</span> =  -&gt;</span>
+                <span class="hljs-keyword">if</span> firebase.auth().currentUser <span class="hljs-keyword">isnt</span> <span class="hljs-literal">null</span> <span class="hljs-keyword">then</span> firebase.auth().currentUser.sendEmailVerification().<span class="hljs-keyword">then</span>(onConfirmEmailVerify).<span class="hljs-keyword">catch</span>(onErr)</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              <p>Esta função checa o domínio do email do usuário.
+Permitido apenas para @itsrio.org e o desenvolvedor</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function">        <span class="hljs-title">onCheckEmailDomain</span> = <span class="hljs-params">(email)</span> -&gt;</span> email.match <span class="hljs-regexp">/\w+@itsrio.org/</span> <span class="hljs-keyword">or</span> email <span class="hljs-keyword">is</span>  <span class="hljs-string">"gcravista@gmail.com"</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-16">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-16">&#182;</a>
+              </div>
+              <p>Função para retornar erro durante o login
+ou registro do usuário</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function">        <span class="hljs-title">onLoginOrCreateErr</span> = -&gt;</span>
+                u = firebase.auth().currentUser
+                msg = <span class="hljs-string">"Usuário <span class="hljs-subst">#{u.displayName <span class="hljs-keyword">or</span> u.email}</span> já está logado"</span>
+                <span class="hljs-built_in">console</span>.log msg
+                onErr(<span class="hljs-keyword">new</span> Error(msg))</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-17">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-17">&#182;</a>
+              </div>
+              <p>Login Google
+realizado com o firebase</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        $rootScope.loginGoogle = <span class="hljs-function">-&gt;</span>
+                <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> firebase.auth().currentUser
+                        provider = <span class="hljs-keyword">new</span> firebase.auth.GoogleAuthProvider()
+                        provider.addScope(<span class="hljs-string">'https://www.googleapis.com/auth/userinfo.profile'</span>)
+                        firebase.auth().signInWithPopup(provider).<span class="hljs-keyword">then</span>(onLogin).<span class="hljs-keyword">catch</span>(onErr)
+                <span class="hljs-keyword">else</span>
+                        onLoginOrCreateErr()</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-18">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-18">&#182;</a>
+              </div>
+              <p>Login email password
+realizado com o firebase</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        $rootScope.loginEmailAndPassword = <span class="hljs-function">-&gt;</span>
+                <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> firebase.auth().currentUser</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-19">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-19">&#182;</a>
+              </div>
+              <p>check email domain</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>                        email = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'input_login_email'</span>).value
+                        <span class="hljs-keyword">if</span> onCheckEmailDomain(email)
+                                firebase.auth().signInWithEmailAndPassword(email,(<span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'input_login_password'</span>).value)).<span class="hljs-keyword">then</span>(onLogin).<span class="hljs-keyword">catch</span>(onErr)
+                        <span class="hljs-keyword">else</span>
+                                onErr(<span class="hljs-keyword">new</span> Error(<span class="hljs-string">"Conta de email não permitida"</span>))
+                <span class="hljs-keyword">else</span>
+                        onLoginOrCreateErr()</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-20">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-20">&#182;</a>
+              </div>
+              <p>Signup
+Cheque o domínio do email (@itsrio.org)
+Crie o usuário se for permitido
+Envie um email resetando a senha</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        $rootScope.createUserWithEmailAndPassword = <span class="hljs-function">-&gt;</span>
+                <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> firebase.auth().currentUser</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-21">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-21">&#182;</a>
+              </div>
+              <p>check email domain</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>                        email = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'input_signup_email'</span>).value
+                        <span class="hljs-keyword">if</span> onCheckEmailDomain email
+                                pwd = randomPassword(<span class="hljs-number">16</span>)
+                                cred = firebase.auth().EmailAuthProvider.credential(user, pwd)
+                                <span class="hljs-built_in">console</span>.log cred
+                                firebase.auth().createUserWithEmailAndPassword(email, pwd).<span class="hljs-keyword">then</span>(onSendEmailVerify).<span class="hljs-keyword">catch</span>(onErr)
+                        <span class="hljs-keyword">else</span>
+                               onErr(<span class="hljs-keyword">new</span> Error(<span class="hljs-string">"Conta de email não permitida"</span>)) 
+                <span class="hljs-keyword">else</span>
+                        onLoginOrCreateErr()</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-22">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-22">&#182;</a>
+              </div>
+              <p>Resete a senha
+Antes de tudo enviamos
+uma requisição por email
+para executar $rootScope.confirmResetPassword</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        $rootScope.sendPasswordResetEmail = <span class="hljs-function">-&gt;</span>
+                email = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'reset_login_email'</span>).value
+                firebase.auth().sendPasswordResetEmail(email).<span class="hljs-keyword">then</span>(onResetPasswordSendEmail).<span class="hljs-keyword">catch</span>(onErr)</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-23">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-23">&#182;</a>
+              </div>
+              <p>Quando receber um email de resetar a senha e clicar ou copiar e colar
+o endereço de confirmação, o cliente recebe um oobCode que deve ser
+acompanhado da chave api do aplicatvo</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        $rootScope.confirmResetPassword = <span class="hljs-function">-&gt;</span>
+                query = $location.search(<span class="hljs-string">'mode'</span>, <span class="hljs-string">'oobCode'</span>, <span class="hljs-string">'apiKey'</span>)
+                $http(method: <span class="hljs-string">'GET'</span>,url: <span class="hljs-string">'/config'</span>).<span class="hljs-keyword">then</span>(onConfirmResetPassword).<span class="hljs-keyword">catch</span>(onErr)</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-24">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-24">&#182;</a>
+              </div>
+              <p>callback para o logout</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        $rootScope.logout = <span class="hljs-function">-&gt;</span> firebase.auth().signOut().<span class="hljs-keyword">then</span>(onSignout).<span class="hljs-keyword">catch</span>(onErr)</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-25">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-25">&#182;</a>
+              </div>
+              <p>Para o menu funcionar corretamente com o bootstrap
+Vamos adicionar as interações</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        $rootScope.onDropmenu = <span class="hljs-function"><span class="hljs-params">(what)</span>-&gt;</span>
+                <span class="hljs-keyword">if</span> $rootScope[what] <span class="hljs-keyword">is</span> <span class="hljs-literal">null</span> <span class="hljs-keyword">or</span> $rootScope[what] <span class="hljs-keyword">is</span> <span class="hljs-literal">undefined</span>
+                        $rootScope[what] = <span class="hljs-literal">false</span>
+
+                
+                <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> $rootScope[what]                         
+                        <span class="hljs-built_in">document</span>.getElementById(what).classList.add(<span class="hljs-string">'open'</span>)
+                        <span class="hljs-built_in">document</span>.getElementById(what).setAttribute(<span class="hljs-string">'aria-expanded'</span>, <span class="hljs-string">'true'</span>)
+                <span class="hljs-keyword">else</span>
+                        <span class="hljs-built_in">document</span>.getElementById(what).classList.remove(<span class="hljs-string">'open'</span>)
+                        <span class="hljs-built_in">document</span>.getElementById(what).setAttribute(<span class="hljs-string">'aria-expanded'</span>, <span class="hljs-string">'false'</span>)
+                $rootScope[what] = <span class="hljs-keyword">not</span> $rootScope[what]</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-26">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-26">&#182;</a>
+              </div>
+              <p>icone de loading</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        $rootScope.onLoading = <span class="hljs-literal">false</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-27">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-27">&#182;</a>
+              </div>
+              <p>Dados typeform</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        $rootScope.typeformData = <span class="hljs-literal">null</span>
+        $rootScope.searchForm = <span class="hljs-function"><span class="hljs-params">(id, options)</span>-&gt;</span>
+                $rootScope.onLoading = <span class="hljs-literal">true</span>
+                query = []
+                search = <span class="hljs-built_in">document</span>.getElementById(id)
+                t = <span class="hljs-keyword">if</span> search.value <span class="hljs-keyword">isnt</span> <span class="hljs-string">''</span> <span class="hljs-keyword">then</span> search.value <span class="hljs-keyword">else</span> search.getAttribute(<span class="hljs-string">'placeholder'</span>)
+                <span class="hljs-built_in">console</span>.log t
+                query.push <span class="hljs-string">"uuid=<span class="hljs-subst">#{t}</span>"</span>
+                query.push <span class="hljs-string">"<span class="hljs-subst">#{k}</span>=<span class="hljs-subst">#{v}</span>"</span> <span class="hljs-keyword">for</span> k,v <span class="hljs-keyword">of</span> options
+                _url = <span class="hljs-string">"/typeform/data-api?<span class="hljs-subst">#{query.join(<span class="hljs-string">'&amp;'</span>)}</span>"</span>
+                <span class="hljs-built_in">console</span>.log _url
+                $http({
+                        method: <span class="hljs-string">'GET'</span>,
+                        url: _url
+                }).<span class="hljs-keyword">then</span> (response) -&gt;
+                        $rootScope.onLoading = <span class="hljs-literal">false</span>
+                        <span class="hljs-built_in">console</span>.log response.data
+                        $rootScope.typeformData = response.data
+
+        $rootScope.novo = <span class="hljs-function"><span class="hljs-params">(ref, obj)</span> -&gt;</span>
+                id = randomPassword(<span class="hljs-number">6</span>)
+                firebase.database().ref(<span class="hljs-string">"/<span class="hljs-subst">#{firebase.auth().currentUser}</span>/cursos/<span class="hljs-subst">#{id}</span>"</span>).set(obj)</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-28">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-28">&#182;</a>
+              </div>
+              <p>Registre o controlador</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>app.controller <span class="hljs-string">"AuthCtrl"</span>, [<span class="hljs-string">'$rootScope'</span>, <span class="hljs-string">'$http'</span>, <span class="hljs-string">'$location'</span>, onAuth]</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

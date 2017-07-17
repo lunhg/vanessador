@@ -10,10 +10,12 @@ module.exports = (grunt) ->
         pkg = grunt.file.readJSON('package.json')
         options = pkg.options;
         options.pkg = name: pkg.name, version: pkg.version
-
+        
         # load task
         grunt.loadNpmTasks 'grunt-contrib-coffee'
         grunt.loadNpmTasks 'grunt-banner'
+        grunt.loadNpmTasks 'grunt-shell'
+        
         grunt.registerTask 'build:init', 'An async configure task', ->
                 done = @async()
                 check_node (err, node_path) ->
@@ -66,8 +68,20 @@ module.exports = (grunt) ->
                                                 console.log "Firebase messagingSenderId created"
                                                 done()
                                         keytar.setPassword("#{pkg.firebase.project.name}.typeform.apiKey",pkg.author,pwd).then onSet
-                                        
+
+
+        grunt.registerTask 'build:doc:client', 'Build documentation with docco', ->
+                grunt.config('doc_dir', "app/assets/doc")
+                grunt.config('shell', {'docco': [
+                        "docco <%= doc_dir %>/../js/index.coffee -o <%= doc_dir %>",
+                        "docco <%= doc_dir %>/../js/app.coffee -o <%= doc_dir %>",
+                        "docco <%= doc_dir %>/../js/config.coffee -o <%= doc_dir %>",
+                        "docco <%= doc_dir %>/../js/auth-ctrl.coffee -o <%= doc_dir %>",
+                        "docco <%= doc_dir %>/../js/run.coffee -o <%= doc_dir %>"
+		].join(" ; ")})
+                
+                
         grunt.initConfig options
         
         # register tasks
-        grunt.registerTask 'default', ['build:init', 'build:libs', 'coffee', 'usebanner']
+        grunt.registerTask 'default', ['build:init', 'build:libs', 'build:doc:client', 'coffee', 'usebanner', 'shell']

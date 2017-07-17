@@ -1,26 +1,38 @@
-section(ng-show="user === null")
-  h1 Entrar
-  
-  div.navbar-left
-    form.form-horizontal
-      fieldset 
-        - var form = {'input_login_email':{'type':'text', 'placeholder':'email'}, 'input_login_password':{'type':'password', 'placeholder': ''}}
-        - for(var key in form)
-          - var val = form[key]
-            div.form-group
-              label.col-lg-2.control-label(for=""+key)= val.placeholder 
-              div.col-lg-10 
-                input.form-control(style="width:300px;" type=""+val.type id=""+key placeholder=""+val.placeholder)
-          
-      button.btn.btn-default(type="submit" ng-click="loginEmailAndPassword()") Login 
-      br
-      br
-      a(href="#!/resetPassword") Resete sua senha
-
-  ul.nav.navbar-nav.navbar-right Login com um clique?!  
-    - var form = {'input_login_google':{'img':'https://cdn.worldvectorlogo.com/logos/google-icon.svg', 'ng-click': 'onLoginGoogle()'}}
+section.col-md-12.centralize-area(ng-show="user === null")
+  br
+  br
+  br
+  br
+  form
+    fieldset Login
+    - var form = {'input_login_email':{'type':'text', 'placeholder':'email@itsrio.org'}, 'input_login_password':{'type':'password', 'placeholder': 'senha'}}
     - for(var key in form)
       - var val = form[key]
-        li
-          a.col-lg-10.dropdown-toogle(ng-click=""+val['ng-click'])
-            img.img-responsive(style="width: 30px; height: 30px;" src=""+val.img)
+      div.form-group
+        label.col-lg-2.control-label(for=""+key)
+          div.col-lg-10 
+            input.form-control(style="width:300px;" type=""+val.type id=""+key placeholder=""+val.placeholder)
+    button.btn.btn-default(type="submit" ng-click="loginEmailAndPassword()") Login 
+    br
+    br
+    a(href="#!/resetPassword") Resete sua senha
+
+    br
+    br
+    div.section-divider
+      hr.navbar-left
+      span Ou
+      hr.navbar-right
+
+    br
+
+    div.container  
+      - var form = {'input_login_google':{'img':'https://cdn.worldvectorlogo.com/logos/google-icon.svg', 'ng-click': 'loginGoogle()', 'text': 'Entrar com google'}}
+      - for(var key in form)
+        - var val = form[key]
+          a.btn.btn-default(ng-click=""+val['ng-click'])= val.text
+            img(style="margin: 5px; width: 30px; height: 30px;" src=""+val.img)
+
+    
+
+    

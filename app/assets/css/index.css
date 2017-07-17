@@ -131,7 +131,7 @@ section {
 }
 
 .background-red {
-    background-color: #0A3901;
+    background-color: #00A00F;
     color: #FFFFFF
 }
 
@@ -3543,6 +3543,12 @@ tbody.collapse.in {
 .dropdown-toggle:focus {
   outline: 0;
 }
+.open > .dropdown-menu {
+  opacity: 1;
+  visibility: visible;
+}
+
+
 .dropdown-menu {
   position: absolute;
   top: 100%;
@@ -3563,7 +3569,14 @@ tbody.collapse.in {
   -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
   -webkit-background-clip: padding-box;
-          background-clip: padding-box;
+  background-clip: padding-box;
+  display: block;
+  opacity: 0;
+  visibility: hidden;
+  -webkit-transition: opacity 500ms ease, visibility 500ms ease;
+  -moz-transition: opacity 500ms ease, visibility 500ms ease;
+  -o-transition: opacity 500ms ease, visibility 500ms ease;
+  transition: opacity 500ms ease, visibility 500ms ease;
 }
 .dropdown-menu.pull-right {
   right: 0;
@@ -6892,3 +6905,8 @@ legend {
 .modal .close {
   color: #333333;
 }
+
+.centralize-area {
+    text-align: center
+}
+

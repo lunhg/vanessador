@@ -8,7 +8,7 @@
 	"build": "grunt --verbose",
 	"test": "mocha --timeout 3000 bin/test.js",
 	"serve": "./bin/www &",
-	"start": "killall node ; npm run build ; npm run serve ; sleep 5 ; npm test"
+	"start": "killall node ; npm run build ; npm run serve ; sleep 7 ; npm test"
     },
     "repository": {
 	"type": "git",
@@ -22,10 +22,9 @@
 	"atob": "^2.0.3",
 	"body-parser": "^1.17.2",
 	"chalk": "^2.0.1",
-	"compression": "^1.6.2",
+	"compression": "^1.7.0",
 	"connect-assets": "^5.4.0",
 	"express": "^4.15.3",
-	"firebase-admin": "^5.0.0",
 	"foreach": "^2.0.5",
 	"keytar": "^4.0.3",
 	"marked": "^0.3.6",
@@ -43,6 +42,7 @@
 	"grunt": "^1.0.1",
 	"grunt-banner": "^0.6.0",
 	"grunt-contrib-coffee": "^1.0.0",
+	"grunt-shell": "^2.1.0",
 	"mocha": "^3.4.2",
 	"require-from-package": "0.0.4",
 	"should": "^11.2.1",

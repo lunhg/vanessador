@@ -1,4 +1,5 @@
-section
+section.centralize-area
+  br
   br
   br
   h1 Gerencie cursos
@@ -7,7 +8,7 @@ section
   h2 O vanessador auxilia administradores do ITS a gerenciar formulários 
     a(href="https://www.typeform.com/") typeform.
 
-section.background-red(ng-show="user !== null")
+section.centralize-area.background-red(ng-show="user !== null")
   br
   br
   h2 Registre um formulário 
@@ -24,7 +25,7 @@ section.background-red(ng-show="user !== null")
           input.form-control(style="width:300px;" type=""+val.type id=""+key placeholder=""+val.placeholder)
     a.btn.btn-default(href="onNovo('curso', {uuid: document.getElementById('input_typeform_uuid').value, nome: document.getElementById('input_typeform_nome').value}") Registrar
 
-section(ng-show="user !== null")
+section.centralize-area(ng-show="user !== null")
   br
   br
   h2 Procure por um formulário
@@ -40,7 +41,7 @@ section(ng-show="user !== null")
   br
   img(ng-show="typeformData !== null" src="/assets/images/arrow.svg" style="width: 30%")
 
-section.background-red(ng-show="typeformData !== null")
+section.centralize-area.background-red(ng-show="typeformData !== null")
   br
   br
   h1 Estatísticas
@@ -52,18 +53,19 @@ section.background-red(ng-show="typeformData !== null")
       tr
         td(ng-repeat="(k,v) in typeformData.stats.responses") {{ v }}
 
-section(ng-show="typeformData !== null")
+section.centralize-area(ng-show="typeformData !== null")
   br
   br
   h1 Questões e Respostas
   table.table.table-striped.table-hover
     thead
       tr
-        th # N
-        th # Token
+        th N
+        th Token
         th(ng-repeat="(k,v) in typeformData.questions") {{ v.question }}
     tbody
       tr(ng-repeat="(k,v) in typeformData.responses")
         td {{ k }}
         td {{ v.token }} 
+        td(ng-repeat="(_k,_v) in v.answers") {{ _v }} 
         
