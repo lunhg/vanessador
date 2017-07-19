@@ -14,6 +14,7 @@ class AppManager
 
                 # Assets
                 @app.set 'assets path', [
+                        path.join __dirname, '..', 'app/assets/fonts'
                         path.join __dirname, '..', 'app/assets/doc'
                         path.join __dirname, '..', 'app/assets/img'
                         path.join __dirname, '..', 'app/assets/css'

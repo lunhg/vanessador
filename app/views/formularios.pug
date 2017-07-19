@@ -1,54 +1,36 @@
 section.centralize-area
   br
   br
-  h2 Inspecione um formulário
   br
-  br
-  form.navbar-form(role="search" ng-show="user !== null && registeredForms[0] !== null") 
-    - var form = {'id': 'input_typeform_procura', 'type':'text', 'placeholder':'lD2u6E', 'style':'width: 150px;', 'ng-click': "searchForm('input_typeform_procura', {completed:true,limit:10})", 'label': 'Buscar'}
-    div.form-group
-      input.form-control.navbar-left(id=''+form.id type=""+form.type placeholder=""+form.placeholder style=""+form.style)
-      button.btn.btn-default.navbar-rigth(ng-click=""+form['ng-click']) Inspecionar
+  div(ng-show="onLoading")
+    button.btn.btn-lg.btn-default
+      span.glyphicon.glyphicon-refresh.glyphicon-refresh-animate Loading...
+  div(ng-show="!onLoading")
+    h2 Inspecione um formulário
+    br
+    br
+    br
 
-  form.navbar-form(ng-show="registeredForms === null")
-    div.form-group
-      p Nenhum curso encontrado. Registre um novo formulário typeform clicando no botão abaixo
-      a.btn.btn-default(href="/#!/formularios/novo") Registrar
+    form.navbar-form(ng-show="registeredForms === null")
+      div.form-group
+        p Nenhum curso encontrado. Registre um novo formulário typeform clicando no botão abaixo
+        a.btn.btn-default(href="/#!/formularios/novo") Registrar
 
-  table.table.table-striped.table-hover(ng-show="registeredForms !== null")
-    thead
-      tr
-        th #
-        th Nome
-        th Proprietários
-        th uuid
-        th tags
-    tbody
-      tr(ng-repeat="(k,v) in registeredForms") 
-        td {{ k }}
-        td {{ v.nome }}
-        td {{ v.owners.join(', ') }}
-        td
-          p {{ v.uuid }}
-          //  img(ng-show="onLoading == true" src="/assets/images/loading.gif" style="width: 40px; heigth: 40px")
-          a.btn.btn-default(href="/#!/formularios/{{ v.uuid }}/stats") Estatisticas
-          a.btn.btn-default(href="/#!/formularios/{{ v.uuid }}/questions") Questões e respostas
-        td {{ v.tags.join(', ') }}
-
-
-
-section(ng-show="typeformData !== null")
-  br
-  br
-  h1 Questões e Respostas
-  table.table.table-striped.table-hover
-    thead
-      tr
-        th N
-        th Token
-        th(ng-repeat="(k,v) in typeformData.questions") {{ v.question }}
-    tbody
-      tr(ng-repeat="(k,v) in typeformData.responses")
-        td {{ k }}
-        td {{ v.token }} 
-        td(ng-repeat="(_k,_v) in v.answers") {{ _v }} 
+    table.table.table-striped.table-hover(ng-show="registeredForms !== null")
+      thead
+        tr
+          th #
+          th Nome
+          th Proprietários
+          th uuid
+          th tags
+      tbody
+        tr(ng-repeat="(k,v) in registeredForms") 
+          td {{ k }}
+          td {{ v.nome }}
+          td {{ v.owners.join(', ') }}
+          td
+            p {{ v.uuid }} 
+            a.btn.btn-default(href="/#!/formularios/{{ v.uuid }}/stats") Estatisticas
+            a.btn.btn-default(href="/#!/formularios/{{ v.uuid }}/questions") Questões e respostas
+          td {{ v.tags.join(', ') }}

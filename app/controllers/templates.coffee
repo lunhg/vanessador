@@ -13,9 +13,12 @@ AppManager::templates = ->
                                                 result = template: html, route: ( ->
                                                         if p.match /_index/
                                                                 "/"
-                                                        else if p.match /\w+_uuid_\w+/
+                                                        else if p.match /^\w+_uuid_[a-z]+$/
                                                                 r = p.split("_")
                                                                 "/#{r[0]}/:uuid/#{r[2]}"
+                                                        else if p.match /^\w+_uuid_[a-z]+_\w+$/
+                                                                r = p.split("_")
+                                                                "/#{r[0]}/:uuid/#{r[2]}/:token"
                                                         else if p.match /\w+_novo/
                                                                 r = p.split("_")
                                                                 "/#{r[0]}/novo"

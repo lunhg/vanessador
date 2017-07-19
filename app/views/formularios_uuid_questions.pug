@@ -1,7 +1,8 @@
 section.centralize-area
   br
   br
-  h1 Questões e respostas
+  h1 Questões e respostas para 
+    a(ng-href="{{ currrentFormUrl }}") {{ currentForm }}
   br
   br
   table.table.table-striped.table-hover
@@ -9,9 +10,10 @@ section.centralize-area
       tr
         th N
         th Token
-        th(ng-repeat="(k,v) in typeformData.questions") {{ v.question }}
+        //th(ng-repeat="(k,v) in typeformData.questions") {{ v.question }}
     tbody
       tr(ng-repeat="(k,v) in typeformData.responses")
         td {{ k }}
-        td {{ v.token }} 
-        td(ng-repeat="(_k,_v) in v.answers") {{ _v }} 
+        td 
+          a(href="/#!/formularios/{{ currentForm }}/questions/{{ v.token }}") {{ v.token }} 
+        //td(ng-repeat="(_k,_v) in v.answers") {{ _v }} 

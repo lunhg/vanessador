@@ -57,7 +57,7 @@ block nav
 
 
 block content
-  div#popup.alert.alert-dismissible(ng-show="popup !== null") {{ popup }}
+  <modal-dialog show='modalShown' width='750px' height='60%'> {{ modalContent }} </modal-dialog>
   <ng-view></ng-view>
 
 

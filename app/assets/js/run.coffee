@@ -18,7 +18,8 @@ Run = ($rootScope, $http, $location, $route, $window) ->
         $rootScope.back = ->
                 prevUrl = if history.length > 1 then history.splice(-2)[0] else "/"
                 $location.path(prevUrl)
-        
+        $rootScope.onLoading = true
+        $rootScope.defaultPhotoURL = '/assets/images/vanessadora.png'
         # Atualize a configuração do firebase
         $http({
                 method: 'GET',
@@ -40,15 +41,10 @@ Run = ($rootScope, $http, $location, $route, $window) ->
                                 # ainda não foi verificado, no caso de cadastro
                                 # por email e senha
                                 if not user.emailVerified then user.sendEmailVerification()
-
-                # atualize a base de dados
-                # conforme ela for populada
-                firebase.database().ref('formularios/').on 'value', (snapshot) ->
-                        $rootScope.registeredForms = snapshot.val()
-
-        # Inicie o aplicativo
-        $rootScope.nextRoute = $rootScope.back() or "/login"
-        $location.path($rootScope.nextRoute)
-        $route.reload()
+                $rootScope.onLoading = false
+                # Inicie o aplicativo
+                $rootScope.nextRoute = $rootScope.back() or "/login"
+                $location.path($rootScope.nextRoute)
+                $route.reload()
 
 app.run(['$rootScope', '$http', '$location', '$route', '$window', Run])

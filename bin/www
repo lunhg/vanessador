@@ -64,7 +64,7 @@ AppManager = (function() {
       });
     });
     this.app.set('view engine', 'pug');
-    this.app.set('assets path', [path.join(__dirname, '..', 'app/assets/doc'), path.join(__dirname, '..', 'app/assets/img'), path.join(__dirname, '..', 'app/assets/css'), path.join(__dirname, '..', 'app/assets/js'), path.join(__dirname, '..', 'app/assets/')]);
+    this.app.set('assets path', [path.join(__dirname, '..', 'app/assets/fonts'), path.join(__dirname, '..', 'app/assets/doc'), path.join(__dirname, '..', 'app/assets/img'), path.join(__dirname, '..', 'app/assets/css'), path.join(__dirname, '..', 'app/assets/js'), path.join(__dirname, '..', 'app/assets/')]);
     this.app.set('port', parseInt(process.env.PORT || '3000'));
   }
 
@@ -251,9 +251,12 @@ AppManager.prototype.templates = function() {
                 var r;
                 if (p.match(/_index/)) {
                   return "/";
-                } else if (p.match(/\w+_uuid_\w+/)) {
+                } else if (p.match(/^\w+_uuid_[a-z]+$/)) {
                   r = p.split("_");
                   return "/" + r[0] + "/:uuid/" + r[2];
+                } else if (p.match(/^\w+_uuid_[a-z]+_\w+$/)) {
+                  r = p.split("_");
+                  return "/" + r[0] + "/:uuid/" + r[2] + "/:token";
                 } else if (p.match(/\w+_novo/)) {
                   r = p.split("_");
                   return "/" + r[0] + "/novo";

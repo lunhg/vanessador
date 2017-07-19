@@ -144,6 +144,9 @@ por email e senha</p>
               </div>
               <p>atualize a base de dados
 conforme ela for populada</p>
+<ul>
+<li>/formularios/:uuid/:action</li>
+</ul>
 
             </div>
             
@@ -159,13 +162,14 @@ conforme ela for populada</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
-              <p>Inicie o aplicativo</p>
+              <ul>
+<li>/formularios/:uuid/:action/:token</li>
+</ul>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                $rootScope.nextRoute = $rootScope.back() <span class="hljs-keyword">or</span> <span class="hljs-string">"/login"</span>
-                $location.path($rootScope.nextRoute)
-                $route.reload()</pre></div></div>
+            <div class="content"><div class='highlight'><pre>                firebase.database().ref(<span class="hljs-string">'formularios/current'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'value'</span>, <span class="hljs-function"><span class="hljs-params">(snapshot)</span> -&gt;</span>
+                        $rootScope.currentForm = snapshot.val()</pre></div></div>
             
         </li>
         
@@ -176,11 +180,15 @@ conforme ela for populada</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
-              <p>$window.location.reload()</p>
+              <p>Inicie o aplicativo</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>
+            <div class="content"><div class='highlight'><pre>        $rootScope.nextRoute = $rootScope.back() <span class="hljs-keyword">or</span> <span class="hljs-string">"/login"</span>
+        $location.path($rootScope.nextRoute)
+        
+        $route.reload()
+
 app.run([<span class="hljs-string">'$rootScope'</span>, <span class="hljs-string">'$http'</span>, <span class="hljs-string">'$location'</span>, <span class="hljs-string">'$route'</span>, <span class="hljs-string">'$window'</span>, Run])</pre></div></div>
             
         </li>

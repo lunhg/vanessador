@@ -9,9 +9,13 @@ obj = {}
 xhr = new XMLHttpRequest()
 xhr.onreadystatechange = ->
         if @readyState is 4 and @status is 200
+
+                # Este objeto é uma configuração parcial
+                # do serviço requerido
                 _obj = JSON.parse xhr.responseText
                 obj = _obj
-        
+
+                # Agora precisamos criar o link
                 obj.link = (scope, element, attrs) ->
                         scope.dialogStyle = {}
                         if (attrs.width)

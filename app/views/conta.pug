@@ -3,13 +3,54 @@ section(ng-show="user !== null")
   br
   br
   br
-  div.navbar-header(role="search") 
-    img.img-responsive.img-circle.navbar-left(width="100" heigth="100" src="{{ user.photoURL }}")
-    h1.navbar-right {{ user.displayName || user.email }}
-  br
-  br
-  br
-  br
-  div.navbar.navbar-nav.navbar-left
-     
+  div.col-lg-3.col-md-3.col-sm-4.navbar-left
+    img.img-circle(ng-show="user.photoURL" width="128" heigth="128" src="{{ user.photoURL }}")
+    img.img-circle(ng-show="user.photoURL === null" width="128" heigth="128" src="{{ defaultPhotoURL }}")
+    br
+    br
+    div.list-group.table-of-contents
+      div.list-group-item
+        a(data-ng-click="onAccountDadosPessoais()") Dados Pessoais
+      div.list-group-item
+        a(data-ng-click="onAccountConfiguracoes()") Configurações
 
+
+  div.col-lg-9.col-md-9.col-sm-10.navbar-right(ng-show="dadosPessoais")
+    br
+    br
+    br
+    br
+    table.table.table-striped.table-hover
+      thead
+        tr
+          th Nome
+        tr
+          th Email
+          td 
+            p {{ user.email }}
+            a.btn-btn-success(ng-show="user.emailVerified") verificado
+            button.btn-btn-danger(ng-show="!user.emailVerified") não verificado
+        tr
+          th Número de telefone
+          td 
+            p {{ user.phoneNumber }} 
+        tr
+          th Google 
+          td 
+            a.btn-btn-success(ng-show="user.linkedAccount") conta vinculada
+            a.btn-btn-success(ng-show="!user.linkedAccount") conta não vinculada
+            
+           
+  div.col-lg-9.col-md-9.col-sm-10.navbar-right(ng-show="configuracoes")
+    br
+    br
+    br
+    br
+    table.table.table-striped.table-hover
+      thead
+        tr
+          th Senha
+        tr
+          th Alterar endereço de email
+          td 
+            p {{ user.email }}
