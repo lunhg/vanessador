@@ -26,15 +26,35 @@ describe chalk.green('Vanessador app'), ->
 
         it 'should GET /templates', ->
                 new Promise (resolve, reject) ->
-                        agent.get("/templates")
+                        array = require('../package.json')['angular-templates']
+                        array.push 'route'
+                        agent.get("/templates") 
                                 .expect 200
                                 .expect('Content-Type', /json/)
                                 .expect (res) ->
                                         console.log res.body
-                                        res.body.should.have.property '_index'
-                                        res.body.should.have.property 'signup'
-                                        res.body.should.have.property 'login'
-                                        res.body.should.have.property 'resetPassword'
+                                        for e in res.body
+                                                e.should.have.property 'template'
+                                                e.should.have.property 'route'
+                                                e.template.should.be.String()
+                                                e.should.match /\/([a-z]+)?/   
+                                .then resolve
+                                .catch reject
+
+        it 'should GET /services?q=dialog', ->
+                new Promise (resolve, reject) ->
+                        agent.get("/services")
+                                .query(q: 'dialog')
+                                .expect 200
+                                .expect('Content-Type', /json/)
+                                .expect (res) ->
+                                        console.log res.body
+                                        res.body.should.have.property 'restrict'
+                                        res.body.should.have.property 'scope'
+                                        res.body.should.have.property 'replace'
+                                        res.body.should.have.property 'scope'
+                                        res.body.should.have.property 'transclude'
+                                        res.body.should.have.property 'template'
                                 .then resolve
                                 .catch reject   
                                                                       
@@ -57,3 +77,73 @@ describe chalk.green('Vanessador app'), ->
                                         
                                 .then resolve
                                 .catch reject
+
+
+        it "should GET /docs", ->
+                new Promise (resolve, reject) ->
+                        agent.get("/docs")
+                                .expect 200
+                                .expect 'Content-Type', /html/
+                                .end (err, res) ->
+                                        if not err
+                                                resolve()
+                                        else
+                                                reject err
+
+        it "should GET /docs/app", ->
+                new Promise (resolve, reject) ->
+                        agent.get("/docs/app")
+                                .expect 200
+                                .expect 'Content-Type', /html/
+                                .end (err, res) ->
+                                        if not err
+                                                resolve()
+                                        else
+                                                reject err
+
+        it "should GET /docs/services", ->
+                new Promise (resolve, reject) ->
+                        agent.get("/docs/run")
+                                .expect 200
+                                .expect 'Content-Type', /html/
+                                .end (err, res) ->
+                                        if not err
+                                                resolve()
+                                        else
+                                                reject err
+
+        it "should GET /docs/config", ->
+                new Promise (resolve, reject) ->
+                        agent.get("/docs/config")
+                                .expect 200
+                                .expect 'Content-Type', /html/
+                                .end (err, res) ->
+                                        if not err
+                                                resolve()
+                                        else
+                                                reject err
+
+
+        it "should GET /docs/auth-ctrl", ->
+                new Promise (resolve, reject) ->
+                        agent.get("/docs/auth-ctrl")
+                                .expect 200
+                                .expect 'Content-Type', /html/
+                                .end (err, res) ->
+                                        if not err
+                                                resolve()
+                                        else
+                                                reject err
+
+        it "should GET /docs/run", ->
+                new Promise (resolve, reject) ->
+                        agent.get("/docs/run")
+                                .expect 200
+                                .expect 'Content-Type', /html/
+                                .end (err, res) ->
+                                        if not err
+                                                resolve()
+                                        else
+                                                reject err
+
+                                                        

@@ -4,7 +4,7 @@ mixin title(t, _href)
       img.img-responsive.navbar-left(width="32" height="32" src="/assets/images/vanessadora.png")
 
 mixin menudown(opt)
-  li(ng-click="onDropmenu(\""+opt.id+"\")" id=""+opt.id)
+  li(ng-mouseenter="onDropdownmenu(\""+opt.id+"\")" ng-mouseleave="onDropupmenu(\""+opt.id+"\")" id=""+opt.id)
     a.btn-btn-default.dropdown-toogle(data-toogle="dropdown" href="#" aria-expanded="true")= opt.label    
       if opt.label == '{{ user.displayName || user.email }}'
         img.img-responsive.img-circle.navbar-right(width="32" heigth="32" ng-show="user.photoUrl !== null" ng-src="{{ user.photoURL }}")

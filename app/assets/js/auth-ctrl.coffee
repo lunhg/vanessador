@@ -1,63 +1,60 @@
 # Controlador de autenticacao
 # TODO Separar os controles    
-onAuth = ($rootScope, $http, $location) ->
-
-        # checkout $rootScope.popup as red
-        onAlertDanger = ->
-                document.getElementById('popup').classList.remove("alert-success")
-                document.getElementById('popup').classList.add("alert-danger")
-
-        # checkout $rootScope.popup as green
-        onAlertSuccess = ->
-                document.getElementById('popup').classList.remove("alert-danger")
-                document.getElementById('popup').classList.add("alert-success")
-
+onAuth = ($rootScope, $http, $location, $window, $route) ->
+        onReload = ->
+                $location.path($rootScope.nextRoute)
+                $route.reload()
+                
         # checkout $rootScope.popup message and type
         onErr  = (err) ->
-                $rootScope.popup = "Error #{err.code}: #{err.message}"
-                onAlertDanger()
-                $location.path( "/" ).replace()
-
+                $rootScope.nextRoute = '/'
+                onReload()
         # checkout $rootScope.popup message success on signout
         onSignout = ->
-                $rootScope.popup = "Saiu com sucesso do sistema"
-                onAlertSuccess()
-                $location.path( "/" ).replace()
-
+                $rootScope.nextRoute = '/login'
+                onReload()
 
         # checkout $rootScope.popup message success on login
         onLogin = (result) ->
-                $rootScope.popup = "Login feito com sucesso"
-                onAlertSuccess()
-                $location.path( "/" ).replace()
+                $rootScope.nextRoute = '/formularios'
+                user = firebase.auth().currentUser
+                onReload()
+                $window.location.reload()
 
+        # Funcao para enviar email de verificação após criar conta
+        onSendEmailVerify =  ->
+                $rootScope.nextRoute = "/login"
+                if not firebase.auth().currentUser then firebase.auth().currentUser.sendEmailVerification().then(onReload).catch(onErr)
+                        
         # checkout $rootScope.popup message success on login
         onConfirmEmailVerify = ->
-                $rootScope.popup = "Enviamos um email de confirmação para #{firebase.auth().currentUser}"
-                onAlertSuccess()
-                $location.path( "/" ).replace()
+                query = $location.search('mode', 'oobCode', 'apiKey')
+                $http(method: 'GET',url: '/config').then(->
+                        $rootScope.nextRoute = '/'
+                        if query.apiKey is config.apiKey
+                                firebase.auth().applyActionCode(query.oobCode).then(onReload)
+                        else
+                                onErr new Error 'apiKey incorrect'
+                ).catch(onErr)
 
         # checkout $rootScope.popup message success on reset password
         onResetPasswordSendEmail = ->
-                $rootScope.popup = "Enviamos um email de confirmação para #{email}"
-                onAlertSuccess()
-                $location.path( "/" ).replace()
+                onReload()
                 
         # on Update password
         onUpdatePassword = ->
-                $rootScope.popup = "Senha redefinida com sucesso"
-                onAlertSuccess()
-                $location.path( "/" ).replace()
+                onReload()
                 
         # on reauthentication, need to be logged or reauthenticated
-        onReauthenticate = (user, p1) -> user.updatePassword(p1).then(onUpdatePassword).catch onErr
-
+        onReauthenticate = (user, p1) ->
+                user.updatePassword(p1).then(onUpdatePassword).catch onErr
+                
         # Reset Password
         onResetPassword = (data) ->
                 if document.getElementById('reset_login_password').value is document.getElementById('reset_login_password_confirm').value
                         user = firebase.auth().currentUser
                         pwd  = document.getElementById('reset_login_password_confirm').value
-
+                        onReauthenticate user, pwd
 
 
         # Funcao auxiliar par $rootScope.confirmResetPassword
@@ -72,13 +69,6 @@ onAuth = ($rootScope, $http, $location) ->
                 c = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!?_-'.split ''
                 (c[Math.floor(Math.random() * c.length)] for i in [0..n-1]).join('')
 
-        # Funcao para enviar email de verificação após criar conta
-        onSendEmailVerify =  ->
-                if firebase.auth().currentUser isnt null then firebase.auth().currentUser.sendEmailVerification().then(onConfirmEmailVerify).catch(onErr)
-
-        # Esta função checa o domínio do email do usuário.
-        # Permitido apenas para @itsrio.org e o desenvolvedor
-        onCheckEmailDomain = (email) -> email.match /\w+@itsrio.org/ or email is  "gcravista@gmail.com"
 
         # Função para retornar erro durante o login
         # ou registro do usuário
@@ -104,7 +94,8 @@ onAuth = ($rootScope, $http, $location) ->
                 if not firebase.auth().currentUser
                         # check email domain
                         email = document.getElementById('input_login_email').value
-                        if onCheckEmailDomain(email)
+                        # Permitido apenas para @itsrio.org e o desenvolvedor
+                        if email.match /\w+@itsrio.org/ or email is  "gcravista@gmail.com"
                                 firebase.auth().signInWithEmailAndPassword(email,(document.getElementById('input_login_password').value)).then(onLogin).catch(onErr)
                         else
                                 onErr(new Error("Conta de email não permitida"))
@@ -120,11 +111,13 @@ onAuth = ($rootScope, $http, $location) ->
                 if not firebase.auth().currentUser
                         # check email domain
                         email = document.getElementById('input_signup_email').value
-                        if onCheckEmailDomain email
+
+                        # Permitido apenas para @itsrio.org e o desenvolvedor
+                        if email.match(/\w+@itsrio.org/) or email.match(/gcravista@gmail.com/)
                                 pwd = randomPassword(16)
-                                cred = firebase.auth().EmailAuthProvider.credential(user, pwd)
-                                console.log cred
+                                
                                 firebase.auth().createUserWithEmailAndPassword(email, pwd).then(onSendEmailVerify).catch(onErr)
+                                
                         else
                                onErr(new Error("Conta de email não permitida")) 
                 else
@@ -150,46 +143,56 @@ onAuth = ($rootScope, $http, $location) ->
                 
         # Para o menu funcionar corretamente com o bootstrap
         # Vamos adicionar as interações
-        $rootScope.onDropmenu = (what)->
-                if $rootScope[what] is null or $rootScope[what] is undefined
-                        $rootScope[what] = false
+        $rootScope.onDropdownmenu = (what)->                     
+                document.getElementById(what).classList.add('open')
+                document.getElementById(what).setAttribute('aria-expanded', 'true')
 
-                
-                if not $rootScope[what]                         
-                        document.getElementById(what).classList.add('open')
-                        document.getElementById(what).setAttribute('aria-expanded', 'true')
-                else
-                        document.getElementById(what).classList.remove('open')
-                        document.getElementById(what).setAttribute('aria-expanded', 'false')
-                $rootScope[what] = not $rootScope[what]
-                
+        $rootScope.onDropupmenu = (what)->
+                document.getElementById(what).classList.remove('open')
+                document.getElementById(what).setAttribute('aria-expanded', 'false')
 
-        # icone de loading
-        $rootScope.onLoading = false
 
         # Dados typeform
         $rootScope.typeformData = null
-        $rootScope.searchForm = (id, options)->
-                $rootScope.onLoading = true
-                query = []
-                search = document.getElementById(id)
-                t = if search.value isnt '' then search.value else search.getAttribute('placeholder')
-                console.log t
-                query.push "uuid=#{t}"
-                query.push "#{k}=#{v}" for k,v of options
-                _url = "/typeform/data-api?#{query.join('&')}"
-                console.log _url
-                $http({
-                        method: 'GET',
-                        url: _url
-                }).then (response) ->
-                        $rootScope.onLoading = false
-                        console.log response.data
-                        $rootScope.typeformData = response.data
-
-        $rootScope.novo = (ref, obj) ->
-                id = randomPassword(6)
-                firebase.database().ref("/#{firebase.auth().currentUser}/cursos/#{id}").set(obj)
-
+        $rootScope.searchForm = (options)->
+                
+        $rootScope.$on '$routeChangeSuccess', (event, next, current) ->
+                event.preventDefault();
+                console.log $location.url()
+                if  $location.url().match /^\/formularios\/\w+\/\w+/
+                        $rootScope.onLoading = true
+                        query = []
+                        uuid = $location.url().split('/formularios/')[1].split('/')[0]
+                        query.push "uuid=#{uuid}"
+                        query.push "#{k}=#{v}" for k,v of {completed:true, limit:10}
+                        _url = "/typeform/data-api?#{query.join('&')}"
+                        console.log _url
+                        $http({
+                                method: 'GET',
+                                url: _url
+                        }).then (response) ->
+                                $rootScope.onLoading = false
+                                $rootScope.typeformData = response.data
+                                
+                
+                
+        $rootScope.onNovo = (ref, id_group, groups...) ->
+                o = {}
+                try
+                        for e in groups
+                                if e isnt 'tags'
+                                        v = document.getElementById("input_typeform_#{e}").value
+                                        o[e] = v
+                                else
+                                        _v = document.getElementById("input_typeform_#{e}").value
+                                        v = _v.split(" ")
+                                        o[e] = v
+                        user = firebase.auth().currentUser
+                        o.owner = user.uid
+                        firebase.database().ref("#{ref}/").set(obj).catch(onErr)
+                        onReload()
+                catch e
+                        onErr e
+                        
 # Registre o controlador
-app.controller "AuthCtrl", ['$rootScope', '$http', '$location', onAuth]
+app.controller "AuthCtrl", ['$rootScope', '$http', '$location', '$window', '$route', onAuth]

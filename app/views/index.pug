@@ -21,30 +21,26 @@ block nav
             li
               a(href="#!/tutorial") Tutorial 
             li
-              +menudown({'id': 'cursos-menu', 'label': 'Cursos'})
+              +menudown({'id': 'cursos-menu', 'label': 'Formularios'})
                 li
-                  a(href="#!/{{ user.uuid }}/cursos/novo") Registrar novo curso
+                  a(href="#!/formularios") Procure um curso
                 li
-                  a(href="#!/{{ user.uuid }}/cursos") Procure um curso
+                  a(href="#!/formularios/novo") Registrar novo curso  
             li
-              +menudown({'id': 'alunos-menu', 'label': 'Alunos'})
-                li
-                  a(href="#!/{{ user.uuid }}/alunos/novo") Registrar novo aluno
-                li
-                  a(href="#!/{{ user.uuid }}/alunos") Procure um aluno
-              
-            li
-              +menudown({'id': 'doc-menu', 'label': 'Doc'})
-                li
-                  a(href="#!/doc/index") Index
-                li
-                  a(href="#!/doc/app") Angular application
-                li
-                  a(href="#!/doc/config") Route configurations
-                li
-                  a(href="#!/doc/auth-ctrl") Auth controller
-                li
-                  a(href="#!/doc/run") Run angular application
+              +menudown({'id': 'doc-menu', 'label': 'Doc'}) 
+                +menudown({'id': 'client-menu', 'label': 'Client'})
+                  li 
+                    a(href="/docs") Index
+                  li
+                    a(href="/docs/app") Angular application
+                  li
+                    a(href="/docs/services") Angular services
+                  li
+                    a(href="/docs/config") Route configurations
+                  li
+                    a(href="/docs/auth-ctrl") Auth controller
+                  li
+                    a(href="/docs/run") Run angular application
   
           ul.nav.navbar-nav.navbar-right(ng-show="user == null")
             li

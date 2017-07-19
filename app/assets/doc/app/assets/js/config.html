@@ -72,11 +72,9 @@ modulo $http no .config, iremos usar XHR.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                        $routeProvider.<span class="hljs-keyword">when</span>(<span class="hljs-string">"/"</span>, {template: obj._index, controller: <span class="hljs-string">'AuthCtrl'</span>})
-                                .<span class="hljs-keyword">when</span>(<span class="hljs-string">"/login"</span>, {template: obj.login, controller: <span class="hljs-string">'AuthCtrl'</span>})
-                                .<span class="hljs-keyword">when</span>(<span class="hljs-string">"/signup"</span>, {template: obj.signup, controller: <span class="hljs-string">'AuthCtrl'</span>})
-                                .<span class="hljs-keyword">when</span>(<span class="hljs-string">"/resetPassword"</span>, {template: obj.resetPassword, controller: <span class="hljs-string">'AuthCtrl'</span>})
-                                .<span class="hljs-keyword">when</span>(<span class="hljs-string">"/confirmResetPassword"</span>, {template: obj.confirmResetPassword, controller: <span class="hljs-string">'AuthCtrl'</span>})</pre></div></div>
+            <div class="content"><div class='highlight'><pre>                        <span class="hljs-keyword">for</span> e <span class="hljs-keyword">in</span> obj
+                                <span class="hljs-built_in">console</span>.log e
+                                $routeProvider.<span class="hljs-keyword">when</span>(e.route,{template:e.template,controller:<span class="hljs-string">'AuthCtrl'</span>})</pre></div></div>
             
         </li>
         
@@ -87,13 +85,11 @@ modulo $http no .config, iremos usar XHR.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              <p>.when(“/:uuid/cursos”, {template: obj.uuid_cursos, controller: ‘AuthCtrl’})
-.when(“/cursos/novo”, {template: obj.cursos_novo, controller: ‘AuthCtrl’})
-.when(“/:uuid/cursos/:uid”, {template: obj.uuid_cursos_uuid, controller: ‘AuthCtrl’})</p>
+              <p>Ponto inicial</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                                .<span class="hljs-keyword">when</span>(<span class="hljs-string">"/:uuid/alunos"</span>, {template : obj.alunos, controller: <span class="hljs-string">'AuthCtrl'</span>})</pre></div></div>
+            <div class="content"><div class='highlight'><pre>                        $routeProvider.otherwise({redirectTo: <span class="hljs-string">'/'</span>})</pre></div></div>
             
         </li>
         
@@ -104,11 +100,11 @@ modulo $http no .config, iremos usar XHR.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
-              <p>.when(“/:uuid/alunos/novo”, {template : obj.alunos_novo, controller: ‘AuthCtrl’})</p>
+              <p>Habilite HTML5</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                                .otherwise({redirectTo: <span class="hljs-string">'/'</span>})</pre></div></div>
+            <div class="content"><div class='highlight'><pre>                        $locationProvider.html5Mode(<span class="hljs-literal">true</span>)</pre></div></div>
             
         </li>
         
@@ -119,12 +115,13 @@ modulo $http no .config, iremos usar XHR.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
-              <p>Habilite HTML5</p>
+              <p>/templates é a rota contendo o
+compilador pug.js que cria
+os templates para as rotas angular</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                        $locationProvider.html5Mode(<span class="hljs-literal">true</span>)
-        xhr.open(<span class="hljs-string">'GET'</span>, <span class="hljs-string">'/templates'</span>, <span class="hljs-literal">true</span>)
+            <div class="content"><div class='highlight'><pre>        xhr.open(<span class="hljs-string">'GET'</span>, <span class="hljs-string">'/templates'</span>, <span class="hljs-literal">true</span>)
         xhr.send()</pre></div></div>
             
         </li>

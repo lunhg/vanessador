@@ -1,0 +1,13 @@
+section.centralize-area.background-red(ng-show="typeformData")
+  br
+  br
+  h1 Estatísticas
+  br
+  br
+  table.table.table-striped.table-hover
+    thead
+      tr
+        th(ng-repeat="(k,v) in typeformData.stats.responses") {{ k }}
+    tbody
+      tr
+        td(ng-repeat="(k,v) in typeformData.stats.responses") {{ v }}

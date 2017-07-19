@@ -16,19 +16,18 @@ app.config ($routeProvider, $locationProvider) ->
                         obj = JSON.parse xhr.responseText
 
                         # Cada ponto é nomeado por um template e controlador
-                        $routeProvider.when("/", {template: obj._index, controller: 'AuthCtrl'})
-                                .when("/login", {template: obj.login, controller: 'AuthCtrl'})
-                                .when("/signup", {template: obj.signup, controller: 'AuthCtrl'})
-                                .when("/resetPassword", {template: obj.resetPassword, controller: 'AuthCtrl'})
-                                .when("/confirmResetPassword", {template: obj.confirmResetPassword, controller: 'AuthCtrl'})
-                                #.when("/:uuid/cursos", {template: obj.uuid_cursos, controller: 'AuthCtrl'})
-                                #.when("/cursos/novo", {template: obj.cursos_novo, controller: 'AuthCtrl'})
-                                #.when("/:uuid/cursos/:uid", {template: obj.uuid_cursos_uuid, controller: 'AuthCtrl'})
-                                .when("/:uuid/alunos", {template : obj.alunos, controller: 'AuthCtrl'})
-                                #.when("/:uuid/alunos/novo", {template : obj.alunos_novo, controller: 'AuthCtrl'})
-                                .otherwise({redirectTo: '/'})
+                        for e in obj
+                                console.log e
+                                $routeProvider.when(e.route,{template:e.template,controller:'AuthCtrl'}) 
+
+                        # Ponto inicial
+                        $routeProvider.otherwise({redirectTo: '/'})
 
                         # Habilite HTML5
                         $locationProvider.html5Mode(true)
+
+        # /templates é a rota contendo o
+        # compilador pug.js que cria
+        # os templates para as rotas angular
         xhr.open('GET', '/templates', true)
         xhr.send()

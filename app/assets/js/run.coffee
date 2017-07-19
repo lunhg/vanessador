@@ -1,9 +1,23 @@
-app.run(['$rootScope', '$http', '$location', ($rootScope, $http, $location) ->
+Run = ($rootScope, $http, $location, $route, $window) ->
         
         # Usuário atual
         $rootScope.user = null
         $rootScope.popup = null
         $rootScope.typeformData = null
+        $rootScope.onLoading = false
+        $rootScope.nextRoute = null
+        $rootScope.registeredForms = null
+
+        # Historico de uso, para poder
+        # atualizar corretamente as páginas
+        # https://stackoverflow.com/questions/15175429/angularjs-getting-previous-route-path
+        history = [];
+
+        $rootScope.$on '$routeChangeSuccess', -> history.push($location.$$path);
+                
+        $rootScope.back = ->
+                prevUrl = if history.length > 1 then history.splice(-2)[0] else "/"
+                $location.path(prevUrl)
         
         # Atualize a configuração do firebase
         $http({
@@ -21,5 +35,20 @@ app.run(['$rootScope', '$http', '$location', ($rootScope, $http, $location) ->
                                 $rootScope.popup =
                                         msg: "Bem vindo #{user.displayName}"
                                         type: 'success'
-                $location.path("/")
-])
+                
+                                # Envie um email de verificação se o usuário
+                                # ainda não foi verificado, no caso de cadastro
+                                # por email e senha
+                                if not user.emailVerified then user.sendEmailVerification()
+
+                # atualize a base de dados
+                # conforme ela for populada
+                firebase.database().ref('formularios/').on 'value', (snapshot) ->
+                        $rootScope.registeredForms = snapshot.val()
+
+        # Inicie o aplicativo
+        $rootScope.nextRoute = $rootScope.back() or "/login"
+        $location.path($rootScope.nextRoute)
+        $route.reload()
+
+app.run(['$rootScope', '$http', '$location', '$route', '$window', Run])

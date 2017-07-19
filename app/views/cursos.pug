@@ -1,7 +1,19 @@
-div.bs-component
-  div.jumbotron
-    h1 Cursos
-    p Gerencie os cursos de seus alunos
-    p
-      a.btn.btn-primary.btn-lg(ng-show="user" ng-click="onNovoCurso()") Novo curso 
-      a.btn.btn-primary.btn-lg(ng-show="user === null" href="#!/") Cadastre-se 
+section.col-md-12.centralize-area(ng-show="user === null")
+  br
+  br
+  br
+  br
+  form
+    fieldset Adicionar formulário
+    - var form = {'input_nome_curso':{'type':'text', 'placeholder':'nome do curso'}, 'input_id_typeform':{'type':'text', 'placeholder': 'id typeform'}}
+    - for(var key in form)
+      - var val = form[key]
+      div.form-group
+        label.col-lg-2.control-label(for=""+key)
+          div.col-lg-10 
+            input.form-control(style="width:300px;" type=""+val.type id=""+key placeholder=""+val.placeholder)
+
+  button.btn.btn-default(type="submit" ng-click="loginEmailAndPassword()") Login 
+  br
+  br
+  a(href="#!/resetPassword") Resete sua senha

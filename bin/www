@@ -64,7 +64,7 @@ AppManager = (function() {
       });
     });
     this.app.set('view engine', 'pug');
-    this.app.set('assets path', [path.join(__dirname, '..', 'app/assets/img'), path.join(__dirname, '..', 'app/assets/css'), path.join(__dirname, '..', 'app/assets/js'), path.join(__dirname, '..', 'app/assets/')]);
+    this.app.set('assets path', [path.join(__dirname, '..', 'app/assets/doc'), path.join(__dirname, '..', 'app/assets/img'), path.join(__dirname, '..', 'app/assets/css'), path.join(__dirname, '..', 'app/assets/js'), path.join(__dirname, '..', 'app/assets/')]);
     this.app.set('port', parseInt(process.env.PORT || '3000'));
   }
 
@@ -83,7 +83,9 @@ AppManager.init = function(result) {
     app_manager.login();
     app_manager.config();
     app_manager.templates();
+    app_manager.services();
     app_manager.typeform();
+    app_manager.docs();
     return resolve(app);
   });
 };
@@ -233,15 +235,38 @@ AppManager.prototype.templates = function() {
   getTemplate = function(p) {
     return new Promise(function(resolve, reject) {
       var _p;
-      _p = (path.join(__dirname)) + "/../app/views/" + p + ".pug";
+      _p = path.resolve((path.join(__dirname)) + "/../app/views/" + p + ".pug");
       return fs.readFile(_p, 'utf8', function(err, content) {
+        var e, error1, html, opt, result;
         if (!err) {
-          return resolve([
-            "" + p, pug.compile(content, {
+          try {
+            opt = {
               filename: _p,
               doctype: 'html'
-            })()
-          ]);
+            };
+            html = pug.compile(content, opt)();
+            result = {
+              template: html,
+              route: (function() {
+                var r;
+                if (p.match(/_index/)) {
+                  return "/";
+                } else if (p.match(/\w+_uuid_\w+/)) {
+                  r = p.split("_");
+                  return "/" + r[0] + "/:uuid/" + r[2];
+                } else if (p.match(/\w+_novo/)) {
+                  r = p.split("_");
+                  return "/" + r[0] + "/novo";
+                } else {
+                  return "/" + p;
+                }
+              })()
+            };
+            return resolve(result);
+          } catch (error1) {
+            e = error1;
+            return reject(e);
+          }
         } else {
           return reject(err);
         }
@@ -249,22 +274,74 @@ AppManager.prototype.templates = function() {
     });
   };
   return this.app.get('/templates', function(req, res) {
-    var a, i, len, p, ref;
-    a = [];
-    ref = ['_index', 'login', 'signup', 'resetPassword', 'confirmResetPassword'];
-    for (i = 0, len = ref.length; i < len; i++) {
-      p = ref[i];
-      a.push(getTemplate(p));
-    }
-    return Promise.all(a).then(function(results) {
-      var j, json, len1;
-      json = {};
-      for (j = 0, len1 = results.length; j < len1; j++) {
-        p = results[j];
-        json[p[0]] = p[1];
+    var onErr, onSuccess, template;
+    onSuccess = function(results) {
+      return res.json(results);
+    };
+    onErr = function(err) {
+      return res.json(err.message);
+    };
+    return Promise.all((function() {
+      var i, len, ref, results1;
+      ref = require("../package.json")['angular-templates'];
+      results1 = [];
+      for (i = 0, len = ref.length; i < len; i++) {
+        template = ref[i];
+        if (template !== 'dialog') {
+          results1.push(getTemplate(template));
+        }
       }
-      return res.json(json);
+      return results1;
+    })()).then(onSuccess)["catch"](onErr);
+  });
+};
+
+AppManager.prototype.services = function() {
+  var getTemplate;
+  getTemplate = function(p) {
+    return new Promise(function(resolve, reject) {
+      var _p;
+      _p = path.resolve((path.join(__dirname)) + "/../app/views/" + p + ".pug");
+      return fs.readFile(_p, 'utf8', function(err, content) {
+        var e, error1, opt;
+        if (!err) {
+          try {
+            opt = {
+              filename: _p,
+              doctype: 'html'
+            };
+            if (p === 'dialog') {
+              return resolve({
+                restrict: 'E',
+                scope: {
+                  show: '='
+                },
+                replace: true,
+                transclude: true,
+                template: pug.compile(content, opt)()
+              });
+            } else {
+              return reject(new Error(p + " isnt a valid service"));
+            }
+          } catch (error1) {
+            e = error1;
+            return reject(e);
+          }
+        } else {
+          return reject(err);
+        }
+      });
     });
+  };
+  return this.app.get('/services', function(req, res) {
+    var onErr, onSuccess;
+    onSuccess = function(result) {
+      return res.json(result);
+    };
+    onErr = function(err) {
+      return res.json(err);
+    };
+    return getTemplate(req.query['q']).then(onSuccess)["catch"](onErr);
   });
 };
 
@@ -290,6 +367,60 @@ AppManager.prototype.typeform = function() {
       return request_json.createClient('https://api.typeform.com/v1/').get(_url, onGet);
     })["catch"](function(err) {
       return res.json(err);
+    });
+  });
+};
+
+AppManager.prototype.docs = function() {
+  var root;
+  root = path.resolve((path.join(__dirname)) + "/../app/assets");
+  this.app.get("/docs", function(req, res) {
+    var _index;
+    _index = "doc/app/assets/js/index.html";
+    return res.sendFile(_index, {
+      'root': root
+    });
+  });
+  this.app.get("/docs/app", function(req, res) {
+    var _index;
+    _index = "doc/app/assets/js/app.html";
+    return res.sendFile(_index, {
+      'root': root
+    });
+  });
+  this.app.get("/docs/config", function(req, res) {
+    var _index;
+    _index = "doc/app/assets/js/config.html";
+    return res.sendFile(_index, {
+      'root': root
+    });
+  });
+  this.app.get("/docs/auth-ctrl", function(req, res) {
+    var _index;
+    _index = "doc/app/assets/js/auth-ctrl.html";
+    return res.sendFile(_index, {
+      'root': root
+    });
+  });
+  this.app.get("/docs/run", function(req, res) {
+    var _index;
+    _index = "doc/app/assets/js/run.html";
+    return res.sendFile(_index, {
+      'root': root
+    });
+  });
+  this.app.get("/docs/services", function(req, res) {
+    var _index;
+    _index = "doc/app/assets/js/services.html";
+    return res.sendFile(_index, {
+      'root': root
+    });
+  });
+  return this.app.get("/docs/docco.css", function(req, res) {
+    var _index;
+    _index = "doc/app/assets/js/docco.css";
+    return res.sendFile(_index, {
+      'root': root
     });
   });
 };

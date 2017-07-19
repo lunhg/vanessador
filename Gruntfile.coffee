@@ -72,13 +72,20 @@ module.exports = (grunt) ->
 
         grunt.registerTask 'build:doc:client', 'Build documentation with docco', ->
                 grunt.config('doc_dir', "app/assets/doc")
-                grunt.config('shell', {'docco': [
-                        "docco <%= doc_dir %>/../js/index.coffee -o <%= doc_dir %>",
-                        "docco <%= doc_dir %>/../js/app.coffee -o <%= doc_dir %>",
-                        "docco <%= doc_dir %>/../js/config.coffee -o <%= doc_dir %>",
-                        "docco <%= doc_dir %>/../js/auth-ctrl.coffee -o <%= doc_dir %>",
-                        "docco <%= doc_dir %>/../js/run.coffee -o <%= doc_dir %>"
-		].join(" ; ")})
+
+                # Document client
+                p = "#{path.join(__dirname)}/app/assets/js"
+                p2= "#{path.join(__dirname)}/app/assets/doc/app/assets/js"
+                client = ("docco #{p}/#{path}.coffee -o #{p2}" for path in [
+                        'index'
+                        'app'
+                        'services'
+                        'config'
+                        'auth-ctrl'
+                        'run'
+                ]).join(" ; ")
+
+                grunt.config('shell', {'docco': client})
                 
                 
         grunt.initConfig options

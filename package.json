@@ -54,6 +54,7 @@
 	    "name": "vanessador-46e68"
 	}
     },
+    "angular-templates": ["_index", "login", "signup", "resetPassword", "confirm", "formularios", "formularios_novo", "formularios_uuid_stats", "formularios_uuid_questions", "conta", "dialog"],
     "options": {
 	"coffee": {
 	    "compileJoin": {
@@ -73,7 +74,9 @@
 			"app/controllers/login.coffee",
 			"app/controllers/config.coffee",
 			"app/controllers/templates.coffee",
+			"app/controllers/services.coffee",
 			"app/controllers/typeform.coffee",
+			"app/controllers/docs.coffee",
 			"boot/server.coffee"
 		    ],
 		    "bin/test.js": [

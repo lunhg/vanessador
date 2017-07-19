@@ -14,6 +14,7 @@ class AppManager
 
                 # Assets
                 @app.set 'assets path', [
+                        path.join __dirname, '..', 'app/assets/doc'
                         path.join __dirname, '..', 'app/assets/img'
                         path.join __dirname, '..', 'app/assets/css'
                         path.join __dirname, '..', 'app/assets/js'
@@ -45,7 +46,9 @@ AppManager.init = (result) ->
                 app_manager.login()
                 app_manager.config()
                 app_manager.templates()
+                app_manager.services()
                 app_manager.typeform()
+                app_manager.docs()
 
                 # Send to server
                 resolve app

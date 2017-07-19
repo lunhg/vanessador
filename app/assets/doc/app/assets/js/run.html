@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>run.coffee</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>run.coffee</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-title">Run</span> = <span class="hljs-params">($rootScope, $http, $location, $route, $<span class="hljs-built_in">window</span>)</span> -&gt;</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>Usuário atual</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        $rootScope.user = <span class="hljs-literal">null</span>
+        $rootScope.popup = <span class="hljs-literal">null</span>
+        $rootScope.typeformData = <span class="hljs-literal">null</span>
+        $rootScope.onLoading = <span class="hljs-literal">false</span>
+        $rootScope.nextRoute = <span class="hljs-literal">null</span>
+        $rootScope.registeredForms = <span class="hljs-literal">null</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>Historico de uso, para poder
+atualizar corretamente as páginas
+<a href="https://stackoverflow.com/questions/15175429/angularjs-getting-previous-route-path">https://stackoverflow.com/questions/15175429/angularjs-getting-previous-route-path</a></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        history = [];
+
+        $rootScope.$<span class="hljs-literal">on</span> <span class="hljs-string">'$routeChangeSuccess'</span>, <span class="hljs-function">-&gt;</span> history.push($location.$$path);
+                
+        $rootScope.back = <span class="hljs-function">-&gt;</span>
+                prevUrl = <span class="hljs-keyword">if</span> history.length &gt; <span class="hljs-number">1</span> <span class="hljs-keyword">then</span> history.splice(<span class="hljs-number">-2</span>)[<span class="hljs-number">0</span>] <span class="hljs-keyword">else</span> <span class="hljs-string">"/"</span>
+                $location.path(prevUrl)</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>Atualize a configuração do firebase</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        $http({
+                method: <span class="hljs-string">'GET'</span>,
+                url: <span class="hljs-string">'/config'</span>
+        }).<span class="hljs-keyword">then</span> (config) -&gt;
+                <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> firebase.apps.length <span class="hljs-keyword">then</span> firebase.initializeApp config.data</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>Somente após reconhecer o login,
+o usuário é carregado e a página muda
+alguns elementos</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>                firebase.auth().onAuthStateChanged (user) -&gt;
+                        <span class="hljs-keyword">if</span> user
+                                $rootScope.user = user
+                                $rootScope.popup =
+                                        msg: <span class="hljs-string">"Bem vindo <span class="hljs-subst">#{user.displayName}</span>"</span>
+                                        type: <span class="hljs-string">'success'</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>Envie um email de verificação se o usuário
+ainda não foi verificado, no caso de cadastro
+por email e senha</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>                                <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> user.emailVerified <span class="hljs-keyword">then</span> user.sendEmailVerification()</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>atualize a base de dados
+conforme ela for populada</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>                firebase.database().ref(<span class="hljs-string">'formularios/'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'value'</span>, <span class="hljs-function"><span class="hljs-params">(snapshot)</span> -&gt;</span>
+                        $rootScope.registeredForms = snapshot.val()</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p>Inicie o aplicativo</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>                $rootScope.nextRoute = $rootScope.back() <span class="hljs-keyword">or</span> <span class="hljs-string">"/login"</span>
+                $location.path($rootScope.nextRoute)
+                $route.reload()</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p>$window.location.reload()</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+app.run([<span class="hljs-string">'$rootScope'</span>, <span class="hljs-string">'$http'</span>, <span class="hljs-string">'$location'</span>, <span class="hljs-string">'$route'</span>, <span class="hljs-string">'$window'</span>, Run])</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>
