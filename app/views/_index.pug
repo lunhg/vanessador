@@ -3,10 +3,14 @@ section.centralize-area
   br
   br
   div(ng-show="onLoading")
-    button.btn.btn-lg.btn-default
-      span.glyphicon.glyphicon-refresh.glyphicon-refresh-animate Loading...
-  div
-    div(modal-dialog)
+    br
+    br
+    br
+    br
+    br
+    img(src="/assets/images/loading.gif")
+  div(ng-show="dialogShown")
+    div(modal-dialog width='10%' height='90%')
   div(ng-show="!onLoading")
     h1 Gerencie cursos
     br

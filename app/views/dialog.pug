@@ -1,6 +1,6 @@
-div.ng-modal(ng-show='dialogShown')
+div.ng-modal
   div.ng-modal-overlay(ng-click='hideModal()')
   div.ng-modal-dialog(ng-style='dialogStyle')
-    div.ng-modal-close(ng-click='hideModal()')
-    div.ng-modal-dialog-content {{ dialogMessage }}
+    div.ng-modal-close(ng-click='hideModal()') X
+    div.ng-modal-dialog-content(ng-transclude) {{ dialogMessage }}
 

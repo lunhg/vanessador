@@ -1,17 +1,22 @@
-section.col-md-12.centralize-area(ng-show="user === null")
+section.centralize-area(ng-show="user === null")
+  br
+  br
+  br
+  br
+  h1 Login
   br
   br
   br
   br
   form
-    fieldset Login
+    fieldset 
     - var form = {'input_login_email':{'type':'text', 'placeholder':'email@itsrio.org'}, 'input_login_password':{'type':'password', 'placeholder': 'senha'}}
     - for(var key in form)
       - var val = form[key]
       div.form-group
-        label.col-lg-2.control-label(for=""+key)
-          div.col-lg-10 
-            input.form-control(style="width:300px;" type=""+val.type id=""+key placeholder=""+val.placeholder)
+        label.control-label(for=""+key)
+          div 
+            input.form-control(type=""+val.type id=""+key placeholder=""+val.placeholder)
     button.btn.btn-default(type="submit" ng-click="loginEmailAndPassword()") Login 
     br
     br

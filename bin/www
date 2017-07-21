@@ -313,7 +313,7 @@ AppManager.prototype.services = function() {
           return resolve({
             name: p,
             options: {
-              restrict: 'AE',
+              restrict: 'A',
               template: html,
               replace: true,
               transclude: true

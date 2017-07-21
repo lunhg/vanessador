@@ -35,10 +35,7 @@ coisas como o que aparece na tela e o que
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-title">fetchConfig</span> = -&gt;</span>
-        <span class="hljs-built_in">console</span>.log <span class="hljs-string">"Configurando templates..."</span>
-        $http.get(<span class="hljs-string">'/templates'</span>).<span class="hljs-keyword">then</span> (templates) -&gt;
-                app.config ($routeProvider, $locationProvider) -&gt;</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-title">fetchConfig</span> = -&gt;</span></pre></div></div>
             
         </li>
         
@@ -48,6 +45,26 @@ coisas como o que aparece na tela e o que
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>A mensagem de carregamento inicial
+deve ser atualizada</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        loader = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'masterLoader'</span>)
+        p = loader.children[<span class="hljs-number">9</span>]
+        p.innerHTML =  <span class="hljs-string">"Configurando templates..."</span>
+        angular.injector([<span class="hljs-string">"ng"</span>]).get(<span class="hljs-string">"$http"</span>).get(<span class="hljs-string">'/templates'</span>).<span class="hljs-keyword">then</span> (templates) -&gt;
+                app.config ($routeProvider, $locationProvider) -&gt;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
               <p>Primeiro inicialize as rotas angular</p>
 
@@ -59,11 +76,11 @@ coisas como o que aparece na tela e o que
         </li>
         
         
-        <li id="section-3">
+        <li id="section-4">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-3">&#182;</a>
+                <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
               <p>Ponto inicial</p>
 
@@ -74,17 +91,18 @@ coisas como o que aparece na tela e o que
         </li>
         
         
-        <li id="section-4">
+        <li id="section-5">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-4">&#182;</a>
+                <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
-              <p>Habilite HTML5</p>
+              <p>Habilite HTML5 com hashbang
+<a href="https://stackoverflow.com/questions/16677528/location-switching-between-html5-and-hashbang-mode-link-rewriting#16678065">https://stackoverflow.com/questions/16677528/location-switching-between-html5-and-hashbang-mode-link-rewriting#16678065</a></p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                        $locationProvider.html5Mode(enabled:<span class="hljs-literal">true</span>)</pre></div></div>
+            <div class="content"><div class='highlight'><pre>                        $locationProvider.html5Mode(enabled:<span class="hljs-literal">false</span>).hashPrefix <span class="hljs-string">"!"</span></pre></div></div>
             
         </li>
         

@@ -1,9 +1,24 @@
 html
   head
     title Vanessador
-    base(href="/va/")
+    base(href="/")
+    meta(name="viewport" content="width=device-width, initial-scale=1.0")
+    link(rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css")
     != css("index")
-  body(ng-controller="AuthCtrl" dir="auto")
-    block nav
-    block content
-    block scripts
+  body
+    section#masterLoader.centralize-area
+      br
+      br
+      br
+      br
+      br
+      br
+      br
+      br
+      img(src="/assets/images/loading.gif")
+      p Inicializando vanessador...
+  
+    div(ng-controller="AuthCtrl" dir="auto")
+      div(modal-menu)
+      <ng-view></ng-view>
+      block scripts

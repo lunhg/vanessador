@@ -79,10 +79,13 @@ module.exports = (grunt) ->
                 client = ("docco #{p}/#{path}.coffee -o #{p2}" for path in [
                         'index'
                         'app'
-                        'services'
                         'config'
                         'auth-ctrl'
+                        'typeform-ctrl'
+                        'services'
                         'run'
+                        'directives'
+                        'boot'
                 ]).join(" ; ")
 
                 grunt.config('shell', {'docco': client})

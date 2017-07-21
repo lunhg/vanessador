@@ -32,9 +32,7 @@ TODO Separar os controles    </p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-title">fetchAuthCtrl</span> = -&gt;</span>
-        <span class="hljs-built_in">console</span>.log <span class="hljs-string">"Trabalhando na autorização..."</span>
-<span class="hljs-function">        <span class="hljs-title">AuthCtrl</span> = <span class="hljs-params">($rootScope, $http, $location, $<span class="hljs-built_in">window</span>, $route, dialog)</span> -&gt;</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-title">fetchAuthCtrl</span> = -&gt;</span></pre></div></div>
             
         </li>
         
@@ -44,6 +42,25 @@ TODO Separar os controles    </p>
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>A mensagem de carregamento inicial
+deve ser atualizada</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        loader = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'masterLoader'</span>)
+        p = loader.children[<span class="hljs-number">9</span>]
+        p.innerHTML = <span class="hljs-string">"Trabalhando na autorização..."</span>
+<span class="hljs-function">        <span class="hljs-title">AuthCtrl</span> = <span class="hljs-params">($rootScope, $http, $location, $<span class="hljs-built_in">window</span>, $route, dialogService)</span> -&gt;</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
               <h1 id="apresenta-o-de-dados">Apresentação de dados</h1>
 <ul>
@@ -59,32 +76,7 @@ TODO Separar os controles    </p>
                         $rootScope.dadosPessoais = <span class="hljs-literal">true</span>
                 $rootScope.onAccountConfiguracoes = <span class="hljs-function">-&gt;</span>
                         $rootScope.configuracoes = <span class="hljs-literal">true</span>
-                        $rootScope.dadosPessoais = <span class="hljs-literal">false</span>
-
-               
-                d = dialog()
-                <span class="hljs-built_in">console</span>.log dialog</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-3">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-3">&#182;</a>
-              </div>
-              <h1 id="fun-es-auxiliares">Funções auxiliares</h1>
-<p>Estas funções auxiliam as funções principais do $rootScope
-como chcagem de erro, login, logout, envio de email
-checkout $rootScope.popup message and type</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre><span class="hljs-function">                <span class="hljs-title">onErr</span>  = <span class="hljs-params">(err)</span> -&gt;</span>
-                        <span class="hljs-built_in">console</span>.log err
-                        $rootScope.nextRoute = <span class="hljs-string">'/'</span>
-                        user = firebase.auth().currentUser.uid</pre></div></div>
+                        $rootScope.dadosPessoais = <span class="hljs-literal">false</span></pre></div></div>
             
         </li>
         
@@ -95,14 +87,17 @@ checkout $rootScope.popup message and type</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              <p>Apresente ao usuário o erro</p>
+              <h1 id="fun-es-auxiliares">Funções auxiliares</h1>
+<p>Estas funções auxiliam as funções principais do $rootScope
+como chcagem de erro, login, logout, envio de email
+checkout $rootScope.popup message and type</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                        user = firebase.auth().currentUser
-                        
-                        d.save(<span class="hljs-string">'danger'</span>, <span class="hljs-string">"<span class="hljs-subst">#{err.code}</span>: <span class="hljs-subst">#{err.message}</span>"</span>)
-                        d.show()</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-function">                <span class="hljs-title">onErr</span>  = <span class="hljs-params">(err)</span> -&gt;</span>
+                        <span class="hljs-built_in">console</span>.log err
+                        $location.path(<span class="hljs-string">'/'</span>)
+                        $route.reload()</pre></div></div>
             
         </li>
         
@@ -113,11 +108,11 @@ checkout $rootScope.popup message and type</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
-              <p>Isso é necessário para reatualizar os dados</p>
+              <p>checkout $rootScope.popup message success on signout</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                        $<span class="hljs-built_in">window</span>.location.reload()</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-function">                <span class="hljs-title">onSignout</span> = -&gt;</span></pre></div></div>
             
         </li>
         
@@ -128,12 +123,14 @@ checkout $rootScope.popup message and type</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
-              <p>checkout $rootScope.popup message success on signout</p>
+              <p>Apresente ao usuário uma mensagem de sucesso</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-function">                <span class="hljs-title">onSignout</span> = -&gt;</span>
-                        nextRoute = <span class="hljs-string">'/login'</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>                        user = firebase.auth().currentUser
+                        d = <span class="hljs-keyword">new</span> dialogService()
+                        <span class="hljs-built_in">console</span>.log d
+                        d.save(<span class="hljs-string">'success'</span>, <span class="hljs-string">"Saiu do vanessador com sucesso"</span>)</pre></div></div>
             
         </li>
         
@@ -144,13 +141,11 @@ checkout $rootScope.popup message and type</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
-              <p>Apresente ao usuário uma mensagem de sucesso</p>
+              <p>Isso é necessário para reatualizar os dados</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                        user = firebase.auth().currentUser
-                        d.save(<span class="hljs-string">'success'</span>, <span class="hljs-string">"Saiu do vanessador com sucesso"</span>)
-                        d.show()</pre></div></div>
+            <div class="content"><div class='highlight'><pre>                        $location.path(<span class="hljs-string">'/login'</span>)</pre></div></div>
             
         </li>
         
@@ -161,12 +156,11 @@ checkout $rootScope.popup message and type</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
-              <p>Isso é necessário para reatualizar os dados</p>
+              <p>checkout $rootScope.popup message success on login</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                        $location.path(nextRoute)
-                        $<span class="hljs-built_in">window</span>.location.reload()</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-function">                <span class="hljs-title">onLogin</span> = <span class="hljs-params">(result)</span> -&gt;</span></pre></div></div>
             
         </li>
         
@@ -177,12 +171,14 @@ checkout $rootScope.popup message and type</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
-              <p>checkout $rootScope.popup message success on login</p>
+              <p>Apresente ao usuário uma mensagem de sucesso</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-function">                <span class="hljs-title">onLogin</span> = <span class="hljs-params">(result)</span> -&gt;</span>
-                        nextRoute = <span class="hljs-string">'/formularios'</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>                        user = firebase.auth().currentUser
+                        d = <span class="hljs-keyword">new</span> dialogService()
+                        <span class="hljs-built_in">console</span>.log d
+                        d.save(<span class="hljs-string">'success'</span>, <span class="hljs-string">"Bem vindo <span class="hljs-subst">#{user.displayName <span class="hljs-keyword">or</span> user.email}</span>"</span>)</pre></div></div>
             
         </li>
         
@@ -193,13 +189,12 @@ checkout $rootScope.popup message and type</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-10">&#182;</a>
               </div>
-              <p>Apresente ao usuário uma mensagem de sucesso</p>
+              <p>Isso é necessário para reatualizar os dados</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                        user = firebase.auth().currentUser
-                        d.save(<span class="hljs-string">'success'</span>, <span class="hljs-string">"Bem vindo <span class="hljs-subst">#{user.displayName <span class="hljs-keyword">or</span> user.email}</span>"</span>)
-                        d.show()</pre></div></div>
+            <div class="content"><div class='highlight'><pre>                        $location.path(<span class="hljs-string">'/formularios'</span>)
+                        $route.reload()</pre></div></div>
             
         </li>
         
@@ -209,22 +204,6 @@ checkout $rootScope.popup message and type</p>
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-11">&#182;</a>
-              </div>
-              <p>Isso é necessário para reatualizar os dados</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>                        $location.path(nextRoute)
-                        $<span class="hljs-built_in">window</span>.location.reload()</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-12">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-12">&#182;</a>
               </div>
               <p>Funcao para enviar email de verificação após criar conta</p>
 
@@ -238,29 +217,32 @@ checkout $rootScope.popup message and type</p>
         </li>
         
         
-        <li id="section-13">
+        <li id="section-12">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-13">&#182;</a>
+                <a class="pilcrow" href="#section-12">&#182;</a>
               </div>
               <p>memorize um popup</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                                msg = <span class="hljs-string">"Enviamos um email  <span class="hljs-subst">#{user.displayName <span class="hljs-keyword">or</span> user.email}</span>"</span>
-                                d.save(<span class="hljs-string">'success'</span>, <span class="hljs-string">"Bem vindo <span class="hljs-subst">#{user.displayName <span class="hljs-keyword">or</span> user.email}</span>"</span>)
-                                d.show()
-                                user.sendEmailVerification().<span class="hljs-keyword">then</span>(<span class="hljs-function">-&gt;</span> $<span class="hljs-built_in">window</span>.location.reload() ).<span class="hljs-keyword">catch</span>(onErr)</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-function">                                <span class="hljs-title">onSend</span> = -&gt;</span>
+                                        msg = <span class="hljs-string">"Enviamos um email  <span class="hljs-subst">#{user.displayName <span class="hljs-keyword">or</span> user.email}</span>"</span>
+                                        d = <span class="hljs-keyword">new</span> dialogService()
+                                        d.save(<span class="hljs-string">'success'</span>, <span class="hljs-string">"Bem vindo <span class="hljs-subst">#{user.displayName <span class="hljs-keyword">or</span> user.email}</span>"</span>)
+                                        $location.path(<span class="hljs-string">'/formularios'</span>)
+                                        $route.reload()
+                                user.sendEmailVerification().<span class="hljs-keyword">then</span>(onSend).<span class="hljs-keyword">catch</span>(onErr)</pre></div></div>
             
         </li>
         
         
-        <li id="section-14">
+        <li id="section-13">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-14">&#182;</a>
+                <a class="pilcrow" href="#section-13">&#182;</a>
               </div>
               <p>Recupere dados de configuração do servidor</p>
 
@@ -271,11 +253,11 @@ checkout $rootScope.popup message and type</p>
         </li>
         
         
-        <li id="section-15">
+        <li id="section-14">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-15">&#182;</a>
+                <a class="pilcrow" href="#section-14">&#182;</a>
               </div>
               <p>checkout $rootScope.popup message success on login</p>
 
@@ -284,10 +266,12 @@ checkout $rootScope.popup message and type</p>
             <div class="content"><div class='highlight'><pre><span class="hljs-function">                <span class="hljs-title">onConfirmEmailVerify</span> = -&gt;</span>
                         query = $location.search(<span class="hljs-string">'mode'</span>, <span class="hljs-string">'oobCode'</span>, <span class="hljs-string">'apiKey'</span>)
                         onGetConfig (config) -&gt;
-                                user = firebase.auth().current
 <span class="hljs-function">                                <span class="hljs-title">onSend</span> = -&gt;</span>
+                                        user = firebase.auth().current
+                                        d = <span class="hljs-keyword">new</span> dialogService()
                                         d.save(<span class="hljs-string">"<span class="hljs-subst">#{user.email}</span> verificado"</span>)
-                                        d.show()
+                                        $location.path(<span class="hljs-string">'/formularios'</span>)
+                                        $route.reload()
                                 <span class="hljs-keyword">if</span> query.apiKey <span class="hljs-keyword">is</span> config.apiKey
                                         firebase.auth().applyActionCode(query.oobCode).<span class="hljs-keyword">then</span>(onSend).<span class="hljs-keyword">catch</span>(onErr)
                                 <span class="hljs-keyword">else</span>
@@ -296,11 +280,11 @@ checkout $rootScope.popup message and type</p>
         </li>
         
         
-        <li id="section-16">
+        <li id="section-15">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-16">&#182;</a>
+                <a class="pilcrow" href="#section-15">&#182;</a>
               </div>
               <h1 id="fun-es-princiapis-de-login">Funções princiapis de login</h1>
 <h2 id="login">Login</h2>
@@ -325,11 +309,11 @@ checkout $rootScope.popup message and type</p>
         </li>
         
         
-        <li id="section-17">
+        <li id="section-16">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-17">&#182;</a>
+                <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
               <h3 id="login-email-e-senha">Login email e senha</h3>
 <ul>
@@ -355,11 +339,11 @@ checkout $rootScope.popup message and type</p>
         </li>
         
         
-        <li id="section-18">
+        <li id="section-17">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-18">&#182;</a>
+                <a class="pilcrow" href="#section-17">&#182;</a>
               </div>
               <h3 id="cadastro">Cadastro</h3>
 <ul>
@@ -377,11 +361,11 @@ checkout $rootScope.popup message and type</p>
         </li>
         
         
-        <li id="section-19">
+        <li id="section-18">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-19">&#182;</a>
+                <a class="pilcrow" href="#section-18">&#182;</a>
               </div>
               <p>check email domain</p>
 
@@ -392,11 +376,11 @@ checkout $rootScope.popup message and type</p>
         </li>
         
         
-        <li id="section-20">
+        <li id="section-19">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-20">&#182;</a>
+                <a class="pilcrow" href="#section-19">&#182;</a>
               </div>
               <p>Permitido apenas para @itsrio.org e o desenvolvedor</p>
 
@@ -414,11 +398,11 @@ checkout $rootScope.popup message and type</p>
         </li>
         
         
-        <li id="section-21">
+        <li id="section-20">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-21">&#182;</a>
+                <a class="pilcrow" href="#section-20">&#182;</a>
               </div>
               <h3 id="resete-a-senha">Resete a senha</h3>
 <ul>
@@ -435,11 +419,11 @@ checkout $rootScope.popup message and type</p>
         </li>
         
         
-        <li id="section-22">
+        <li id="section-21">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-22">&#182;</a>
+                <a class="pilcrow" href="#section-21">&#182;</a>
               </div>
               <p>Quando receber um email de resetar a senha e clicar ou copiar e colar
 o endereço de confirmação, o cliente recebe um oobCode que deve ser
@@ -455,11 +439,11 @@ acompanhado da chave api do aplicatvo</p>
         </li>
         
         
-        <li id="section-23">
+        <li id="section-22">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-23">&#182;</a>
+                <a class="pilcrow" href="#section-22">&#182;</a>
               </div>
               <p>Checar se os emails estão iguais</p>
 
@@ -473,11 +457,11 @@ acompanhado da chave api do aplicatvo</p>
         </li>
         
         
-        <li id="section-24">
+        <li id="section-23">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-24">&#182;</a>
+                <a class="pilcrow" href="#section-23">&#182;</a>
               </div>
               <p>Quando a verificação do código de ação for possível
 Aplique a atualização da senha </p>
@@ -495,11 +479,11 @@ Aplique a atualização da senha </p>
         </li>
         
         
-        <li id="section-25">
+        <li id="section-24">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-25">&#182;</a>
+                <a class="pilcrow" href="#section-24">&#182;</a>
               </div>
               <p>Verifique o código oob e depois resete a senha e notifique o usuário</p>
 
@@ -512,11 +496,11 @@ Aplique a atualização da senha </p>
         </li>
         
         
-        <li id="section-26">
+        <li id="section-25">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-26">&#182;</a>
+                <a class="pilcrow" href="#section-25">&#182;</a>
               </div>
               <p>callback para o logout</p>
 
@@ -527,11 +511,11 @@ Aplique a atualização da senha </p>
         </li>
         
         
-        <li id="section-27">
+        <li id="section-26">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-27">&#182;</a>
+                <a class="pilcrow" href="#section-26">&#182;</a>
               </div>
               <p>É necessário limpar parte da base de dados que
 memorizavam qual é o formulário atual de cada usuário</p>
@@ -539,19 +523,17 @@ memorizavam qual é o formulário atual de cada usuário</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>                        user = firebase.auth().currentUser
-                        d.<span class="hljs-keyword">delete</span>()
-                        firebase.database().ref(<span class="hljs-string">"users/<span class="hljs-subst">#{user.uid}</span>/currentForm"</span>).remove().<span class="hljs-keyword">then</span>( <span class="hljs-function">-&gt;</span>
-                                firebase.auth().signOut().<span class="hljs-keyword">then</span>(onSignout).<span class="hljs-keyword">catch</span>(onErr)
-                        ).<span class="hljs-keyword">catch</span>(onErr)</pre></div></div>
+<span class="hljs-function">                        <span class="hljs-title">_onSignout</span> = -&gt;</span> firebase.auth().signOut().<span class="hljs-keyword">then</span>(onSignout).<span class="hljs-keyword">catch</span>(onErr)
+                        firebase.database().ref(<span class="hljs-string">"users/<span class="hljs-subst">#{user.uid}</span>/currentForm"</span>).remove().<span class="hljs-keyword">then</span>(_onSignout).<span class="hljs-keyword">catch</span>(onErr)</pre></div></div>
             
         </li>
         
         
-        <li id="section-28">
+        <li id="section-27">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-28">&#182;</a>
+                <a class="pilcrow" href="#section-27">&#182;</a>
               </div>
               <p>Esta função vincula a autenticação por email e senha com a autenticação por oauth
 <a href="https://firebase.google.com/docs/auth/web/account-linking">https://firebase.google.com/docs/auth/web/account-linking</a></p>
@@ -569,11 +551,11 @@ memorizavam qual é o formulário atual de cada usuário</p>
         </li>
         
         
-        <li id="section-29">
+        <li id="section-28">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-29">&#182;</a>
+                <a class="pilcrow" href="#section-28">&#182;</a>
               </div>
               <p>Para o menu funcionar corretamente com o bootstrap
 Vamos adicionar as interações</p>

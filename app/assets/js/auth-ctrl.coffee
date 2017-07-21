@@ -1,7 +1,11 @@
 # Controlador de autenticacao
 # TODO Separar os controles    
 fetchAuthCtrl = ->
-        console.log "Trabalhando na autorização..."
+        # A mensagem de carregamento inicial
+        # deve ser atualizada
+        loader = document.getElementById('masterLoader')
+        p = loader.children[9]
+        p.innerHTML = "Trabalhando na autorização..."
         AuthCtrl = ($rootScope, $http, $location, $window, $route, dialogService) ->
 
                 # # Apresentação de dados
@@ -21,41 +25,29 @@ fetchAuthCtrl = ->
                 # checkout $rootScope.popup message and type
                 onErr  = (err) ->
                         console.log err
-                        $rootScope.nextRoute = '/'
-                        user = firebase.auth().currentUser.uid
-        
-                        # Apresente ao usuário o erro
-                        user = firebase.auth().currentUser
-                        d = dialogService()
-                        d.save('danger', "#{err.code}: #{err.message}")
-                        d.show()
-                        # Isso é necessário para reatualizar os dados
                         $location.path('/')
-        
+                        $route.reload()
                 # checkout $rootScope.popup message success on signout
                 onSignout = ->
-                        nextRoute = '/login'
         
                         # Apresente ao usuário uma mensagem de sucesso
                         user = firebase.auth().currentUser
-                        d = dialogService()
+                        d = new dialogService()
+                        console.log d
                         d.save('success', "Saiu do vanessador com sucesso")
-                        d.show()
                         # Isso é necessário para reatualizar os dados
-                        $location.path(nextRoute)
+                        $location.path('/login')
         
                 # checkout $rootScope.popup message success on login
                 onLogin = (result) ->
-                        nextRoute = '/formularios'
-        
                         # Apresente ao usuário uma mensagem de sucesso
                         user = firebase.auth().currentUser
-                        d = dialogService()
+                        d = new dialogService()
+                        console.log d
                         d.save('success', "Bem vindo #{user.displayName or user.email}")
-                        d.show()
                         # Isso é necessário para reatualizar os dados
-                        $location.path(nextRoute)
-        
+                        $location.path('/formularios')
+                        $route.reload()
                 
                 # Funcao para enviar email de verificação após criar conta
                 onSendEmailVerify =  ->
@@ -64,11 +56,13 @@ fetchAuthCtrl = ->
                                 user = firebase.auth().currentUser
         
                                 # memorize um popup
-                                msg = "Enviamos um email  #{user.displayName or user.email}"
-                                d = dialogService()
-                                d.save('success', "Bem vindo #{user.displayName or user.email}")
-                                d.show()
-                                user.sendEmailVerification().then(-> $window.location.reload() ).catch(onErr)
+                                onSend = ->
+                                        msg = "Enviamos um email  #{user.displayName or user.email}"
+                                        d = new dialogService()
+                                        d.save('success', "Bem vindo #{user.displayName or user.email}")
+                                        $location.path('/formularios')
+                                        $route.reload()
+                                user.sendEmailVerification().then(onSend).catch(onErr)
                         
         
                 # Recupere dados de configuração do servidor
@@ -78,11 +72,12 @@ fetchAuthCtrl = ->
                 onConfirmEmailVerify = ->
                         query = $location.search('mode', 'oobCode', 'apiKey')
                         onGetConfig (config) ->
-                                user = firebase.auth().current
                                 onSend = ->
-                                        d = dialogService()
+                                        user = firebase.auth().current
+                                        d = new dialogService()
                                         d.save("#{user.email} verificado")
-                                        d.show()
+                                        $location.path('/formularios')
+                                        $route.reload()
                                 if query.apiKey is config.apiKey
                                         firebase.auth().applyActionCode(query.oobCode).then(onSend).catch(onErr)
                                 else
@@ -183,11 +178,8 @@ fetchAuthCtrl = ->
                         # É necessário limpar parte da base de dados que
                         # memorizavam qual é o formulário atual de cada usuário
                         user = firebase.auth().currentUser
-                        d = dialogService()
-                        d.delete()
-                        firebase.database().ref("users/#{user.uid}/currentForm").remove().then( ->
-                                firebase.auth().signOut().then(onSignout).catch(onErr)
-                        ).catch(onErr)
+                        _onSignout = -> firebase.auth().signOut().then(onSignout).catch(onErr)
+                        firebase.database().ref("users/#{user.uid}/currentForm").remove().then(_onSignout).catch(onErr)
                 
 
                 # Esta função vincula a autenticação por email e senha com a autenticação por oauth

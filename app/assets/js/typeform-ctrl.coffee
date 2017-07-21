@@ -1,6 +1,10 @@
 fetchTypeform = ->
-        console.log "Trabalhando no typeform..."
-        TypeformCtrl = ($rootScope, $http, $location, $window)->
+        # A mensagem de carregamento inicial
+        # deve ser atualizada
+        loader = document.getElementById('masterLoader')
+        p = loader.children[9]
+        p.innerHTML = "Trabalhando no typeform..."
+        TypeformCtrl = ($rootScope, $http, $location, $window, formularios)->
 
                 # # Funções auxiliares
                 # Estas funções auxiliam as funções principais do $rootScope
@@ -20,24 +24,14 @@ fetchTypeform = ->
                         
                 # Dados typeform
                 $rootScope.typeformData = null                          
+
+                $rootScope.onNovo = (id, groups...) ->
+                        f = new formularios()
+                        _onNovo = ->
+                                $location.path('/formularios')
+                                $route.update()
+                        f.novo(id, groups).then(_onNovo).catch(onErr)
                         
-                $rootScope.onNovo = (ref, id_group, groups...) ->
-                        o = {}
-                        try
-                                for e in groups
-                                        if e isnt 'tags'
-                                                v = document.getElementById("input_typeform_#{e}").value
-                                                o[e] = v
-                                        else
-                                                _v = document.getElementById("input_typeform_#{e}").value
-                                                v = _v.split(" ")
-                                                o[e] = v
-                                user = firebase.auth().currentUser
-                                o.owner = user.uid
-                                firebase.database().ref("#{ref}/").set(obj).catch(onErr)
-                        catch e
-                                onErr e
-        
                 # Fake listeners para atualizar
                 # os formulários typeform
                 # em rotas específicas como

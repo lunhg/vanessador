@@ -1,4 +1,6 @@
-section.col-md-12.centralize-area(ng-show="user")
+section.centralize-area(ng-show="user")
+  br
+  br
   br
   br
   h1 Registre um formulário
@@ -6,12 +8,13 @@ section.col-md-12.centralize-area(ng-show="user")
   br
   form 
     fieldset 
-    - var form = {'input_typeform_nome':{'type':'text', 'placeholder':'nome'}, 'input_typeform_tags':{'type':'text', 'placeholder':'#tags... (ex. #alunos #workshop)'}, 'input_typeform_uuid':{'type':'text', 'placeholder':'lD2u6E'}}
+    - var form = {'input_typeform_nome':{'type':'text', 'placeholder':'nome', 'label':'Nome do formulário'}, 'input_typeform_tags':{'type':'text', 'placeholder':'#tags... (ex. #alunos #workshop)', 'label': 'Tags'}, 'input_typeform_uuid':{'type':'text', 'placeholder':'lD2u6E', 'label': 'Identificador'}, 'input_typeform_url':{'type':'text', 'placeholder':'lunhg.typeform.com/to', 'label': 'URL de base'}}
     - for(var key in form)
       - var val = form[key]
       div.form-group
-        label.col-lg-2.control-label(for=""+key)
-          div.col-lg-10 
-            input.form-control(style="width:300px;" type=""+val.type id=""+key placeholder=""+val.placeholder)
+        label.control-label(for=""+key)= val.label
+          br
+          div
+            input.form-control(type=""+val.type id=""+key placeholder=""+val.placeholder)
 
-    a.btn.btn-default(ng-click="onNovo('formularios', 'input_typeform', 'nome', 'tags', 'uuid')") Registrar
+    a.btn.btn-default(ng-click="onNovo('formularios', 'input_typeform', 'nome', 'tags', 'uuid', 'url')") Registrar

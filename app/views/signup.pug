@@ -1,8 +1,10 @@
-section.col-md-12.centralize-area(ng-show="user === null")
+section.centralize-area(ng-show="user === null")
+  br
   br
   br
   br
   h1 Cadastre-se
+  br
   br
   br
   br
@@ -12,9 +14,9 @@ section.col-md-12.centralize-area(ng-show="user === null")
       - for(var key in form)
         - var val = form[key]
         div.form-group
-          label.col-lg-2.control-label(for=""+key)= val.placeholder 
-          div.col-lg-10
-            input.form-control(type=""+val.type id=""+key placeholder=""+val.placeholder)
-      br
-      br
-      a.btn.btn-success(ng-click="createUserWithEmailAndPassword()") Cadastrar 
+          label.control-label(for=""+key)= val.placeholder 
+            div
+              input.form-control(type=""+val.type id=""+key placeholder=""+val.placeholder)
+    br
+    br
+    a.btn.btn-success(ng-click="createUserWithEmailAndPassword()") Cadastrar 

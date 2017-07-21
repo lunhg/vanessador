@@ -1,5 +1,9 @@
 fetchRun = ->
-        console.log "Iniciado o vanessador..."
+        # A mensagem de carregamento inicial
+        # deve ser atualizada
+        loader = document.getElementById('masterLoader')
+        p = loader.children[9]
+        p.innerHTML =  "Verificando autorizações prévias"
         Run = ($rootScope, $http, $location, $route, $window) ->
         
                 # Usuário atual
@@ -42,17 +46,23 @@ fetchRun = ->
                         firebase.auth().onAuthStateChanged (user) ->
                                 if user
                                         $rootScope.user = user
-                                                
-                                        # Notifique o usuário de qq mudança importante
+                                        
+                                        # Notifique o usuário atual de qq mudança importante
                                         firebase.database()
                                                 .ref("/users/#{user.uid}/popup")
                                                 .once 'value', (snapshot) ->
-                                                        unless $rootScope.dialogShown
-                                                                $rootScope.dialogContent = snapshot.val()
-                                                        $rootScope.dialogShown = not $rootScope.dialogShown 
+                                                        val = snapshot.val()
+                                                        if val
+                                                                $rootScope.dialogMessage = snapshot.val()
+                                                        else
+                                                                $rootScope.dialogMessage = "Usuário deslogado"
+                                                        $rootScope.dialogShown = not $rootScope.dialogShown
+
                                 
-                
-                        $rootScope.onLoading = false
-                        # Inicie o aplicativo
-                        nextRoute = back() or "/login"
-                        $location.path($rootScope.nextRoute)
+                                
+                                                
+                                $rootScope.onLoading = false
+
+                                # Inicie o aplicativo
+                                nextRoute = back() or "/login"
+                                $location.path(nextRoute)
