@@ -12,8 +12,8 @@ Vanessador  um aplicativo firebase+typeform+express.js para gerenciar formulári
     
 ##  Instalando chaves de acesso firebase
 
-    grunt build build:firebase:apiKey
-    grunt build build:firebase:messagingSenderId
+    npm build build:firebase:apiKey
+    npm build build:firebase:messagingSenderId
     
 ##  Instalando chaves de acesso typeform
 
