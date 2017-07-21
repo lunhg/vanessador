@@ -35,7 +35,10 @@ coisas como o que aparece na tela e o que
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>app.config ($routeProvider, $locationProvider) -&gt;</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-title">fetchConfig</span> = -&gt;</span>
+        <span class="hljs-built_in">console</span>.log <span class="hljs-string">"Configurando templates..."</span>
+        $http.get(<span class="hljs-string">'/templates'</span>).<span class="hljs-keyword">then</span> (templates) -&gt;
+                app.config ($routeProvider, $locationProvider) -&gt;</pre></div></div>
             
         </li>
         
@@ -46,18 +49,12 @@ coisas como o que aparece na tela e o que
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
-              <p>Primeiro inicialize as rotas angular atraves
-de templates. Para recuperar esses templates, precisamos
-antes requerilos do servidor. Como n da p usar o
-modulo $http no .config, iremos usar XHR.</p>
+              <p>Primeiro inicialize as rotas angular</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        
-        xhr = <span class="hljs-keyword">new</span> XMLHttpRequest()
-        xhr.onreadystatechange = <span class="hljs-function">-&gt;</span>
-                <span class="hljs-keyword">if</span> @readyState <span class="hljs-keyword">is</span> <span class="hljs-number">4</span> <span class="hljs-keyword">and</span> @status <span class="hljs-keyword">is</span> <span class="hljs-number">200</span>
-                        obj = JSON.parse xhr.responseText</pre></div></div>
+            <div class="content"><div class='highlight'><pre>                        <span class="hljs-keyword">for</span> e <span class="hljs-keyword">in</span> templates.data
+                                $routeProvider.<span class="hljs-keyword">when</span>(e.route,{template:e.template,controller:<span class="hljs-string">'AuthCtrl'</span>})</pre></div></div>
             
         </li>
         
@@ -68,13 +65,11 @@ modulo $http no .config, iremos usar XHR.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              <p>Cada ponto é nomeado por um template e controlador</p>
+              <p>Ponto inicial</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                        <span class="hljs-keyword">for</span> e <span class="hljs-keyword">in</span> obj
-                                <span class="hljs-built_in">console</span>.log e
-                                $routeProvider.<span class="hljs-keyword">when</span>(e.route,{template:e.template,controller:<span class="hljs-string">'AuthCtrl'</span>})</pre></div></div>
+            <div class="content"><div class='highlight'><pre>                        $routeProvider.otherwise({redirectTo: <span class="hljs-string">'/'</span>})</pre></div></div>
             
         </li>
         
@@ -85,44 +80,11 @@ modulo $http no .config, iremos usar XHR.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              <p>Ponto inicial</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>                        $routeProvider.otherwise({redirectTo: <span class="hljs-string">'/'</span>})</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-5">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-5">&#182;</a>
-              </div>
               <p>Habilite HTML5</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                        $locationProvider.html5Mode(<span class="hljs-literal">true</span>)</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-6">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-6">&#182;</a>
-              </div>
-              <p>/templates é a rota contendo o
-compilador pug.js que cria
-os templates para as rotas angular</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        xhr.open(<span class="hljs-string">'GET'</span>, <span class="hljs-string">'/templates'</span>, <span class="hljs-literal">true</span>)
-        xhr.send()</pre></div></div>
+            <div class="content"><div class='highlight'><pre>                        $locationProvider.html5Mode(enabled:<span class="hljs-literal">true</span>)</pre></div></div>
             
         </li>
         

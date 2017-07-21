@@ -54,7 +54,9 @@
 	    "name": "vanessador-46e68"
 	}
     },
-    "angular-templates": ["_index", "login", "signup", "resetPassword", "confirm", "formularios", "formularios_novo", "formularios_uuid_stats", "formularios_uuid_questions", "formularios_uuid_questions_token", "conta", "dialog"],
+    "angular-templates": ["_index", "login", "signup", "resetPassword", "confirm", "formularios", "formularios_novo", "formularios_uuid_stats", "formularios_uuid_questions", "formularios_uuid_questions_token", "conta"],
+    "angular-directives": ["dialog", "menu"],
+    "angular-services": [],
     "options": {
 	"coffee": {
 	    "compileJoin": {

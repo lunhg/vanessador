@@ -14,3 +14,5 @@ section.centralize-area(ng-show="typeformData")
     tbody
       tr
         td(ng-repeat="(k,v) in typeformData.stats.responses") {{ v }}
+
+  a.btn.btn-default(href="/#!/formularios/{{ currentForm }}/questions")

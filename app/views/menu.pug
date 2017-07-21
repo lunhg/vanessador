@@ -1,0 +1,43 @@
+div.ng-modal
+  div.navbar-header
+    a.navbar-brand(href="/va/") Vanessador
+      img.img-responsive.navbar-left(width="32" height="32" src="/assets/images/vanessadora.png")
+
+  div.collapse.navbar-collapse
+    ul.nav.navbar-nav(ng-show="user === null")
+      li
+        a(href="/v/sobre") Sobre
+      li
+        a(href="https://www.github.com/lunhg/vanessador") Contribua
+      
+    ul.nav.navbar-nav(ng-show="user != null")  
+      li#formularios-menu(ng-mouseenter="onDropdownmenu('formularios-menu')" ng-mouseleave="onDropupmenu('formularios-menu')")
+        a.btn-btn-default.dropdown-toogle(data-toogle="dropdown" aria-expanded="true") Formulários
+          span.caret
+        ul.dropdown-menu(aria-labelledby="formularios-menu")
+          li
+            a(href="/va/formularios/novo") Novo formulário 
+          li
+            a(href="/va/formularios") Ver seus formulários
+
+    ul.nav.navbar-nav.navbar-right(ng-show="user == null")
+      li
+        a(href="/va/login" ng-show="user == null") Login
+      li(ng-show="user === null")
+        a(href="/va/signup" ng-show="user == null") Cadastre-se
+
+    ul.nav.navbar-nav.navbar-right(ng-show="user != null")
+      li#user-menu(ng-mouseenter="onDropdownmenu('user-menu')" ng-mouseleave="onDropupmenu('user-menu')")
+        a.btn-btn-default.dropdown-toogle(data-toogle="dropdown" href="#" aria-expanded="true") {{ user.displayName || user.email }}
+          img.img-responsive.img-circle.navbar-right(width="32" heigth="32" ng-show="user.photoUrl !== null" ng-src="{{ user.photoURL }}")
+          span.caret
+   
+        ul.dropdown-menu(aria-labelledby="user-menu")
+          li
+            a(href="/va/conta") Conta
+          li
+            a(ng-click="logout()") Logout
+  
+//img.img-responsive.img-circle.navbar-right(width="32" heigth="32" ng-show="user.photoUrl !== null" ng-src="{{ user.photoURL }}")
+
+

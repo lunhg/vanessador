@@ -1,5 +1,8 @@
 #= require app
-#= require services
 #= require config
 #= require auth-ctrl
-#= require run 
+#= require typeform-ctrl
+#= require services
+#= require run
+#= require directives
+#= require boot

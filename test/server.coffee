@@ -41,20 +41,23 @@ describe chalk.green('Vanessador app'), ->
                                 .then resolve
                                 .catch reject
 
-        it 'should GET /services?q=dialog', ->
+        it 'should GET /directives', ->
                 new Promise (resolve, reject) ->
-                        agent.get("/services")
-                                .query(q: 'dialog')
+                        agent.get("/directives")
                                 .expect 200
                                 .expect('Content-Type', /json/)
                                 .expect (res) ->
                                         console.log res.body
-                                        res.body.should.have.property 'restrict'
-                                        res.body.should.have.property 'scope'
-                                        res.body.should.have.property 'replace'
-                                        res.body.should.have.property 'scope'
-                                        res.body.should.have.property 'transclude'
-                                        res.body.should.have.property 'template'
+                                .then resolve
+                                .catch reject
+                                
+        it 'should GET /services', ->
+                new Promise (resolve, reject) ->
+                        agent.get("/services")
+                                .expect 200
+                                .expect('Content-Type', /json/)
+                                .expect (res) ->
+                                        console.log res.body
                                 .then resolve
                                 .catch reject   
                                                                       

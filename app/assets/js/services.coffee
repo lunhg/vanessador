@@ -1,35 +1,31 @@
-# Este serviço será baseado
-# no tutorial elaborado por Adam Albrecht
-# http://adamalbrecht.com/2013/12/12/creating-a-simple-modal-dialog-directive-in-angular-js/
-obj = {}
-
 # Primeiro inicialize as rotas angular atraves
 # de templates. Para recuperar esses templates, precisamos
 # antes requerilos do servidor.
-xhr = new XMLHttpRequest()
-xhr.onreadystatechange = ->
-        if @readyState is 4 and @status is 200
+fetchServices = ->
 
-                # Este objeto é uma configuração parcial
-                # do serviço requerido
-                _obj = JSON.parse xhr.responseText
-                obj = _obj
+        services =
+                dialogService: ['$rootScope', ($rootScope) ->
+                        ->
+                                this.save = (type, msg) ->
+                                        if firebase.auth().currentUser
+                                                userid = firebase.auth().currentUser.uid
+                                                firebase.database()
+                                                        .ref("users/#{userid}/popup")
+                                                        .set({type:type, msg:msg})
+                                this.show = ->
+                                        if firebase.auth().currentUser
+                                                userid = firebase.auth().currentUser.uid
+                                                firebase.database()
+                                                        .ref("users/#{userid}/popup")
+                                                        .once 'value', (snapshot) ->
+                                                                $rootScope.dialogShown = true
+                                                                $rootScope.dialogMessage = snapshot.value()
+                                this.delete = ->
+                                        if firebase.auth().currentUser
+                                                userid = firebase.auth().currentUser.uid
+                                                firebase.database()
+                                                        .ref("users/#{userid}/popup")
+                                                        .remove()
+                        ]
 
-                # Agora precisamos criar o link
-                obj.link = (scope, element, attrs) ->
-                        scope.dialogStyle = {}
-                        if (attrs.width)
-                                scope.dialogStyle.width = attrs.width
-                        if (attrs.height)
-                                scope.dialogStyle.height = attrs.height;
-                        scope.hideModal = -> scope.show = false
-                        
-# /services?q=modal é a rota contendo o
-# compilador pug.js que cria
-# os templates para as rotas angular
-xhr.open('GET', '/services?q=dialog', true)
-xhr.send()
 
-ModalDialog = -> obj
-
-app.directive 'modalDialog', ModalDialog

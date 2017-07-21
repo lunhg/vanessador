@@ -290,9 +290,7 @@ AppManager.prototype.templates = function() {
       results1 = [];
       for (i = 0, len = ref.length; i < len; i++) {
         template = ref[i];
-        if (template !== 'dialog') {
-          results1.push(getTemplate(template));
-        }
+        results1.push(getTemplate(template));
       }
       return results1;
     })()).then(onSuccess)["catch"](onErr);
@@ -300,43 +298,44 @@ AppManager.prototype.templates = function() {
 };
 
 AppManager.prototype.services = function() {
-  var getTemplate;
+  var _on, getTemplate;
   getTemplate = function(p) {
     return new Promise(function(resolve, reject) {
       var _p;
       _p = path.resolve((path.join(__dirname)) + "/../app/views/" + p + ".pug");
       return fs.readFile(_p, 'utf8', function(err, content) {
-        var e, error1, opt;
+        var html;
         if (!err) {
-          try {
-            opt = {
-              filename: _p,
-              doctype: 'html'
-            };
-            if (p === 'dialog') {
-              return resolve({
-                restrict: 'E',
-                scope: {
-                  show: '='
-                },
-                replace: true,
-                transclude: true,
-                template: pug.compile(content, opt)()
-              });
-            } else {
-              return reject(new Error(p + " isnt a valid service"));
+          html = pug.compile(content, {
+            filename: _p,
+            doctype: 'html'
+          })();
+          return resolve({
+            name: p,
+            options: {
+              restrict: 'AE',
+              template: html,
+              replace: true,
+              transclude: true
             }
-          } catch (error1) {
-            e = error1;
-            return reject(e);
-          }
+          });
         } else {
           return reject(err);
         }
       });
     });
   };
-  return this.app.get('/services', function(req, res) {
+  _on = function(what) {
+    var a, i, len, ref, w;
+    a = [];
+    ref = require("../package.json")["angular-" + what];
+    for (i = 0, len = ref.length; i < len; i++) {
+      w = ref[i];
+      a.push(getTemplate(w));
+    }
+    return Promise.all(a);
+  };
+  this.app.get("/services", function(req, res) {
     var onErr, onSuccess;
     onSuccess = function(result) {
       return res.json(result);
@@ -344,7 +343,17 @@ AppManager.prototype.services = function() {
     onErr = function(err) {
       return res.json(err);
     };
-    return getTemplate(req.query['q']).then(onSuccess)["catch"](onErr);
+    return _on('services').then(onSuccess)["catch"](onErr);
+  });
+  return this.app.get("/directives", function(req, res) {
+    var onErr, onSuccess;
+    onSuccess = function(result) {
+      return res.json(result);
+    };
+    onErr = function(err) {
+      return res.json(err);
+    };
+    return _on('directives').then(onSuccess)["catch"](onErr);
   });
 };
 

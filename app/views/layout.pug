@@ -1,8 +1,9 @@
 html
   head
     title Vanessador
+    base(href="/va/")
     != css("index")
-  body(ng-app="vanessador" ng-controller="AuthCtrl")
+  body(ng-controller="AuthCtrl" dir="auto")
     block nav
     block content
     block scripts

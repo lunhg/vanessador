@@ -5,17 +5,31 @@ AppManager::services = ->
                         _p = path.resolve "#{path.join(__dirname)}/../app/views/#{p}.pug"
                         fs.readFile _p, 'utf8', (err, content) ->
                                 if not err
-                                        try
-                                                opt = {filename: _p, doctype:'html'}
-                                                if p is 'dialog'
-                                                        resolve {restrict: 'E',scope: { show: '='},replace: true,transclude: true,template: pug.compile(content, opt)()}
-                                                else
-                                                        reject new Error("#{p} isnt a valid service")
-                                        catch e
-                                                reject e
+                                        html = pug.compile(content, {filename:_p,doctype:'html'})()
+                                        resolve {
+                                                name: p
+                                                options: {
+                                                        restrict: 'A'
+                                                        template: html
+                                                        replace: true
+                                                        transclude: true
+                                                }
+                                        }
                                 else
                                         reject err
-        @app.get '/services', (req, res) ->
+
+        _on = (what) ->
+                a = []
+                for w in require("../package.json")["angular-#{what}"]
+                        a.push getTemplate(w) 
+                Promise.all(a)
+
+        @app.get "/services", (req, res) ->
                 onSuccess = (result) -> res.json result
-                onErr = (err) -> res.json err 
-                getTemplate(req.query['q']).then(onSuccess).catch(onErr)
+                onErr = (err) -> res.json err
+                _on('services').then(onSuccess).catch(onErr)
+                
+        @app.get "/directives", (req, res) ->
+                onSuccess = (result) -> res.json result
+                onErr = (err) -> res.json err
+                _on('directives').then(onSuccess).catch(onErr)

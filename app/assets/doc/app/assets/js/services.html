@@ -27,92 +27,37 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
-              <p>Este serviço será baseado
-no tutorial elaborado por Adam Albrecht
-<a href="http://adamalbrecht.com/2013/12/12/creating-a-simple-modal-dialog-directive-in-angular-js/">http://adamalbrecht.com/2013/12/12/creating-a-simple-modal-dialog-directive-in-angular-js/</a></p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>obj = {}</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-2">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-2">&#182;</a>
-              </div>
               <p>Primeiro inicialize as rotas angular atraves
 de templates. Para recuperar esses templates, precisamos
 antes requerilos do servidor.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>xhr = <span class="hljs-keyword">new</span> XMLHttpRequest()
-xhr.onreadystatechange = <span class="hljs-function">-&gt;</span>
-        <span class="hljs-keyword">if</span> @readyState <span class="hljs-keyword">is</span> <span class="hljs-number">4</span> <span class="hljs-keyword">and</span> @status <span class="hljs-keyword">is</span> <span class="hljs-number">200</span></pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-3">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-3">&#182;</a>
-              </div>
-              <p>Este objeto é uma configuração parcial
-do serviço requerido</p>
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-title">fetchServices</span> = -&gt;</span>
 
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>                _obj = JSON.parse xhr.responseText
-                obj = _obj</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-4">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-4">&#182;</a>
-              </div>
-              <p>Agora precisamos criar o link</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>                obj.link = <span class="hljs-function"><span class="hljs-params">(scope, element, attrs)</span> -&gt;</span>
-                        scope.dialogStyle = {}
-                        <span class="hljs-keyword">if</span> (attrs.width)
-                                scope.dialogStyle.width = attrs.width
-                        <span class="hljs-keyword">if</span> (attrs.height)
-                                scope.dialogStyle.height = attrs.height;
-                        scope.hideModal = <span class="hljs-function">-&gt;</span> scope.show = <span class="hljs-literal">false</span></pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-5">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-5">&#182;</a>
-              </div>
-              <p>/services?q=modal é a rota contendo o
-compilador pug.js que cria
-os templates para as rotas angular</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>xhr.open(<span class="hljs-string">'GET'</span>, <span class="hljs-string">'/services?q=dialog'</span>, <span class="hljs-literal">true</span>)
-xhr.send()
-<span class="hljs-function">
-<span class="hljs-title">ModalDialog</span> = -&gt;</span> obj
-
-app.directive <span class="hljs-string">'modalDialog'</span>, ModalDialog</pre></div></div>
+        services =
+                dialog: [<span class="hljs-string">'$rootScope'</span>, <span class="hljs-function"><span class="hljs-params">($rootScope)</span> -&gt;</span><span class="hljs-function">
+                        -&gt;</span>
+                                <span class="hljs-keyword">this</span>.save = <span class="hljs-function"><span class="hljs-params">(type, msg)</span> -&gt;</span>
+                                        <span class="hljs-keyword">if</span> firebase.auth().currentUser
+                                                userid = firebase.auth().currentUser.uid
+                                                firebase.database()
+                                                        .ref(<span class="hljs-string">"users/<span class="hljs-subst">#{userid}</span>/popup"</span>)
+                                                        .set({type:type, msg:msg})
+                                <span class="hljs-keyword">this</span>.show = <span class="hljs-function">-&gt;</span>
+                                        <span class="hljs-keyword">if</span> firebase.auth().currentUser
+                                                userid = firebase.auth().currentUser.uid
+                                                firebase.database()
+                                                        .ref(<span class="hljs-string">"users/<span class="hljs-subst">#{userid}</span>/popup"</span>)
+                                                        .once <span class="hljs-string">'value'</span>, <span class="hljs-function"><span class="hljs-params">(snapshot)</span> -&gt;</span>
+                                                                $rootScope.dialogMessage = snapshot.value()
+                                <span class="hljs-keyword">this</span>.<span class="hljs-keyword">delete</span> = <span class="hljs-function">-&gt;</span>
+                                        <span class="hljs-keyword">if</span> firebase.auth().currentUser
+                                                userid = firebase.auth().currentUser.uid
+                                                firebase.database()
+                                                        .ref(<span class="hljs-string">"users/<span class="hljs-subst">#{userid}</span>/popup"</span>)
+                                                        .remove()
+                        ]</pre></div></div>
             
         </li>
         

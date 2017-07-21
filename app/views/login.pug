@@ -15,8 +15,9 @@ section.col-md-12.centralize-area(ng-show="user === null")
     button.btn.btn-default(type="submit" ng-click="loginEmailAndPassword()") Login 
     br
     br
-    a(href="#!/resetPassword") Resete sua senha
-
+    div.section-divider
+      a(href="#!/signup" ng-show="user == null") Cadastre-se
+      a(href="#!/resetPassword" ng-show="user == null") Esqueceu sua senha?
     br
     br
     div.section-divider
@@ -24,10 +25,8 @@ section.col-md-12.centralize-area(ng-show="user === null")
       span Ou
       hr.navbar-right
 
-    br
-
     div.container  
-      - var form = {'input_login_google':{'img':'https://cdn.worldvectorlogo.com/logos/google-icon.svg', 'ng-click': 'loginGoogle()', 'text': 'Entrar com google'}}
+      - var form = {'input_login_google':{'img':'https://cdn.worldvectorlogo.com/logos/google-icon.svg', 'ng-click': 'loginGoogle()', 'text': 'Entrar com sua conta google'}}
       - for(var key in form)
         - var val = form[key]
           a.btn.btn-default(ng-click=""+val['ng-click'])= val.text

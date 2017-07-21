@@ -35,4 +35,4 @@ AppManager::templates = ->
                 onSuccess = (results) -> res.json results
                 onErr = (err) -> res.json err.message
                 
-                Promise.all(getTemplate(template) for template in require("../package.json")['angular-templates'] when template isnt 'dialog').then(onSuccess).catch(onErr) 
+                Promise.all(getTemplate(template) for template in require("../package.json")['angular-templates']).then(onSuccess).catch(onErr) 

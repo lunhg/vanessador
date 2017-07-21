@@ -57,18 +57,17 @@ describe(chalk.green('Vanessador app'), function() {
       }).then(resolve)["catch"](reject);
     });
   });
-  it('should GET /services?q=dialog', function() {
+  it('should GET /directives', function() {
     return new Promise(function(resolve, reject) {
-      return agent.get("/services").query({
-        q: 'dialog'
-      }).expect(200).expect('Content-Type', /json/).expect(function(res) {
-        console.log(res.body);
-        res.body.should.have.property('restrict');
-        res.body.should.have.property('scope');
-        res.body.should.have.property('replace');
-        res.body.should.have.property('scope');
-        res.body.should.have.property('transclude');
-        return res.body.should.have.property('template');
+      return agent.get("/directives").expect(200).expect('Content-Type', /json/).expect(function(res) {
+        return console.log(res.body);
+      }).then(resolve)["catch"](reject);
+    });
+  });
+  it('should GET /services', function() {
+    return new Promise(function(resolve, reject) {
+      return agent.get("/services").expect(200).expect('Content-Type', /json/).expect(function(res) {
+        return console.log(res.body);
       }).then(resolve)["catch"](reject);
     });
   });

@@ -32,7 +32,9 @@ TODO Separar os controles    </p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-title">onAuth</span> = <span class="hljs-params">($rootScope, $http, $location, $<span class="hljs-built_in">window</span>, $route)</span> -&gt;</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-title">fetchAuthCtrl</span> = -&gt;</span>
+        <span class="hljs-built_in">console</span>.log <span class="hljs-string">"Trabalhando na autorização..."</span>
+<span class="hljs-function">        <span class="hljs-title">AuthCtrl</span> = <span class="hljs-params">($rootScope, $http, $location, $<span class="hljs-built_in">window</span>, $route, dialog)</span> -&gt;</span></pre></div></div>
             
         </li>
         
@@ -43,24 +45,25 @@ TODO Separar os controles    </p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
-              <p>modalDialog apresenta
-popups que retornam
-mensagens de erro ou
-mensagens úteis de notificação
-como sucesso no login, logout
-troca de senha</p>
+              <h1 id="apresenta-o-de-dados">Apresentação de dados</h1>
+<ul>
+<li>/contas</li>
+</ul>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        $rootScope.modalShown = <span class="hljs-literal">false</span>
-        $rootScope.modalContent = <span class="hljs-literal">null</span>
-        $rootScope.toggleModal = <span class="hljs-function"><span class="hljs-params">(content)</span>-&gt;</span>
-                <span class="hljs-keyword">unless</span> $rootScope.modalShown <span class="hljs-keyword">then</span> $rootScope.modalContent = content
-                $rootScope.modalShown = <span class="hljs-keyword">not</span> $rootScope.modalShown
-<span class="hljs-function">                
-        <span class="hljs-title">onReload</span> = -&gt;</span>
-                $location.path($rootScope.nextRoute)
-                $route.reload()</pre></div></div>
+            <div class="content"><div class='highlight'><pre>                $rootScope.dadosPessoais = <span class="hljs-literal">true</span>
+                $rootScope.configuracoes = <span class="hljs-literal">false</span>
+                $rootScope.onAccountDadosPessoais = <span class="hljs-function">-&gt;</span>
+                        $rootScope.configuracoes = <span class="hljs-literal">false</span>
+                        $rootScope.dadosPessoais = <span class="hljs-literal">true</span>
+                $rootScope.onAccountConfiguracoes = <span class="hljs-function">-&gt;</span>
+                        $rootScope.configuracoes = <span class="hljs-literal">true</span>
+                        $rootScope.dadosPessoais = <span class="hljs-literal">false</span>
+
+               
+                d = dialog()
+                <span class="hljs-built_in">console</span>.log dialog</pre></div></div>
             
         </li>
         
@@ -71,14 +74,17 @@ troca de senha</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              <p>checkout $rootScope.popup message and type</p>
+              <h1 id="fun-es-auxiliares">Funções auxiliares</h1>
+<p>Estas funções auxiliam as funções principais do $rootScope
+como chcagem de erro, login, logout, envio de email
+checkout $rootScope.popup message and type</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-function">        <span class="hljs-title">onErr</span>  = <span class="hljs-params">(err)</span> -&gt;</span>
-                $rootScope.nextRoute = <span class="hljs-string">'/'</span>
-                $rootScope.toggleModal(<span class="hljs-string">"&lt;p&gt;<span class="hljs-subst">#{err.code}</span>:&lt;/p&gt;&lt;br/&gt;&lt;br/&gt;&lt;p&gt;<span class="hljs-subst">#{err.message}</span>&lt;/p&gt;"</span>)
-                onReload()</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-function">                <span class="hljs-title">onErr</span>  = <span class="hljs-params">(err)</span> -&gt;</span>
+                        <span class="hljs-built_in">console</span>.log err
+                        $rootScope.nextRoute = <span class="hljs-string">'/'</span>
+                        user = firebase.auth().currentUser.uid</pre></div></div>
             
         </li>
         
@@ -89,14 +95,14 @@ troca de senha</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              <p>checkout $rootScope.popup message success on signout</p>
+              <p>Apresente ao usuário o erro</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-function">        <span class="hljs-title">onSignout</span> = -&gt;</span>
-                $rootScope.nextRoute = <span class="hljs-string">'/login'</span>
-                $rootScope.toggleModal(<span class="hljs-string">"&lt;p&gt;Saiu do vanessador com sucesso&lt;/p&gt;"</span>)
-                onReload()</pre></div></div>
+            <div class="content"><div class='highlight'><pre>                        user = firebase.auth().currentUser
+                        
+                        d.save(<span class="hljs-string">'danger'</span>, <span class="hljs-string">"<span class="hljs-subst">#{err.code}</span>: <span class="hljs-subst">#{err.message}</span>"</span>)
+                        d.show()</pre></div></div>
             
         </li>
         
@@ -107,16 +113,11 @@ troca de senha</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
-              <p>checkout $rootScope.popup message success on login</p>
+              <p>Isso é necessário para reatualizar os dados</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-function">        <span class="hljs-title">onLogin</span> = <span class="hljs-params">(result)</span> -&gt;</span>
-                $rootScope.nextRoute = <span class="hljs-string">'/formularios'</span>
-                user = firebase.auth().currentUser
-                $rootScope.toggleModal(<span class="hljs-string">"&lt;p&gt;Bem vindo <span class="hljs-subst">#{user.displayName <span class="hljs-keyword">or</span> user.email}</span>&lt;/p&gt;"</span>)
-                onReload()
-                $<span class="hljs-built_in">window</span>.location.reload()</pre></div></div>
+            <div class="content"><div class='highlight'><pre>                        $<span class="hljs-built_in">window</span>.location.reload()</pre></div></div>
             
         </li>
         
@@ -127,14 +128,12 @@ troca de senha</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
-              <p>Funcao para enviar email de verificação após criar conta</p>
+              <p>checkout $rootScope.popup message success on signout</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-function">        <span class="hljs-title">onSendEmailVerify</span> =  -&gt;</span>
-                $rootScope.nextRoute = <span class="hljs-string">"/login"</span>
-<span class="hljs-function">                <span class="hljs-title">onSend</span> = -&gt;</span> $rootScope.toggleModal(<span class="hljs-string">"&lt;p&gt;Enviamos um email  <span class="hljs-subst">#{user.displayName <span class="hljs-keyword">or</span> user.email}</span>&lt;/p&gt;"</span>)
-                <span class="hljs-keyword">if</span> firebase.auth().currentUser <span class="hljs-keyword">then</span> firebase.auth().currentUser.sendEmailVerification().<span class="hljs-keyword">then</span>(onSend).<span class="hljs-keyword">then</span>(onReload).<span class="hljs-keyword">catch</span>(onErr)</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-function">                <span class="hljs-title">onSignout</span> = -&gt;</span>
+                        nextRoute = <span class="hljs-string">'/login'</span></pre></div></div>
             
         </li>
         
@@ -145,20 +144,13 @@ troca de senha</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
-              <p>checkout $rootScope.popup message success on login</p>
+              <p>Apresente ao usuário uma mensagem de sucesso</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-function">        <span class="hljs-title">onConfirmEmailVerify</span> = -&gt;</span>
-                query = $location.search(<span class="hljs-string">'mode'</span>, <span class="hljs-string">'oobCode'</span>, <span class="hljs-string">'apiKey'</span>)
-                $http(method: <span class="hljs-string">'GET'</span>,url: <span class="hljs-string">'/config'</span>).<span class="hljs-keyword">then</span>(<span class="hljs-function">-&gt;</span>
-<span class="hljs-function">                        <span class="hljs-title">onSend</span> = -&gt;</span> $rootScope.toggleModal(<span class="hljs-string">"&lt;p&gt;<span class="hljs-subst">#{user.email}</span> verificado&lt;/p&gt;"</span>)
-                        $rootScope.nextRoute = <span class="hljs-string">'/'</span>
-                        <span class="hljs-keyword">if</span> query.apiKey <span class="hljs-keyword">is</span> config.apiKey
-                                firebase.auth().applyActionCode(query.oobCode).<span class="hljs-keyword">then</span>(onSend).<span class="hljs-keyword">then</span>(onReload)
-                        <span class="hljs-keyword">else</span>
-                                onErr <span class="hljs-keyword">new</span> Error <span class="hljs-string">'apiKey incorrect'</span>
-                ).<span class="hljs-keyword">catch</span>(onErr)</pre></div></div>
+            <div class="content"><div class='highlight'><pre>                        user = firebase.auth().currentUser
+                        d.save(<span class="hljs-string">'success'</span>, <span class="hljs-string">"Saiu do vanessador com sucesso"</span>)
+                        d.show()</pre></div></div>
             
         </li>
         
@@ -169,16 +161,12 @@ troca de senha</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
-              <p>Funcao auxiliar par $rootScope.confirmResetPassword</p>
+              <p>Isso é necessário para reatualizar os dados</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-function">        <span class="hljs-title">onConfirmResetPassword</span> = <span class="hljs-params">(config)</span> -&gt;</span>
-                <span class="hljs-keyword">if</span> query.apiKey <span class="hljs-keyword">is</span> config.apiKey
-                        user = firebase.auth().currentUser
-                        pwd  = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'reset_login_password_confirm'</span>).value
-<span class="hljs-function">                        <span class="hljs-title">_onApply</span> = -&gt;</span> $rootScope.toggleModal(<span class="hljs-string">"&lt;p&gt;Senha atualizada com sucesso <span class="hljs-subst">#{user.email}</span> &lt;/p&gt;"</span>)
-<span class="hljs-function">                        <span class="hljs-title">onApply</span> = -&gt;</span> user.updatePassword(pwd).<span class="hljs-keyword">then</span>(_onApply).<span class="hljs-keyword">catch</span> onErr</pre></div></div>
+            <div class="content"><div class='highlight'><pre>                        $location.path(nextRoute)
+                        $<span class="hljs-built_in">window</span>.location.reload()</pre></div></div>
             
         </li>
         
@@ -189,11 +177,12 @@ troca de senha</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
-              <p>Checar se os emails estão iguais</p>
+              <p>checkout $rootScope.popup message success on login</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                        <span class="hljs-keyword">if</span> <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'reset_login_password'</span>).value <span class="hljs-keyword">is</span> <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'reset_login_password_confirm'</span>).value</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-function">                <span class="hljs-title">onLogin</span> = <span class="hljs-params">(result)</span> -&gt;</span>
+                        nextRoute = <span class="hljs-string">'/formularios'</span></pre></div></div>
             
         </li>
         
@@ -204,13 +193,13 @@ troca de senha</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-10">&#182;</a>
               </div>
-              <p>Verifique o código oob e depois resete a senha e notifique o usuário</p>
+              <p>Apresente ao usuário uma mensagem de sucesso</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                                firebase.auth().applyActionCode(query.oobCode).<span class="hljs-keyword">then</span>(onApply).<span class="hljs-keyword">catch</span>(onErr)
-                        <span class="hljs-keyword">else</span>
-                                onErr <span class="hljs-keyword">new</span> Error <span class="hljs-string">'Senhas não coincidem'</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>                        user = firebase.auth().currentUser
+                        d.save(<span class="hljs-string">'success'</span>, <span class="hljs-string">"Bem vindo <span class="hljs-subst">#{user.displayName <span class="hljs-keyword">or</span> user.email}</span>"</span>)
+                        d.show()</pre></div></div>
             
         </li>
         
@@ -221,13 +210,12 @@ troca de senha</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
-              <p>Random Password</p>
+              <p>Isso é necessário para reatualizar os dados</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-function">        <span class="hljs-title">randomPassword</span> = <span class="hljs-params">(n)</span> -&gt;</span>
-                c = <span class="hljs-string">'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!?_-'</span>.split <span class="hljs-string">''</span>
-                (c[Math.floor(Math.random() * c.length)] <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> [<span class="hljs-number">0.</span>.n<span class="hljs-number">-1</span>]).join(<span class="hljs-string">''</span>)</pre></div></div>
+            <div class="content"><div class='highlight'><pre>                        $location.path(nextRoute)
+                        $<span class="hljs-built_in">window</span>.location.reload()</pre></div></div>
             
         </li>
         
@@ -238,18 +226,14 @@ troca de senha</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-12">&#182;</a>
               </div>
-              <p>Login Google
-realizado com o firebase</p>
+              <p>Funcao para enviar email de verificação após criar conta</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        $rootScope.loginGoogle = <span class="hljs-function">-&gt;</span>
-                <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> firebase.auth().currentUser
-                        provider = <span class="hljs-keyword">new</span> firebase.auth.GoogleAuthProvider()
-                        provider.addScope(<span class="hljs-string">'https://www.googleapis.com/auth/userinfo.profile'</span>)
-                        firebase.auth().signInWithPopup(provider).<span class="hljs-keyword">then</span>(onLogin).<span class="hljs-keyword">catch</span>(onErr)
-                <span class="hljs-keyword">else</span>
-                       onErr <span class="hljs-keyword">new</span> Error</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-function">                <span class="hljs-title">onSendEmailVerify</span> =  -&gt;</span>
+                        nextRoute = <span class="hljs-string">"/login"</span>
+                        <span class="hljs-keyword">if</span> firebase.auth().currentUser
+                                user = firebase.auth().currentUser</pre></div></div>
             
         </li>
         
@@ -260,13 +244,14 @@ realizado com o firebase</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-13">&#182;</a>
               </div>
-              <p>Login email password
-realizado com o firebase</p>
+              <p>memorize um popup</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        $rootScope.loginEmailAndPassword = <span class="hljs-function">-&gt;</span>
-                <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> firebase.auth().currentUser</pre></div></div>
+            <div class="content"><div class='highlight'><pre>                                msg = <span class="hljs-string">"Enviamos um email  <span class="hljs-subst">#{user.displayName <span class="hljs-keyword">or</span> user.email}</span>"</span>
+                                d.save(<span class="hljs-string">'success'</span>, <span class="hljs-string">"Bem vindo <span class="hljs-subst">#{user.displayName <span class="hljs-keyword">or</span> user.email}</span>"</span>)
+                                d.show()
+                                user.sendEmailVerification().<span class="hljs-keyword">then</span>(<span class="hljs-function">-&gt;</span> $<span class="hljs-built_in">window</span>.location.reload() ).<span class="hljs-keyword">catch</span>(onErr)</pre></div></div>
             
         </li>
         
@@ -277,11 +262,11 @@ realizado com o firebase</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-14">&#182;</a>
               </div>
-              <p>check email domain</p>
+              <p>Recupere dados de configuração do servidor</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                        email = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'input_login_email'</span>).value</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-function">                <span class="hljs-title">onGetConfig</span> = <span class="hljs-params">(callback)</span> -&gt;</span> $http(method: <span class="hljs-string">'GET'</span>,url: <span class="hljs-string">'/config'</span>).<span class="hljs-keyword">then</span>(callback).<span class="hljs-keyword">catch</span>(onErr)</pre></div></div>
             
         </li>
         
@@ -292,16 +277,21 @@ realizado com o firebase</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-15">&#182;</a>
               </div>
-              <p>Permitido apenas para @itsrio.org e o desenvolvedor</p>
+              <p>checkout $rootScope.popup message success on login</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                        <span class="hljs-keyword">if</span> email.match <span class="hljs-regexp">/\w+@itsrio.org/</span> <span class="hljs-keyword">or</span> email <span class="hljs-keyword">is</span>  <span class="hljs-string">"gcravista@gmail.com"</span>
-                                firebase.auth().signInWithEmailAndPassword(email,(<span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'input_login_password'</span>).value)).<span class="hljs-keyword">then</span>(onLogin).<span class="hljs-keyword">catch</span>(onErr)
-                        <span class="hljs-keyword">else</span>
-                                onErr(<span class="hljs-keyword">new</span> Error(<span class="hljs-string">"Conta de email não permitida"</span>))
-                <span class="hljs-keyword">else</span>
-                        onLoginOrCreateErr()</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-function">                <span class="hljs-title">onConfirmEmailVerify</span> = -&gt;</span>
+                        query = $location.search(<span class="hljs-string">'mode'</span>, <span class="hljs-string">'oobCode'</span>, <span class="hljs-string">'apiKey'</span>)
+                        onGetConfig (config) -&gt;
+                                user = firebase.auth().current
+<span class="hljs-function">                                <span class="hljs-title">onSend</span> = -&gt;</span>
+                                        d.save(<span class="hljs-string">"<span class="hljs-subst">#{user.email}</span> verificado"</span>)
+                                        d.show()
+                                <span class="hljs-keyword">if</span> query.apiKey <span class="hljs-keyword">is</span> config.apiKey
+                                        firebase.auth().applyActionCode(query.oobCode).<span class="hljs-keyword">then</span>(onSend).<span class="hljs-keyword">catch</span>(onErr)
+                                <span class="hljs-keyword">else</span>
+                                        onErr <span class="hljs-keyword">new</span> Error <span class="hljs-string">'apiKey incorrect'</span></pre></div></div>
             
         </li>
         
@@ -312,15 +302,25 @@ realizado com o firebase</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
-              <p>Signup
-Cheque o domínio do email (@itsrio.org)
-Crie o usuário se for permitido
-Envie um email resetando a senha</p>
+              <h1 id="fun-es-princiapis-de-login">Funções princiapis de login</h1>
+<h2 id="login">Login</h2>
+<h3 id="login-google">Login Google</h3>
+<ul>
+<li>realizado com o firebase</li>
+<li>Necessita do provedor Google</li>
+<li>ASsim que autorizar, o usuário é notificado que logou</li>
+<li>Utiliza a função auxiliar <code>onLogin</code></li>
+</ul>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        $rootScope.createUserWithEmailAndPassword = <span class="hljs-function">-&gt;</span>
-                <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> firebase.auth().currentUser</pre></div></div>
+            <div class="content"><div class='highlight'><pre>                $rootScope.loginGoogle = <span class="hljs-function">-&gt;</span>
+                        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> firebase.auth().currentUser
+                                provider = <span class="hljs-keyword">new</span> firebase.auth.GoogleAuthProvider()
+                                provider.addScope(<span class="hljs-string">'https://www.googleapis.com/auth/userinfo.profile'</span>)
+                                firebase.auth().signInWithPopup(provider).<span class="hljs-keyword">then</span>(onLogin).<span class="hljs-keyword">catch</span>(onErr)
+                        <span class="hljs-keyword">else</span>
+                               onErr <span class="hljs-keyword">new</span> Error  <span class="hljs-string">"User already logged"</span></pre></div></div>
             
         </li>
         
@@ -331,11 +331,26 @@ Envie um email resetando a senha</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-17">&#182;</a>
               </div>
-              <p>check email domain</p>
+              <h3 id="login-email-e-senha">Login email e senha</h3>
+<ul>
+<li>realizado com o firebase</li>
+<li>requer email e senha independentes</li>
+<li>Os únicos autorizados são aqueles com domínio @itsrio.org e o desenvolvedor </li>
+<li>Assim que autorizar, o usuário é notificado que entrou no sistema</li>
+<li>Utiliza a função auxiliar <code>onLogin</code></li>
+</ul>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                        email = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'input_signup_email'</span>).value</pre></div></div>
+            <div class="content"><div class='highlight'><pre>                $rootScope.loginEmailAndPassword = <span class="hljs-function">-&gt;</span>
+                        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> firebase.auth().currentUser
+                                email = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'input_login_email'</span>).value
+                                <span class="hljs-keyword">if</span> email.match(<span class="hljs-regexp">/\w+@itsrio.org/</span>) <span class="hljs-keyword">or</span> email.match(<span class="hljs-regexp">/gcravista@gmail.com/</span>)
+                                        firebase.auth().signInWithEmailAndPassword(email,(<span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'input_login_password'</span>).value)).<span class="hljs-keyword">then</span>(onLogin).<span class="hljs-keyword">catch</span>(onErr)
+                                <span class="hljs-keyword">else</span>
+                                        onErr(<span class="hljs-keyword">new</span> Error(<span class="hljs-string">"Conta de email não permitida"</span>))
+                        <span class="hljs-keyword">else</span>
+                                onErr <span class="hljs-keyword">new</span> Error <span class="hljs-string">"User already logged"</span></pre></div></div>
             
         </li>
         
@@ -346,19 +361,18 @@ Envie um email resetando a senha</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-18">&#182;</a>
               </div>
-              <p>Permitido apenas para @itsrio.org e o desenvolvedor</p>
+              <h3 id="cadastro">Cadastro</h3>
+<ul>
+<li>realizado com o firebase</li>
+<li>requer email e senha independentes</li>
+<li>Os únicos autorizados são aqueles com domínio @itsrio.org e o desenvolvedor</li>
+<li>Assim que autorizar, o usuário é notificado que foi enviado um email de confirmação e o usuário entra no sistema</li>
+</ul>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                        <span class="hljs-keyword">if</span> email.match(<span class="hljs-regexp">/\w+@itsrio.org/</span>) <span class="hljs-keyword">or</span> email.match(<span class="hljs-regexp">/gcravista@gmail.com/</span>)
-                                pwd = randomPassword(<span class="hljs-number">16</span>)
-                                
-                                firebase.auth().createUserWithEmailAndPassword(email, pwd).<span class="hljs-keyword">then</span>(onSendEmailVerify).<span class="hljs-keyword">catch</span>(onErr)
-                                
-                        <span class="hljs-keyword">else</span>
-                               onErr(<span class="hljs-keyword">new</span> Error(<span class="hljs-string">"Conta de email não permitida"</span>)) 
-                <span class="hljs-keyword">else</span>
-                        onLoginOrCreateErr()</pre></div></div>
+            <div class="content"><div class='highlight'><pre>                $rootScope.createUserWithEmailAndPassword = <span class="hljs-function">-&gt;</span>
+                        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> firebase.auth().currentUser</pre></div></div>
             
         </li>
         
@@ -369,16 +383,11 @@ Envie um email resetando a senha</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-19">&#182;</a>
               </div>
-              <p>Resete a senha
-Antes de tudo enviamos
-uma requisição por email
-para executar $rootScope.confirmResetPassword</p>
+              <p>check email domain</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        $rootScope.sendPasswordResetEmail = <span class="hljs-function">-&gt;</span>
-                email = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'reset_login_email'</span>).value
-                firebase.auth().sendPasswordResetEmail(email).<span class="hljs-keyword">then</span>(onResetPasswordSendEmail).<span class="hljs-keyword">catch</span>(onErr)</pre></div></div>
+            <div class="content"><div class='highlight'><pre>                                email = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'input_signup_email'</span>).value</pre></div></div>
             
         </li>
         
@@ -389,15 +398,18 @@ para executar $rootScope.confirmResetPassword</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-20">&#182;</a>
               </div>
-              <p>Quando receber um email de resetar a senha e clicar ou copiar e colar
-o endereço de confirmação, o cliente recebe um oobCode que deve ser
-acompanhado da chave api do aplicatvo</p>
+              <p>Permitido apenas para @itsrio.org e o desenvolvedor</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        $rootScope.confirmResetPassword = <span class="hljs-function">-&gt;</span>
-                query = $location.search(<span class="hljs-string">'mode'</span>, <span class="hljs-string">'oobCode'</span>, <span class="hljs-string">'apiKey'</span>)
-                $http(method: <span class="hljs-string">'GET'</span>,url: <span class="hljs-string">'/config'</span>).<span class="hljs-keyword">then</span>(onConfirmResetPassword).<span class="hljs-keyword">catch</span>(onErr)</pre></div></div>
+            <div class="content"><div class='highlight'><pre>                                <span class="hljs-keyword">if</span> email.match(<span class="hljs-regexp">/\w+@itsrio.org/</span>) <span class="hljs-keyword">or</span> email.match(<span class="hljs-regexp">/gcravista@gmail.com/</span>)
+                                        pwd = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'input_signup_senha'</span>).value
+                                        firebase.auth().createUserWithEmailAndPassword(email, pwd).<span class="hljs-keyword">then</span>(onSendEmailVerify).<span class="hljs-keyword">catch</span>(onErr)
+                                        
+                                <span class="hljs-keyword">else</span>
+                                       onErr(<span class="hljs-keyword">new</span> Error(<span class="hljs-string">"Conta de email não permitida"</span>)) 
+                        <span class="hljs-keyword">else</span>
+                                onLoginOrCreateErr()</pre></div></div>
             
         </li>
         
@@ -408,11 +420,17 @@ acompanhado da chave api do aplicatvo</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-21">&#182;</a>
               </div>
-              <p>callback para o logout</p>
+              <h3 id="resete-a-senha">Resete a senha</h3>
+<ul>
+<li>realizado com o firebase</li>
+<li>enviamos  uma requisição por email para executar posteriormente $rootScope.confirmResetPassword</li>
+</ul>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        $rootScope.logout = <span class="hljs-function">-&gt;</span> firebase.auth().signOut().<span class="hljs-keyword">then</span>(onSignout).<span class="hljs-keyword">catch</span>(onErr)</pre></div></div>
+            <div class="content"><div class='highlight'><pre>                $rootScope.sendPasswordResetEmail = <span class="hljs-function">-&gt;</span>
+                        email = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'reset_login_email'</span>).value
+                        firebase.auth().sendPasswordResetEmail(email).<span class="hljs-keyword">then</span>(onResetPasswordSendEmail).<span class="hljs-keyword">catch</span>(onErr)</pre></div></div>
             
         </li>
         
@@ -423,18 +441,16 @@ acompanhado da chave api do aplicatvo</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-22">&#182;</a>
               </div>
-              <p>Para o menu funcionar corretamente com o bootstrap
-Vamos adicionar as interações</p>
+              <p>Quando receber um email de resetar a senha e clicar ou copiar e colar
+o endereço de confirmação, o cliente recebe um oobCode que deve ser
+acompanhado da chave api do aplicatvo</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        $rootScope.onDropdownmenu = <span class="hljs-function"><span class="hljs-params">(what)</span>-&gt;</span>                     
-                <span class="hljs-built_in">document</span>.getElementById(what).classList.add(<span class="hljs-string">'open'</span>)
-                <span class="hljs-built_in">document</span>.getElementById(what).setAttribute(<span class="hljs-string">'aria-expanded'</span>, <span class="hljs-string">'true'</span>)
-
-        $rootScope.onDropupmenu = <span class="hljs-function"><span class="hljs-params">(what)</span>-&gt;</span>
-                <span class="hljs-built_in">document</span>.getElementById(what).classList.remove(<span class="hljs-string">'open'</span>)
-                <span class="hljs-built_in">document</span>.getElementById(what).setAttribute(<span class="hljs-string">'aria-expanded'</span>, <span class="hljs-string">'false'</span>)</pre></div></div>
+            <div class="content"><div class='highlight'><pre>                $rootScope.confirmResetPassword = <span class="hljs-function">-&gt;</span>
+                        onGetConfig (config) -&gt;
+                                query = $location.search(<span class="hljs-string">'mode'</span>, <span class="hljs-string">'oobCode'</span>, <span class="hljs-string">'apiKey'</span>)
+                                <span class="hljs-keyword">if</span> query.apiKey <span class="hljs-keyword">is</span> config.apiKey</pre></div></div>
             
         </li>
         
@@ -445,33 +461,14 @@ Vamos adicionar as interações</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-23">&#182;</a>
               </div>
-              <p>Dados typeform</p>
+              <p>Checar se os emails estão iguais</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        $rootScope.typeformData = <span class="hljs-literal">null</span>
-                
-        $rootScope.$<span class="hljs-literal">on</span> <span class="hljs-string">'$routeChangeSuccess'</span>, <span class="hljs-function"><span class="hljs-params">(event, next, current)</span> -&gt;</span>
-                event.preventDefault();
-                <span class="hljs-built_in">console</span>.log $location.url()                             
-                
-        $rootScope.onNovo = <span class="hljs-function"><span class="hljs-params">(ref, id_group, groups...)</span> -&gt;</span>
-                o = {}
-                <span class="hljs-keyword">try</span>
-                        <span class="hljs-keyword">for</span> e <span class="hljs-keyword">in</span> groups
-                                <span class="hljs-keyword">if</span> e <span class="hljs-keyword">isnt</span> <span class="hljs-string">'tags'</span>
-                                        v = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">"input_typeform_<span class="hljs-subst">#{e}</span>"</span>).value
-                                        o[e] = v
-                                <span class="hljs-keyword">else</span>
-                                        _v = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">"input_typeform_<span class="hljs-subst">#{e}</span>"</span>).value
-                                        v = _v.split(<span class="hljs-string">" "</span>)
-                                        o[e] = v
-                        user = firebase.auth().currentUser
-                        o.owner = user.uid
-                        firebase.database().ref(<span class="hljs-string">"<span class="hljs-subst">#{ref}</span>/"</span>).set(obj).<span class="hljs-keyword">catch</span>(onErr)
-                        onReload()
-                <span class="hljs-keyword">catch</span> e
-                        onErr e</pre></div></div>
+            <div class="content"><div class='highlight'><pre>                                        b = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'reset_login_password'</span>).value <span class="hljs-keyword">is</span> <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'reset_login_password_confirm'</span>).value
+
+                                        <span class="hljs-keyword">if</span> b
+                                                user = firebase.auth().currentUser</pre></div></div>
             
         </li>
         
@@ -482,19 +479,18 @@ Vamos adicionar as interações</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-24">&#182;</a>
               </div>
-              <p>Fake listeners para atualizar
-os formulários typeform
-em rotas específicas como</p>
+              <p>Quando a verificação do código de ação for possível
+Aplique a atualização da senha </p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-function">        <span class="hljs-title">__onLoadForm__</span> = <span class="hljs-params">(url)</span> -&gt;</span>
-                $rootScope.onLoading = <span class="hljs-literal">true</span>
-                query = [url+<span class="hljs-string">"?"</span>]
-                uuid = $location.url().split(<span class="hljs-string">'/formularios/'</span>)[<span class="hljs-number">1</span>].split(<span class="hljs-string">'/'</span>)[<span class="hljs-number">0</span>]
-                query.push <span class="hljs-string">"uuid=<span class="hljs-subst">#{uuid}</span>"</span>
-                query.push <span class="hljs-string">"<span class="hljs-subst">#{k}</span>=<span class="hljs-subst">#{v}</span>"</span> <span class="hljs-keyword">for</span> k,v <span class="hljs-keyword">of</span> {completed:<span class="hljs-literal">true</span>, limit:<span class="hljs-number">10</span>}
-                query.join(<span class="hljs-string">'&amp;'</span>)</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-function">                                                <span class="hljs-title">onApply</span> = -&gt;</span>
+<span class="hljs-function">                                                        <span class="hljs-title">_onApply</span> = -&gt;</span>
+                                                                d.save(<span class="hljs-string">'success'</span>, <span class="hljs-string">"Senha atualizada com sucesso"</span>)
+                                                                d.show()
+                                                                
+                                                        pwd  = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'reset_login_password_confirm'</span>).value
+                                                        user.updatePassword(pwd).<span class="hljs-keyword">then</span>(_onApply).<span class="hljs-keyword">catch</span> onErr</pre></div></div>
             
         </li>
         
@@ -505,31 +501,13 @@ em rotas específicas como</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-25">&#182;</a>
               </div>
-              <ul>
-<li>/formularios/:uuid/:action</li>
-</ul>
+              <p>Verifique o código oob e depois resete a senha e notifique o usuário</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span>  $location.url().match <span class="hljs-regexp">/^\/formularios\/\w+\/\w+$/</span>
-                _url = __onLoadForm__(<span class="hljs-string">"/typeform/data-api"</span>)
-                <span class="hljs-built_in">console</span>.log _url
-                $rootScope.onLoading = <span class="hljs-literal">true</span>
-                $rootScope.currentForm  = $location.url().split(<span class="hljs-string">'/formularios/'</span>)[<span class="hljs-number">1</span>].split(<span class="hljs-string">'/'</span>)[<span class="hljs-number">0</span>]
-                firebase.database().ref(<span class="hljs-string">'formularios/'</span>).once <span class="hljs-string">'value'</span>, <span class="hljs-function"><span class="hljs-params">(snapshot)</span> -&gt;</span>
-                        values = snapshot.val()
-                        <span class="hljs-keyword">for</span> val <span class="hljs-keyword">in</span> values
-                                <span class="hljs-keyword">if</span> val.uuid <span class="hljs-keyword">is</span> $rootScope.currentForm
-                                        $rootScope.currentFormUrl = <span class="hljs-string">"https://<span class="hljs-subst">#{val.base_url}</span>/<span class="hljs-subst">#{val.uuid}</span>"</span>
-
-                                        
-                        $http({
-                                method: <span class="hljs-string">'GET'</span>,
-                                url: _url
-                        }).<span class="hljs-keyword">then</span> (response) -&gt;
-                                $rootScope.typeformData = response.data
-                                user = firebase.auth().currentUser.uid
-                                firebase.database().ref(<span class="hljs-string">"users/<span class="hljs-subst">#{user}</span>/currentForm"</span>).set(response.data).<span class="hljs-keyword">then</span>(<span class="hljs-function">-&gt;</span> $rootScope.onLoading = <span class="hljs-literal">false</span>).<span class="hljs-keyword">catch</span>(onErr)</pre></div></div>
+            <div class="content"><div class='highlight'><pre>                                                firebase.auth().applyActionCode(query.oobCode).<span class="hljs-keyword">then</span>(onApply).<span class="hljs-keyword">catch</span>(onErr)
+                                        <span class="hljs-keyword">else</span>
+                                                onErr <span class="hljs-keyword">new</span> Error <span class="hljs-string">'Senhas não coincidem'</span></pre></div></div>
             
         </li>
         
@@ -540,22 +518,11 @@ em rotas específicas como</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-26">&#182;</a>
               </div>
-              <ul>
-<li>/formularios/:uuid/:action/:token</li>
-</ul>
+              <p>callback para o logout</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">if</span>  $location.url().match <span class="hljs-regexp">/^\/formularios\/\w+\/\w+\/[a-zA-Z0-9]+$/</span>
-                user = firebase.auth().currentUser.uid
-                firebase.database().ref(<span class="hljs-string">"users/<span class="hljs-subst">#{user}</span>/currentForm"</span>).once <span class="hljs-string">'value'</span>, <span class="hljs-function"><span class="hljs-params">(snapshot)</span> -&gt;</span>
-                        $rootScope.typeformData = snapshow.val()
-                        token = $location.url().split(<span class="hljs-string">'/formularios/'</span>)[<span class="hljs-number">1</span>].split(<span class="hljs-string">'/'</span>)[<span class="hljs-number">1</span>].split(<span class="hljs-string">'/'</span>)[<span class="hljs-number">1</span>]
-                        <span class="hljs-keyword">for</span> i,e <span class="hljs-keyword">of</span> response.data.responses
-                                <span class="hljs-keyword">if</span>  e.token <span class="hljs-keyword">is</span> token
-                                        $rootScope.onLoading = <span class="hljs-literal">false</span>
-                                        $rootScope.currentToken = e.token
-                                        <span class="hljs-built_in">console</span>.log e</pre></div></div>
+            <div class="content"><div class='highlight'><pre>                $rootScope.logout = <span class="hljs-function">-&gt;</span></pre></div></div>
             
         </li>
         
@@ -566,11 +533,60 @@ em rotas específicas como</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-27">&#182;</a>
               </div>
-              <p>Registre o controlador</p>
+              <p>É necessário limpar parte da base de dados que
+memorizavam qual é o formulário atual de cada usuário</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>app.controller <span class="hljs-string">"AuthCtrl"</span>, [<span class="hljs-string">'$rootScope'</span>, <span class="hljs-string">'$http'</span>, <span class="hljs-string">'$location'</span>, <span class="hljs-string">'$window'</span>, <span class="hljs-string">'$route'</span>, onAuth]</pre></div></div>
+            <div class="content"><div class='highlight'><pre>                        user = firebase.auth().currentUser
+                        d.<span class="hljs-keyword">delete</span>()
+                        firebase.database().ref(<span class="hljs-string">"users/<span class="hljs-subst">#{user.uid}</span>/currentForm"</span>).remove().<span class="hljs-keyword">then</span>( <span class="hljs-function">-&gt;</span>
+                                firebase.auth().signOut().<span class="hljs-keyword">then</span>(onSignout).<span class="hljs-keyword">catch</span>(onErr)
+                        ).<span class="hljs-keyword">catch</span>(onErr)</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-28">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-28">&#182;</a>
+              </div>
+              <p>Esta função vincula a autenticação por email e senha com a autenticação por oauth
+<a href="https://firebase.google.com/docs/auth/web/account-linking">https://firebase.google.com/docs/auth/web/account-linking</a></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>                $rootScope.linkAccount = <span class="hljs-function">-&gt;</span>
+                        <span class="hljs-keyword">if</span> firebase.auth().currentUser
+                                provider = <span class="hljs-keyword">new</span> firebase.auth.GoogleAuthProvider()
+<span class="hljs-function">                                <span class="hljs-title">onLinkProvider</span> = <span class="hljs-params">(result)</span> -&gt;</span>
+                                        credential = result.credential;
+                                        user = result.user;
+                                        firebase.auth().currentUser.linkWithPopup(provider).<span class="hljs-keyword">then</span>(onLinkProvider).<span class="hljs-keyword">catch</span>(onErr)</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-29">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-29">&#182;</a>
+              </div>
+              <p>Para o menu funcionar corretamente com o bootstrap
+Vamos adicionar as interações</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>                $rootScope.onDropdownmenu = <span class="hljs-function"><span class="hljs-params">(what)</span>-&gt;</span>                     
+                        <span class="hljs-built_in">document</span>.getElementById(what).classList.add(<span class="hljs-string">'open'</span>)
+                        <span class="hljs-built_in">document</span>.getElementById(what).setAttribute(<span class="hljs-string">'aria-expanded'</span>, <span class="hljs-string">'true'</span>)
+        
+                $rootScope.onDropupmenu = <span class="hljs-function"><span class="hljs-params">(what)</span>-&gt;</span>
+                        <span class="hljs-built_in">document</span>.getElementById(what).classList.remove(<span class="hljs-string">'open'</span>)
+                        <span class="hljs-built_in">document</span>.getElementById(what).setAttribute(<span class="hljs-string">'aria-expanded'</span>, <span class="hljs-string">'false'</span>)</pre></div></div>
             
         </li>
         

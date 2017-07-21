@@ -1,3 +1,4 @@
-AppManager::index = -> @app.get '/', (req, res) -> res.render 'index'
+AppManager::index = ->
+        @app.get '/', (req, res) -> res.render 'index'
 
         

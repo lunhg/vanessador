@@ -30,7 +30,9 @@
               
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-title">Run</span> = <span class="hljs-params">($rootScope, $http, $location, $route, $<span class="hljs-built_in">window</span>)</span> -&gt;</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-title">fetchRun</span> = -&gt;</span>
+        <span class="hljs-built_in">console</span>.log <span class="hljs-string">"Iniciado o vanessador..."</span>
+<span class="hljs-function">        <span class="hljs-title">Run</span> = <span class="hljs-params">($rootScope, $http, $location, $route, $<span class="hljs-built_in">window</span>)</span> -&gt;</span></pre></div></div>
             
         </li>
         
@@ -45,12 +47,12 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        $rootScope.user = <span class="hljs-literal">null</span>
-        $rootScope.popup = <span class="hljs-literal">null</span>
-        $rootScope.typeformData = <span class="hljs-literal">null</span>
-        $rootScope.onLoading = <span class="hljs-literal">false</span>
-        $rootScope.nextRoute = <span class="hljs-literal">null</span>
-        $rootScope.registeredForms = <span class="hljs-literal">null</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>                $rootScope.user = <span class="hljs-literal">null</span>
+                $rootScope.popup = <span class="hljs-literal">null</span>
+                $rootScope.typeformData = <span class="hljs-literal">null</span>
+                $rootScope.onLoading = <span class="hljs-literal">false</span>
+                $rootScope.registeredForms = <span class="hljs-literal">null</span>
+                $rootScope.dialogShown = <span class="hljs-literal">false</span></pre></div></div>
             
         </li>
         
@@ -67,13 +69,20 @@ atualizar corretamente as páginas
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        history = [];
-
-        $rootScope.$<span class="hljs-literal">on</span> <span class="hljs-string">'$routeChangeSuccess'</span>, <span class="hljs-function">-&gt;</span> history.push($location.$$path);
-                
-        $rootScope.back = <span class="hljs-function">-&gt;</span>
-                prevUrl = <span class="hljs-keyword">if</span> history.length &gt; <span class="hljs-number">1</span> <span class="hljs-keyword">then</span> history.splice(<span class="hljs-number">-2</span>)[<span class="hljs-number">0</span>] <span class="hljs-keyword">else</span> <span class="hljs-string">"/"</span>
-                $location.path(prevUrl)</pre></div></div>
+            <div class="content"><div class='highlight'><pre>                history = [];
+        
+                $rootScope.$<span class="hljs-literal">on</span> <span class="hljs-string">'$routeChangeSuccess'</span>, <span class="hljs-function"><span class="hljs-params">(event, next, current)</span> -&gt;</span>
+                        event.preventDefault();
+                        <span class="hljs-built_in">console</span>.log $location.url()   
+                        history.push($location.$$path);
+<span class="hljs-function">                
+                        
+                <span class="hljs-title">back</span> = -&gt;</span>
+                        prevUrl = <span class="hljs-keyword">if</span> history.length &gt; <span class="hljs-number">1</span> <span class="hljs-keyword">then</span> history.splice(<span class="hljs-number">-2</span>)[<span class="hljs-number">0</span>] <span class="hljs-keyword">else</span> <span class="hljs-string">"/"</span>
+                        $location.path(prevUrl)
+                        
+                $rootScope.onLoading = <span class="hljs-literal">true</span>
+                $rootScope.defaultPhotoURL = <span class="hljs-string">'/assets/images/vanessadora.png'</span></pre></div></div>
             
         </li>
         
@@ -88,11 +97,11 @@ atualizar corretamente as páginas
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        $http({
-                method: <span class="hljs-string">'GET'</span>,
-                url: <span class="hljs-string">'/config'</span>
-        }).<span class="hljs-keyword">then</span> (config) -&gt;
-                <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> firebase.apps.length <span class="hljs-keyword">then</span> firebase.initializeApp config.data</pre></div></div>
+            <div class="content"><div class='highlight'><pre>                $http({
+                        method: <span class="hljs-string">'GET'</span>,
+                        url: <span class="hljs-string">'/config'</span>
+                }).<span class="hljs-keyword">then</span> (config) -&gt;
+                        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> firebase.apps.length <span class="hljs-keyword">then</span> firebase.initializeApp config.data</pre></div></div>
             
         </li>
         
@@ -109,12 +118,9 @@ alguns elementos</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                firebase.auth().onAuthStateChanged (user) -&gt;
-                        <span class="hljs-keyword">if</span> user
-                                $rootScope.user = user
-                                $rootScope.popup =
-                                        msg: <span class="hljs-string">"Bem vindo <span class="hljs-subst">#{user.displayName}</span>"</span>
-                                        type: <span class="hljs-string">'success'</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>                        firebase.auth().onAuthStateChanged (user) -&gt;
+                                <span class="hljs-keyword">if</span> user
+                                        $rootScope.user = user</pre></div></div>
             
         </li>
         
@@ -125,13 +131,19 @@ alguns elementos</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
-              <p>Envie um email de verificação se o usuário
-ainda não foi verificado, no caso de cadastro
-por email e senha</p>
+              <p>Notifique o usuário de qq mudança importante</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                                <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> user.emailVerified <span class="hljs-keyword">then</span> user.sendEmailVerification()</pre></div></div>
+            <div class="content"><div class='highlight'><pre>                                        firebase.database()
+                                                .ref(<span class="hljs-string">"/users/<span class="hljs-subst">#{user.uid}</span>/popup"</span>)
+                                                .once <span class="hljs-string">'value'</span>, <span class="hljs-function"><span class="hljs-params">(snapshot)</span> -&gt;</span>
+                                                        <span class="hljs-keyword">unless</span> $rootScope.dialogShown
+                                                                $rootScope.dialogContent = snapshot.val()
+                                                        $rootScope.dialogShown = <span class="hljs-keyword">not</span> $rootScope.dialogShown 
+                                
+                
+                        $rootScope.onLoading = <span class="hljs-literal">false</span></pre></div></div>
             
         </li>
         
@@ -142,54 +154,12 @@ por email e senha</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
-              <p>atualize a base de dados
-conforme ela for populada</p>
-<ul>
-<li>/formularios/:uuid/:action</li>
-</ul>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>                firebase.database().ref(<span class="hljs-string">'formularios/'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'value'</span>, <span class="hljs-function"><span class="hljs-params">(snapshot)</span> -&gt;</span>
-                        $rootScope.registeredForms = snapshot.val()</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-8">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-8">&#182;</a>
-              </div>
-              <ul>
-<li>/formularios/:uuid/:action/:token</li>
-</ul>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>                firebase.database().ref(<span class="hljs-string">'formularios/current'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'value'</span>, <span class="hljs-function"><span class="hljs-params">(snapshot)</span> -&gt;</span>
-                        $rootScope.currentForm = snapshot.val()</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-9">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-9">&#182;</a>
-              </div>
               <p>Inicie o aplicativo</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        $rootScope.nextRoute = $rootScope.back() <span class="hljs-keyword">or</span> <span class="hljs-string">"/login"</span>
-        $location.path($rootScope.nextRoute)
-        
-        $route.reload()
-
-app.run([<span class="hljs-string">'$rootScope'</span>, <span class="hljs-string">'$http'</span>, <span class="hljs-string">'$location'</span>, <span class="hljs-string">'$route'</span>, <span class="hljs-string">'$window'</span>, Run])</pre></div></div>
+            <div class="content"><div class='highlight'><pre>                        nextRoute = back() <span class="hljs-keyword">or</span> <span class="hljs-string">"/login"</span>
+                        $location.path($rootScope.nextRoute)</pre></div></div>
             
         </li>
         
