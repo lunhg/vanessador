@@ -6,7 +6,7 @@ Vanessador  um aplicativo firebase+typeform+express.js para gerenciar formulári
 
 ## Debian
 
-- libsecret
+libsecret
 
     sudo apt-get install install libsecret-1-dev
     
