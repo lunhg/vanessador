@@ -1,2 +1,2 @@
 # Aplicativo client
-app = angular.module("vanessador", ["ngRoute", "ngResource"])
+app = angular.module("vanessador", ["ngRoute", "ngResource", "toastr"])

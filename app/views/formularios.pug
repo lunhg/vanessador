@@ -1,5 +1,8 @@
 section.centralize-area(ng-controller="TypeformCtrl")
-  div(ng-show="typeformData")
+  div
+    br
+    br
+    br
     h2 Inspecione um formulário
     br
     br
@@ -13,18 +16,21 @@ section.centralize-area(ng-controller="TypeformCtrl")
     table.table.table-striped.table-hover(ng-show="registeredForms !== null")
       thead
         tr
-          th #
-          th Nome
-          th Proprietários
           th uuid
-          th tags
+          th Nome
+          th Tags
+          th Proprietários
+          th Ações
       tbody
         tr(ng-repeat="(k,v) in registeredForms") 
           td {{ k }}
           td {{ v.nome }}
-          td {{ v.owners.join(', ') }}
           td
-            p {{ v.uuid }} 
-            a.btn.btn-default(href="/#!/formularios/{{ v.uuid }}/stats") Estatisticas
-            a.btn.btn-default(href="/#!/formularios/{{ v.uuid }}/questions") Questões e respostas
-          td {{ v.tags.join(', ') }}
+            p(ng-repeat="(i, e) in registeredForms[k].tags")
+              a(href="/#!/formularios/tags/{{ e }}") {{ v.tags.join(', ') }}
+          td 
+            a(href="/#!/users/{{ v.owner }}/profile") {{ v.owner }}
+          td
+            a.btn.btn-default(href="/#!/formularios/{{ k }}/stats") Estatisticas
+            a.btn.btn-default(href="/#!/formularios/{{ k }}/questions") Questões e respostas
+            a.btn.btn-default(href="/#!/formularios/{{ k }}/delete") Deletar

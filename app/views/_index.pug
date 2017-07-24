@@ -2,16 +2,15 @@ section.centralize-area
   br
   br
   br
-  div(ng-show="onLoading")
+  div(ng-controller="AuthCtrl" ng-show="onLoading")
     br
     br
     br
     br
     br
     img(src="/assets/images/loading.gif")
-  div(ng-show="dialogShown")
-    div(modal-dialog width='10%' height='90%')
-  div(ng-show="!onLoading")
+
+  div(ng-controller="AuthCtrl" ng-show="!onLoading")
     h1 Gerencie cursos
     br
     br

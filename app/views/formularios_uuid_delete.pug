@@ -1,0 +1,21 @@
+section.centralize-area(ng-controller="TypeformCtrl")
+  br
+  br
+  br
+  h1 Você quer mesmo deletar o registro do formulário {{ currentForm }} ?
+  br
+  br
+  br
+  form 
+    fieldset 
+    - var form = {'input_typeform_uuid':{'type':'text', 'placeholder':'uuid', 'label':'Confirme o UUID do formulário'}}
+    - for(var key in form)
+      - var val = form[key]
+      div.form-group
+        label.control-label(for=""+key)= val.label
+          br
+          div
+            input.form-control(type=""+val.type id=""+key placeholder=""+val.placeholder)
+
+    a.btn.btn-danger(ng-click="onDelete('input_typeform', 'uuid')") Deletar
+  

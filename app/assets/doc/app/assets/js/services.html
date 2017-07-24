@@ -53,32 +53,34 @@ deve ser atualizada</p>
         p = loader.children[<span class="hljs-number">9</span>]
         p.innerHTML = <span class="hljs-string">"Construindo serviços..."</span>
         services =
-                dialogService:
-                        save: <span class="hljs-function"><span class="hljs-params">(type, msg)</span> -&gt;</span>
-                                <span class="hljs-keyword">if</span> firebase.auth().currentUser
-                                        userid = firebase.auth().currentUser.uid
-                                        firebase.database().ref(<span class="hljs-string">"users/<span class="hljs-subst">#{userid}</span>/popup"</span>).set({type:type, msg:msg})
-                        delete: <span class="hljs-function">-&gt;</span>
-                                <span class="hljs-keyword">if</span> firebase.auth().currentUser
-                                        userid = firebase.auth().currentUser.uid
-                                        firebase.database().ref(<span class="hljs-string">"users/<span class="hljs-subst">#{userid}</span>/popup"</span>).remove()
+                        
+                formularioService:
 
+                        getAll: <span class="hljs-function"><span class="hljs-params">(fn)</span> -&gt;</span> firebase.database().ref(<span class="hljs-string">'formularios/'</span>).once <span class="hljs-string">'value'</span>, <span class="hljs-function"><span class="hljs-params">(snapshot)</span> -&gt;</span> fn snapshot.val()
 
-                formulario:
+                        get: <span class="hljs-function"><span class="hljs-params">(uuid, fn)</span> -&gt;</span>
+                                firebase.database().ref(<span class="hljs-string">"formularios/<span class="hljs-subst">#{uuid}</span>"</span>).once <span class="hljs-string">'value'</span>, <span class="hljs-function"><span class="hljs-params">(snapshot)</span> -&gt;</span>
+                                        fn snapshot.val()
 
-                        novo: <span class="hljs-function"><span class="hljs-params">(id_group, groups)</span> -&gt;</span>
+                        delete: <span class="hljs-function"><span class="hljs-params">(uuid)</span> -&gt;</span>
+<span class="hljs-function">                                <span class="hljs-title">onDel</span> = -&gt;</span> toastr.warning(<span class="hljs-string">'Atenção'</span>, <span class="hljs-string">"formulário <span class="hljs-subst">#{uuid}</span> deletado"</span>)
+                                firebase.database().ref(<span class="hljs-string">"formularios/<span class="hljs-subst">#{uuid}</span>"</span>).set(<span class="hljs-literal">null</span>).<span class="hljs-keyword">then</span>(onDel)
+
+                        novo: <span class="hljs-function"><span class="hljs-params">(id_group, groups, toaster)</span> -&gt;</span>
                                 o = {}
                                 <span class="hljs-keyword">for</span> e <span class="hljs-keyword">in</span> groups
-                                        <span class="hljs-keyword">if</span> e <span class="hljs-keyword">isnt</span> <span class="hljs-string">'tags'</span>
-                                                v = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">"input_typeform_<span class="hljs-subst">#{e}</span>"</span>).value
-                                                o[e] = v
-                                        <span class="hljs-keyword">else</span>
-                                                _v = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">"input_typeform_<span class="hljs-subst">#{e}</span>"</span>).value
-                                                v = _v.split(<span class="hljs-string">" "</span>)
-                                                o[e] = v
+                                        <span class="hljs-keyword">if</span> e <span class="hljs-keyword">isnt</span> <span class="hljs-string">'uuid'</span>
+                                                <span class="hljs-keyword">if</span> e <span class="hljs-keyword">isnt</span> <span class="hljs-string">'tags'</span>
+                                                        o[e] = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">"<span class="hljs-subst">#{id_group}</span>_<span class="hljs-subst">#{e}</span>"</span>).value
+                                                <span class="hljs-keyword">else</span>
+                                                        o[e] = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">"<span class="hljs-subst">#{id_group}</span>_<span class="hljs-subst">#{e}</span>"</span>).value.split(<span class="hljs-string">" "</span>)
+
+
                                 user = firebase.auth().currentUser
                                 o.owner = user.uid
-                                firebase.database().ref(<span class="hljs-string">"formularios/"</span>).set(obj)</pre></div></div>
+                                uuid = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">"<span class="hljs-subst">#{id_group}</span>_uuid"</span>).value
+<span class="hljs-function">                                <span class="hljs-title">onSet</span> = -&gt;</span> toastr.success(<span class="hljs-string">'Sucesso'</span>, <span class="hljs-string">"formulário <span class="hljs-subst">#{uuid}</span> registrado"</span>)
+                                firebase.database().ref(<span class="hljs-string">"formularios/<span class="hljs-subst">#{uuid}</span>"</span>).set(o).<span class="hljs-keyword">then</span>(onSet)</pre></div></div>
             
         </li>
         

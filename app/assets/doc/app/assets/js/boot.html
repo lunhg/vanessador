@@ -34,7 +34,7 @@
 
         fetchConfig().<span class="hljs-keyword">then</span>(fetchServices)
                 .<span class="hljs-keyword">then</span> (services) -&gt;
-                        app.factory(<span class="hljs-string">"<span class="hljs-subst">#{service}</span>"</span>, <span class="hljs-function">-&gt;</span> v) <span class="hljs-keyword">for</span> service, v <span class="hljs-keyword">of</span> services
+                        app.service(<span class="hljs-string">"<span class="hljs-subst">#{service}</span>"</span>, <span class="hljs-function">-&gt;</span> v) <span class="hljs-keyword">for</span> service, v <span class="hljs-keyword">of</span> services
                 .<span class="hljs-keyword">then</span>(fetchAuthCtrl)
                 .<span class="hljs-keyword">then</span> (AuthCtrl) -&gt;</pre></div></div>
             
@@ -51,7 +51,7 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                        app.controller <span class="hljs-string">"AuthCtrl"</span>, [<span class="hljs-string">'$rootScope'</span>,<span class="hljs-string">'$http'</span>,<span class="hljs-string">'$location'</span>,<span class="hljs-string">'$window'</span>,<span class="hljs-string">'$route'</span>, <span class="hljs-string">'dialogService'</span>, AuthCtrl]
+            <div class="content"><div class='highlight'><pre>                        app.controller <span class="hljs-string">"AuthCtrl"</span>, [<span class="hljs-string">'$rootScope'</span>,<span class="hljs-string">'$http'</span>,<span class="hljs-string">'$location'</span>,<span class="hljs-string">'$window'</span>, <span class="hljs-string">'$route'</span>, <span class="hljs-string">'toastr'</span>, AuthCtrl]
                 .<span class="hljs-keyword">then</span>(fetchTypeform)
                 .<span class="hljs-keyword">then</span> (TypeformCtrl) -&gt;</pre></div></div>
             
@@ -68,7 +68,7 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                        app.controller <span class="hljs-string">"TypeformCtrl"</span>, [<span class="hljs-string">'$rootScope'</span>,<span class="hljs-string">'$http'</span>,<span class="hljs-string">'$location'</span>,<span class="hljs-string">'$window'</span>,<span class="hljs-string">'dialog'</span>, <span class="hljs-string">'formularios'</span>, TypeformCtrl]              
+            <div class="content"><div class='highlight'><pre>                        app.controller <span class="hljs-string">"TypeformCtrl"</span>, [<span class="hljs-string">'$rootScope'</span>,<span class="hljs-string">'$http'</span>,<span class="hljs-string">'$location'</span>,<span class="hljs-string">'$window'</span>,<span class="hljs-string">'$controller'</span>, <span class="hljs-string">'toastr'</span>, <span class="hljs-string">'formularioService'</span>, TypeformCtrl]              
                 .<span class="hljs-keyword">then</span>(fetchRun)
                 .<span class="hljs-keyword">then</span> (Run) -&gt;
                         app.run([<span class="hljs-string">'$rootScope'</span>, <span class="hljs-string">'$http'</span>, <span class="hljs-string">'$location'</span>, <span class="hljs-string">'$route'</span>, <span class="hljs-string">'$window'</span>, Run])

@@ -2,15 +2,15 @@ document.addEventListener 'DOMContentLoaded', (event)->
 
         fetchConfig().then(fetchServices)
                 .then (services) ->
-                        app.factory("#{service}", -> v) for service, v of services
+                        app.service("#{service}", -> v) for service, v of services
                 .then(fetchAuthCtrl)
                 .then (AuthCtrl) ->
                         # Registre o controlador
-                        app.controller "AuthCtrl", ['$rootScope','$http','$location','$window','$route', 'dialogService', AuthCtrl]
+                        app.controller "AuthCtrl", ['$rootScope','$http','$location','$window', '$route', 'toastr', AuthCtrl]
                 .then(fetchTypeform)
                 .then (TypeformCtrl) ->
                         # Registre o controlador
-                        app.controller "TypeformCtrl", ['$rootScope','$http','$location','$window','dialog', 'formularios', TypeformCtrl]              
+                        app.controller "TypeformCtrl", ['$rootScope','$http','$location','$window','$controller', 'toastr', 'formularioService', TypeformCtrl]              
                 .then(fetchRun)
                 .then (Run) ->
                         app.run(['$rootScope', '$http', '$location', '$route', '$window', Run])

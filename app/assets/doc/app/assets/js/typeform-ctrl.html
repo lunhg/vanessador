@@ -49,7 +49,7 @@ deve ser atualizada</p>
             <div class="content"><div class='highlight'><pre>        loader = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'masterLoader'</span>)
         p = loader.children[<span class="hljs-number">9</span>]
         p.innerHTML = <span class="hljs-string">"Trabalhando no typeform..."</span>
-<span class="hljs-function">        <span class="hljs-title">TypeformCtrl</span> = <span class="hljs-params">($rootScope, $http, $location, $<span class="hljs-built_in">window</span>, formularios)</span>-&gt;</span></pre></div></div>
+<span class="hljs-function">        <span class="hljs-title">TypeformCtrl</span> = <span class="hljs-params">($rootScope, $http, $location, $<span class="hljs-built_in">window</span>, $controller, toastr, formularioService)</span>-&gt;</span></pre></div></div>
             
         </li>
         
@@ -70,7 +70,9 @@ checkout $rootScope.popup message and type</p>
             <div class="content"><div class='highlight'><pre><span class="hljs-function">                <span class="hljs-title">onErr</span>  = <span class="hljs-params">(err)</span> -&gt;</span>
                         <span class="hljs-built_in">console</span>.log err
                         $rootScope.nextRoute = <span class="hljs-string">'/'</span>
-                        user = firebase.auth().currentUser.uid</pre></div></div>
+                        $rootScope.dialogMessage =
+                                type: <span class="hljs-string">'danger'</span>
+                                text: <span class="hljs-string">"<span class="hljs-subst">#{err.code}</span>: <span class="hljs-subst">#{err.message}</span>"</span></pre></div></div>
             
         </li>
         
@@ -81,12 +83,18 @@ checkout $rootScope.popup message and type</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              <p>Apresente ao usuário o erro</p>
+              <p>Isso é necessário para reatualizar os dados</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                        user = firebase.auth().currentUser
-                        dialog.save(user, <span class="hljs-string">'danger'</span>, <span class="hljs-string">"<span class="hljs-subst">#{err.code}</span>: <span class="hljs-subst">#{err.message}</span>"</span>)</pre></div></div>
+            <div class="content"><div class='highlight'><pre>                        $<span class="hljs-built_in">window</span>.location.reload()
+<span class="hljs-function">
+                <span class="hljs-title">fetch</span> = -&gt;</span>
+                        query = [<span class="hljs-string">"/typeform/data-api?"</span>]
+                        $rootScope.currentForm = $location.url().split(<span class="hljs-string">'/formularios/'</span>)[<span class="hljs-number">1</span>].split(<span class="hljs-string">'/'</span>)[<span class="hljs-number">0</span>]
+                        query.push <span class="hljs-string">"uuid=<span class="hljs-subst">#{$rootScope.currentForm}</span>"</span>
+                        query.push <span class="hljs-string">"<span class="hljs-subst">#{k}</span>=<span class="hljs-subst">#{v}</span>"</span> <span class="hljs-keyword">for</span> k,v <span class="hljs-keyword">of</span> {completed:<span class="hljs-literal">true</span>, limit:<span class="hljs-number">10</span>}
+                        query.join(<span class="hljs-string">'&amp;'</span>)</pre></div></div>
             
         </li>
         
@@ -97,11 +105,28 @@ checkout $rootScope.popup message and type</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
-              <p>Isso é necessário para reatualizar os dados</p>
+              <p>Dados typeform</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                        $<span class="hljs-built_in">window</span>.location.reload()</pre></div></div>
+            <div class="content"><div class='highlight'><pre>                $rootScope.typeformData = <span class="hljs-literal">null</span>                          
+
+                $rootScope.onNovo = <span class="hljs-function"><span class="hljs-params">(id, groups...)</span> -&gt;</span>
+<span class="hljs-function">                        <span class="hljs-title">_onNovo</span> = -&gt;</span> $location.path(<span class="hljs-string">'/formularios'</span>)
+                        formularioService.novo(id, groups, toastr).<span class="hljs-keyword">then</span>(_onNovo).<span class="hljs-keyword">catch</span>(onErr)
+
+                $rootScope.onDelete = <span class="hljs-function"><span class="hljs-params">(id, name)</span> -&gt;</span>
+<span class="hljs-function">                        <span class="hljs-title">_onDel</span> = -&gt;</span>
+                                $rootScope.dialogMessage =
+                                        type: <span class="hljs-string">'success'</span>
+                                        text: <span class="hljs-string">"formulário deletado com sucesso"</span>
+                                $location.path(<span class="hljs-string">'/formularios'</span>)
+                        _uuid = $location.url().split(<span class="hljs-string">'/formularios/'</span>)[<span class="hljs-number">1</span>].split(<span class="hljs-string">'/'</span>)[<span class="hljs-number">0</span>]
+                        uuid = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">"<span class="hljs-subst">#{id}</span>_<span class="hljs-subst">#{name}</span>"</span>).value
+                        <span class="hljs-keyword">if</span> _uuid <span class="hljs-keyword">is</span> uuid
+                                formularioService.<span class="hljs-keyword">delete</span>(uuid, toastr).<span class="hljs-keyword">then</span>(_onDel).<span class="hljs-keyword">catch</span>(onErr)
+                        <span class="hljs-keyword">else</span>
+                                onErr <span class="hljs-keyword">new</span> Error(<span class="hljs-string">"uuid do formulário incorreto"</span>)</pre></div></div>
             
         </li>
         
@@ -112,18 +137,11 @@ checkout $rootScope.popup message and type</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
-              <p>Dados typeform</p>
+              <p>Fake listeners para atualizar
+os formulários typeform
+em rotas específicas como</p>
 
             </div>
-            
-            <div class="content"><div class='highlight'><pre>                $rootScope.typeformData = <span class="hljs-literal">null</span>                          
-
-                $rootScope.onNovo = <span class="hljs-function"><span class="hljs-params">(id, groups...)</span> -&gt;</span>
-                        f = <span class="hljs-keyword">new</span> formularios()
-<span class="hljs-function">                        <span class="hljs-title">_onNovo</span> = -&gt;</span>
-                                $location.path(<span class="hljs-string">'/formularios'</span>)
-                                $route.update()
-                        f.novo(id, groups).<span class="hljs-keyword">then</span>(_onNovo).<span class="hljs-keyword">catch</span>(onErr)</pre></div></div>
             
         </li>
         
@@ -133,29 +151,6 @@ checkout $rootScope.popup message and type</p>
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-7">&#182;</a>
-              </div>
-              <p>Fake listeners para atualizar
-os formulários typeform
-em rotas específicas como</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre><span class="hljs-function">                <span class="hljs-title">__onLoadForm__</span> = <span class="hljs-params">(url)</span> -&gt;</span>
-                        $rootScope.onLoading = <span class="hljs-literal">true</span>
-                        query = [url+<span class="hljs-string">"?"</span>]
-                        uuid = $location.url().split(<span class="hljs-string">'/formularios/'</span>)[<span class="hljs-number">1</span>].split(<span class="hljs-string">'/'</span>)[<span class="hljs-number">0</span>]
-                        query.push <span class="hljs-string">"uuid=<span class="hljs-subst">#{uuid}</span>"</span>
-                        query.push <span class="hljs-string">"<span class="hljs-subst">#{k}</span>=<span class="hljs-subst">#{v}</span>"</span> <span class="hljs-keyword">for</span> k,v <span class="hljs-keyword">of</span> {completed:<span class="hljs-literal">true</span>, limit:<span class="hljs-number">10</span>}
-                        query.join(<span class="hljs-string">'&amp;'</span>)</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-8">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
               <ul>
 <li>/formularios</li>
@@ -168,18 +163,49 @@ em rotas específicas como</p>
         </li>
         
         
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p>atualize a base de dados</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>                        $rootScope.onLoading = <span class="hljs-literal">true</span>
+                        formularioService.getAll (all) -&gt;
+                                <span class="hljs-built_in">console</span>.log all
+                                $rootScope.registeredForms  = all</pre></div></div>
+            
+        </li>
+        
+        
         <li id="section-9">
             <div class="annotation">
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
-              <p>atualize a base de dados</p>
+              <ul>
+<li>/formularios/:uuid/:action</li>
+</ul>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                        firebase.database().ref(<span class="hljs-string">'formularios/'</span>).once <span class="hljs-string">'value'</span>, <span class="hljs-function"><span class="hljs-params">(snapshot)</span> -&gt;</span>
-                                $rootScope.registeredForms = snapshot.val()</pre></div></div>
+            <div class="content"><div class='highlight'><pre>                <span class="hljs-keyword">if</span>  $location.url().match <span class="hljs-regexp">/^\/formularios\/\w+\/\w+$/</span>
+                        $rootScope.onLoading = <span class="hljs-literal">true</span>
+                        url = fetch()
+                        formularioService.get $rootScope.currentForm, <span class="hljs-function"><span class="hljs-params">(form)</span> -&gt;</span>
+                                $rootScope.currentFormUrl = <span class="hljs-string">"https://<span class="hljs-subst">#{form.base_url}</span>/<span class="hljs-subst">#{$rootScope.currentForm}</span>"</span>
+                                $http.get(url).<span class="hljs-keyword">then</span> (response) -&gt;
+                                        $rootScope.typeformData = response.data
+                                        $rootScope.onLoading = <span class="hljs-literal">false</span>
+                                        user = firebase.auth().currentUser.uid
+                                        firebase.database()
+                                                .ref(<span class="hljs-string">"users/<span class="hljs-subst">#{user}</span>/currentForm"</span>)
+                                                .set(response.data)
+                                                .<span class="hljs-keyword">catch</span>(onErr)</pre></div></div>
             
         </li>
         
@@ -189,41 +215,6 @@ em rotas específicas como</p>
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-10">&#182;</a>
-              </div>
-              <ul>
-<li>/formularios/:uuid/:action</li>
-</ul>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>                <span class="hljs-keyword">if</span>  $location.url().match <span class="hljs-regexp">/^\/formularios\/\w+\/\w+$/</span>
-                        _url = __onLoadForm__(<span class="hljs-string">"/typeform/data-api"</span>)
-                        <span class="hljs-built_in">console</span>.log _url
-                        $rootScope.onLoading = <span class="hljs-literal">true</span>
-                        $rootScope.currentForm  = $location.url().split(<span class="hljs-string">'/formularios/'</span>)[<span class="hljs-number">1</span>].split(<span class="hljs-string">'/'</span>)[<span class="hljs-number">0</span>]
-                        firebase.database().ref(<span class="hljs-string">'formularios/'</span>).once <span class="hljs-string">'value'</span>, <span class="hljs-function"><span class="hljs-params">(snapshot)</span> -&gt;</span>
-                                values = snapshot.val()
-                                <span class="hljs-keyword">for</span> val <span class="hljs-keyword">in</span> values
-                                        <span class="hljs-keyword">if</span> val.uuid <span class="hljs-keyword">is</span> $rootScope.currentForm
-                                                $rootScope.currentFormUrl = <span class="hljs-string">"https://<span class="hljs-subst">#{val.base_url}</span>/<span class="hljs-subst">#{val.uuid}</span>"</span>
-        
-
-                                $http({
-                                        method: <span class="hljs-string">'GET'</span>,
-                                        url: _url
-                                }).<span class="hljs-keyword">then</span> (response) -&gt;
-                                        $rootScope.typeformData = response.data
-                                        user = firebase.auth().currentUser.uid
-                                        firebase.database().ref(<span class="hljs-string">"users/<span class="hljs-subst">#{user}</span>/currentForm"</span>).set(response.data).<span class="hljs-keyword">then</span>(<span class="hljs-function">-&gt;</span> $rootScope.onLoading = <span class="hljs-literal">false</span>)</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-11">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
               <ul>
 <li>/formularios/:uuid/:action/:token</li>
@@ -243,6 +234,19 @@ em rotas específicas como</p>
                                 $rootScope.questions = snapshot.val().questions 
                                 <span class="hljs-built_in">console</span>.log $rootScope[e] <span class="hljs-keyword">for</span> e <span class="hljs-keyword">in</span> <span class="hljs-string">'answers questions'</span>.split(<span class="hljs-string">' '</span>)
                                 $rootScope.onLoading = <span class="hljs-literal">false</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <p>angular.extend this, $controller(‘AuthCtrl’, {$scope:$rootScope})</p>
+
+            </div>
             
         </li>
         

@@ -1,20 +1,29 @@
-section(ng-show="resetPassword")
+section.centralize-area(ng-controller="AuthCtrl" ng-show="resetPassword")
+  br
+  br
+  br
+  br
   h1 Insira sua nova senha
-  
-  div.navbar-left
-    form.form-horizontal
-      fieldset 
-        - var form = {'reset_login_password':{'type':'password', 'placeholder':'senha'}, 'reset_login_password_confirm':{'type':'password', 'placeholder': 'confirme sua senha'}}
-        - for(var key in form)
-          - var val = form[key]
-            div.form-group
-              label.col-lg-2.control-label(for=""+key)= val.placeholder 
-              div.col-lg-10 
-                input.form-control(style="width:300px;" type=""+val.type id=""+key placeholder=""+val.placeholder)
-          
-      button.btn.btn-default(type="submit" ng-click="confirmResetPassword()") Enviar
+  br
+  br
+  form
+    fieldset
+    - var form = {'reset_login_password':{'type':'password', 'placeholder':'', 'label': 'Nova senha'}, 'reset_login_password_confirm':{'type':'password', 'placeholder': '', 'label':'Confirme sua senha'}}
+    - for(var key in form)
+      - var val = form[key]
+      div.form-group
+        label.control-label(for=""+key)= val.label
+          br
+          div
+            input.form-control(type=""+val.type id=""+key placeholder=""+val.placeholder)
 
-section(ng-show="confirmEmail")
+    a.btn.btn-default(ng-click="confirm()") Enviar
+
+section.centralize-area(ng-controller="AuthCtrl" ng-show="verifyEmail")
+  br
+  br
+  br
+  br
   h1 Email confirmado
   p faça seu 
-    a(href="/#!/login")
+    a(ng-click="confirm()")

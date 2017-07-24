@@ -24,7 +24,7 @@ fetchAuthCtrl = ->
                 # como chcagem de erro, login, logout, envio de email
                 # checkout $rootScope.popup message and type
                 onErr  = (err) ->
-                        console.log err
+                        toastr.error("Erro #{err.code}", err.message)
                         $location.path('/')
                         $route.reload()
                 # checkout $rootScope.popup message success on signout
@@ -32,19 +32,20 @@ fetchAuthCtrl = ->
         
                         # Apresente ao usuário uma mensagem de sucesso
                         user = firebase.auth().currentUser
-                        d = new dialogService()
-                        console.log d
-                        d.save('success', "Saiu do vanessador com sucesso")
-                        # Isso é necessário para reatualizar os dados
-                        $location.path('/login')
-        
+                        if not user
+                                toastr.success('Logout', "você saiu do sistema")
+                                $rootScope.user = null
+                                # Isso é necessário para reatualizar os dados
+                                $location.path('/login')
+                        else
+                                onErr new Error("Usuário #{user.uid} ainda está logado")
+                                $location.path('/formularios')
+                        $route.reload()
                 # checkout $rootScope.popup message success on login
                 onLogin = (result) ->
                         # Apresente ao usuário uma mensagem de sucesso
                         user = firebase.auth().currentUser
-                        d = new dialogService()
-                        console.log d
-                        d.save('success', "Bem vindo #{user.displayName or user.email}")
+                        toastr.success('Bem vindo', "#{user.displayName or user.email}")
                         # Isso é necessário para reatualizar os dados
                         $location.path('/formularios')
                         $route.reload()
@@ -58,8 +59,7 @@ fetchAuthCtrl = ->
                                 # memorize um popup
                                 onSend = ->
                                         msg = "Enviamos um email  #{user.displayName or user.email}"
-                                        d = new dialogService()
-                                        d.save('success', "Bem vindo #{user.displayName or user.email}")
+                                        toastr.success('Email', msg)
                                         $location.path('/formularios')
                                         $route.reload()
                                 user.sendEmailVerification().then(onSend).catch(onErr)
@@ -74,8 +74,7 @@ fetchAuthCtrl = ->
                         onGetConfig (config) ->
                                 onSend = ->
                                         user = firebase.auth().current
-                                        d = new dialogService()
-                                        d.save("#{user.email} verificado")
+                                        toastr.success('Email', "#{user.email} verificado")
                                         $location.path('/formularios')
                                         $route.reload()
                                 if query.apiKey is config.apiKey
@@ -83,6 +82,25 @@ fetchAuthCtrl = ->
                                 else
                                         onErr new Error 'apiKey incorrect'
 
+                # Função que confirma a troca de senha
+                onConfirmResetPassword = ->
+                        b = document.getElementById('reset_login_password').value is document.getElementById('reset_login_password_confirm').value
+
+                        if b
+                                user = firebase.auth().currentUser
+                                
+                                # Verifique o código oob e depois resete a senha e notifique o usuário
+                                firebase.auth().applyActionCode(query.oobCode).then(onApply).catch(onErr)
+                                # Quando a verificação do código de ação for possível
+                                # Aplique a atualização da senha 
+                                onApply = ->
+                                        _onApply = -> toastr.success('Senha', 'Senha trocada com sucesso!')
+                                        pwd  = document.getElementById('reset_login_password_confirm').value
+                                        user.updatePassword(pwd).then(_onApply).catch onErr
+                
+                                
+                        else
+                                onErr new Error 'Senhas não coincidem'
                 # # Funções princiapis de login
                 #
                 # ## Login
@@ -142,37 +160,29 @@ fetchAuthCtrl = ->
                 # - enviamos  uma requisição por email para executar posteriormente $rootScope.confirmResetPassword
                 $rootScope.sendPasswordResetEmail = ->
                         email = document.getElementById('reset_login_email').value
-                        firebase.auth().sendPasswordResetEmail(email).then(onResetPasswordSendEmail).catch(onErr)
+                        firebase.auth().sendPasswordResetEmail(email).then(->
+                                msg = "Enviamos um email para #{email} com um novo token"
+                                toastr.info('Recuperação de senha', msg)
+                                $location.path('/login')
+                                $route.reload()
+                        ).catch(onErr)
         
                 # Quando receber um email de resetar a senha e clicar ou copiar e colar
                 # o endereço de confirmação, o cliente recebe um oobCode que deve ser
                 # acompanhado da chave api do aplicatvo
-                $rootScope.confirmResetPassword = ->
+                $rootScope.resetPassword = false
+                $rootScope.confirmEmail = false
+                $rootScope.confirm = ->
                         onGetConfig (config) ->
-                                query = $location.search('mode', 'oobCode', 'apiKey')
-                                if query.apiKey is config.apiKey
-                                
-                                        # Checar se os emails estão iguais
-                                        b = document.getElementById('reset_login_password').value is document.getElementById('reset_login_password_confirm').value
-
-                                        if b
-                                                user = firebase.auth().currentUser
-
-                                                # Quando a verificação do código de ação for possível
-                                                # Aplique a atualização da senha 
-                                                onApply = ->
-                                                        _onApply = ->
-                                                                d.save('success', "Senha atualizada com sucesso")
-                                                                d.show()
-                                                                
-                                                        pwd  = document.getElementById('reset_login_password_confirm').value
-                                                        user.updatePassword(pwd).then(_onApply).catch onErr
-                                        
-                                                # Verifique o código oob e depois resete a senha e notifique o usuário
-                                                firebase.auth().applyActionCode(query.oobCode).then(onApply).catch(onErr)
-                                        else
-                                                onErr new Error 'Senhas não coincidem'
-        
+                                query = $location.search()
+                                if query.apiKey is config.data.apiKey
+                                        if query.mode is 'resetPassword'
+                                                # Checar se os emails estão iguais
+                                                onConfirmResetPassword()
+                                        if query.mode is 'confirmEmail'
+                                                onErr new Error "Função não implementada ainda"
+                                else
+                                        onErr new Error "Chave incorreta"
                 # callback para o logout
                 $rootScope.logout = ->
                         # É necessário limpar parte da base de dados que
@@ -201,3 +211,11 @@ fetchAuthCtrl = ->
                 $rootScope.onDropupmenu = (what)->
                         document.getElementById(what).classList.remove('open')
                         document.getElementById(what).setAttribute('aria-expanded', 'false')
+                
+
+                if $location.url().match /\/confirm\?mode\=[a-zA-Z0-9]+\&oobCode\=[a-zA-Z0-9\_\-]+\&apiKey\=[a-zA-Z0-9]+/
+                        query = $location.search()
+                        $rootScope.resetPassword = query.mode is 'resetPassword'
+                        $rootScope.verifyEmail = query.mode is 'verifyEmail'
+                        console.log $rootScope.resetPassword
+                        console.log $rootScope.verifyEmail

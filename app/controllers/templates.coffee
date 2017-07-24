@@ -10,23 +10,30 @@ AppManager::templates = ->
                                         try
                                                 opt = {filename: _p, doctype:'html'}
                                                 html = pug.compile(content, opt)()
-                                                result = template: html, route: ( ->
-                                                        if p.match /_index/
-                                                                "/"
-                                                        else if p.match /^\w+_uuid_[a-z]+$/
-                                                                r = p.split("_")
-                                                                "/#{r[0]}/:uuid/#{r[2]}"
-                                                        else if p.match /^\w+_uuid_[a-z]+_\w+$/
-                                                                r = p.split("_")
-                                                                "/#{r[0]}/:uuid/#{r[2]}/:token"
-                                                        else if p.match /\w+_novo/
-                                                                r = p.split("_")
-                                                                "/#{r[0]}/novo"
-                                                        else
-                                                                "/#{p}"
-                                                )()
+                                                result = template: html, controller:'', route: ''
+                                                if p.match /_index/
+                                                        result.controller = 'AuthCtrl'
+                                                        result.route = "/"
+                                                else if p.match /^formularios_uuid_[a-z]+$/
+                                                        result.controller = 'TypeformCtrl'
+                                                        r = p.split("_")
+                                                        result.route = "/#{r[0]}/:uuid/#{r[2]}"
+                                                else if p.match /^formularios_uuid_[a-z]+_\w+$/
+                                                        result.controller = 'TypeformCtrl'
+                                                        r = p.split("_")
+                                                        result.route = "/#{r[0]}/:uuid/#{r[2]}/:token"
+                                                else if p.match /formularios_novo/
+                                                        result.controller = 'TypeformCtrl'
+                                                        r = p.split("_")
+                                                        result.route = "/#{r[0]}/novo"
+                                                else
+                                                        result.controller = 'AuthCtrl'
+                                                        result.route = "/#{p}"
+                                                
+                                                console.log result
                                                 resolve result
                                         catch e
+                                                console.log e
                                                 reject e
                                 else
                                         reject err

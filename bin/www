@@ -237,7 +237,7 @@ AppManager.prototype.templates = function() {
       var _p;
       _p = path.resolve((path.join(__dirname)) + "/../app/views/" + p + ".pug");
       return fs.readFile(_p, 'utf8', function(err, content) {
-        var e, error1, html, opt, result;
+        var e, error1, html, opt, r, result;
         if (!err) {
           try {
             opt = {
@@ -247,27 +247,33 @@ AppManager.prototype.templates = function() {
             html = pug.compile(content, opt)();
             result = {
               template: html,
-              route: (function() {
-                var r;
-                if (p.match(/_index/)) {
-                  return "/";
-                } else if (p.match(/^\w+_uuid_[a-z]+$/)) {
-                  r = p.split("_");
-                  return "/" + r[0] + "/:uuid/" + r[2];
-                } else if (p.match(/^\w+_uuid_[a-z]+_\w+$/)) {
-                  r = p.split("_");
-                  return "/" + r[0] + "/:uuid/" + r[2] + "/:token";
-                } else if (p.match(/\w+_novo/)) {
-                  r = p.split("_");
-                  return "/" + r[0] + "/novo";
-                } else {
-                  return "/" + p;
-                }
-              })()
+              controller: '',
+              route: ''
             };
+            if (p.match(/_index/)) {
+              result.controller = 'AuthCtrl';
+              result.route = "/";
+            } else if (p.match(/^formularios_uuid_[a-z]+$/)) {
+              result.controller = 'TypeformCtrl';
+              r = p.split("_");
+              result.route = "/" + r[0] + "/:uuid/" + r[2];
+            } else if (p.match(/^formularios_uuid_[a-z]+_\w+$/)) {
+              result.controller = 'TypeformCtrl';
+              r = p.split("_");
+              result.route = "/" + r[0] + "/:uuid/" + r[2] + "/:token";
+            } else if (p.match(/formularios_novo/)) {
+              result.controller = 'TypeformCtrl';
+              r = p.split("_");
+              result.route = "/" + r[0] + "/novo";
+            } else {
+              result.controller = 'AuthCtrl';
+              result.route = "/" + p;
+            }
+            console.log(result);
             return resolve(result);
           } catch (error1) {
             e = error1;
+            console.log(e);
             return reject(e);
           }
         } else {

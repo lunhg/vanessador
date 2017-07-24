@@ -48,10 +48,15 @@ describe(chalk.green('Vanessador app'), function() {
         results = [];
         for (i = 0, len = ref.length; i < len; i++) {
           e = ref[i];
+          console.log(e);
           e.should.have.property('template');
           e.should.have.property('route');
+          e.should.have.property('controller');
           e.template.should.be.String();
-          results.push(e.should.match(/\/([a-z]+)?/));
+          e.route.should.be.String();
+          e.route.should.match(/\/(\w+(\/\w+)?)?/);
+          e.controller.should.be.String();
+          results.push(e.controller.should.match(/[A-Z][a-z]+[A-Z][a-z]+/));
         }
         return results;
       }).then(resolve)["catch"](reject);

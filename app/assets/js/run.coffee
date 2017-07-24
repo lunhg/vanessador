@@ -10,7 +10,6 @@ fetchRun = ->
                 $rootScope.user = null
                 $rootScope.popup = null
                 $rootScope.typeformData = null
-                $rootScope.onLoading = false
                 $rootScope.registeredForms = null
                 $rootScope.dialogShown = false
                 $rootScope.dialogMessage = "Nenhuma mensagem"
@@ -61,8 +60,4 @@ fetchRun = ->
                                 
                                 
                                                 
-                                $rootScope.onLoading = false
-
-                                # Inicie o aplicativo
-                                nextRoute = back() or "/login"
-                                $location.path(nextRoute)
+                        $rootScope.onLoading = false

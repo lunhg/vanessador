@@ -1,13 +1,11 @@
-section.centralize-area(ng-show="onLoading == true")
-   img(src="/assets/images/loading.gif" style="width: 40px; heigth: 40px")
-
-section.centralize-area(ng-show="typeformData")
+section.centralize-area(ng-controller="TypeformCtrl")
   br
   br
-  h1 Estatísticas
+  h1 Estatísticas para {{ currentForm }}
   br
   br
-  table.table.table-striped.table-hover
+  img(ng-show="onLoading" src="/assets/images/loading.gif")
+  table.table.table-striped.table-hover(ng-show="onLoading === false && typeformData")
     thead
       tr
         th(ng-repeat="(k,v) in typeformData.stats.responses") {{ k }}
@@ -15,4 +13,4 @@ section.centralize-area(ng-show="typeformData")
       tr
         td(ng-repeat="(k,v) in typeformData.stats.responses") {{ v }}
 
-  a.btn.btn-default(href="/#!/formularios/{{ currentForm }}/questions")
+    a.btn.btn-default(href="/#!/formularios/{{ currentForm }}/questions") Ver respostas

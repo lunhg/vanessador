@@ -1,4 +1,4 @@
-section.centralize-area(ng-show="user")
+section.centralize-area(ng-controller="TypeformCtrl")
   br
   br
   br
@@ -17,4 +17,4 @@ section.centralize-area(ng-show="user")
           div
             input.form-control(type=""+val.type id=""+key placeholder=""+val.placeholder)
 
-    a.btn.btn-default(ng-click="onNovo('formularios', 'input_typeform', 'nome', 'tags', 'uuid', 'url')") Registrar
+    a.btn.btn-default(ng-click="onNovo('input_typeform', 'nome', 'tags', 'uuid', 'url')") Registrar
