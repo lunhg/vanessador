@@ -1,4 +1,4 @@
-var chalk, fs, http, mocha, path, should, supertest;
+var chalk, fs, http, mocha, mocha_testdata, path, should, supertest;
 
 fs = require('fs');
 
@@ -10,13 +10,16 @@ chalk = require('chalk');
 
 mocha = require('mocha');
 
+mocha_testdata = require('mocha-testdata');
+
 should = require('should');
 
 supertest = require('supertest');
 
 describe(chalk.green('Vanessador app'), function() {
-  var agent;
+  var agent, payment_id;
   agent = supertest.agent("http://localhost:3000");
+  payment_id = "";
   it('should GET / for first time', function() {
     return new Promise(function(resolve, reject) {
       return agent.get('/').expect(200).expect('Content-Type', /html/).end(function(err, res) {
@@ -91,6 +94,66 @@ describe(chalk.green('Vanessador app'), function() {
         res.body.stats.responses.should.have.property('total');
         res.body.stats.responses.should.have.property('completed');
         return res.body.should.have.property('questions');
+      }).then(resolve)["catch"](reject);
+    });
+  });
+  it("should GET /paypal/boletos/novo", function() {
+    return new Promise(function(resolve, reject) {
+      return agent.get("/paypal/invoices/novo").query({
+        first_name: "Guilherme"
+      }).query({
+        second_name: "Martins"
+      }).query({
+        phone_country_code: "51"
+      }).query({
+        phone_national_number: "15998006760"
+      }).query({
+        line: "Rua Abolição 403, Ap. 13 - Vila Jardini"
+      }).query({
+        city: "Sorocaba"
+      }).query({
+        state: "SP"
+      }).query({
+        postal_code: "18044070"
+      }).query({
+        country_code: "BR"
+      }).query({
+        value: '10.00'
+      }).query({
+        billing_info_email: 'gcravista-buyer@gmail.com'
+      }).query({
+        form: 'lD26uE'
+      }).expect(200).expect('Content-Type', /json/).expect(function(res) {
+        payment_id = res.body.payment_id;
+        return res.body.should.have.property('payment_id');
+      }).then(resolve)["catch"](reject);
+    });
+  });
+  it("should GET /paypal/invoices/:id", function() {
+    return new Promise(function(resolve, reject) {
+      return agent.get("/paypal/invoices/" + payment_id).expect(200).expect('Content-Type', /json/).expect(function(res) {
+        return res.body.should.have.property('status');
+      }).then(resolve)["catch"](reject);
+    });
+  });
+  it("should GET /paypal/invoices/:id/send", function() {
+    return new Promise(function(resolve, reject) {
+      return agent.get("/paypal/invoices/" + payment_id + "/send").expect(200).expect(function(res) {
+        return res.body.should.be.String();
+      }).then(resolve)["catch"](reject);
+    });
+  });
+  it("should GET /paypal/invoices/:id/remind", function() {
+    return new Promise(function(resolve, reject) {
+      return agent.get("/paypal/invoices/" + payment_id + "/remind").expect(200).expect(function(res) {
+        return res.body.should.be.String();
+      }).then(resolve)["catch"](reject);
+    });
+  });
+  it("should GET /paypal/invoices/:id/cancel", function() {
+    return new Promise(function(resolve, reject) {
+      return agent.get("/paypal/invoices/" + payment_id + "/cancel").expect(200).expect(function(res) {
+        return res.body.should.be.String();
       }).then(resolve)["catch"](reject);
     });
   });

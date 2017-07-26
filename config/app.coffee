@@ -24,32 +24,3 @@ class AppManager
                 ]
 
                 @app.set 'port', parseInt(process.env.PORT || '3000')
-
-# Init lifetime
-# - configure a basic express app
-# - configure passport.js
-# - initialize routines (log, assets, ...)
-# - initialize mount points (index and json API)
-# - initialize typeform
-AppManager.init = (result) ->
-        new Promise (resolve, reject) ->
-                app = express()
-                app_manager = new AppManager(app)
-
-                # run passport first
-                app_manager.passport()
-                
-                # use some middleware routines
-                app_manager.boot()
-
-                # our routes
-                app_manager.index()
-                app_manager.login()
-                app_manager.config()
-                app_manager.templates()
-                app_manager.services()
-                app_manager.typeform()
-                app_manager.docs()
-
-                # Send to server
-                resolve app

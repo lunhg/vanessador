@@ -1,5 +1,5 @@
 ServerManager = {}
-ServerManager.make = (app) ->
+ServerManager.bind = (app) ->
         self = this
         new Promise (resolve, reject) ->
                 server = http.createServer app
@@ -24,3 +24,29 @@ ServerManager.make = (app) ->
         
         
 
+ServerManager.start = ->
+        new Promise (resolve, reject) ->
+                try
+                        # Start express server
+                        app = express()
+
+                        # this manage the routes
+                        app_manager = new AppManager(app)
+                                        
+                        # use some middleware routines
+                        app_manager.boot()
+                
+                        # our routes
+                        app_manager.index()
+                        app_manager.login()
+                        app_manager.config()
+                        app_manager.templates()
+                        app_manager.services()
+                        app_manager.typeform()
+                        app_manager.paypal()
+                        app_manager.docs()
+                        
+                        # Send the configured express app to server
+                        resolve app
+                catch e
+                        reject e

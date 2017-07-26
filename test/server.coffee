@@ -1,7 +1,8 @@
 describe chalk.green('Vanessador app'), ->
 
         agent = supertest.agent("http://localhost:3000")
-        
+        payment_id = ""
+                
         it 'should GET / for first time', ->
                 new Promise (resolve, reject) ->
                         agent.get('/')
@@ -87,7 +88,67 @@ describe chalk.green('Vanessador app'), ->
                                 .then resolve
                                 .catch reject
 
+                                
+        it "should GET /paypal/boletos/novo", ->
+                new Promise (resolve, reject) ->
+                        agent.get("/paypal/invoices/novo")
+                                .query(first_name: "Guilherme")
+                                .query(second_name: "Martins")
+                                .query(phone_country_code: "51")
+                                .query(phone_national_number: "15998006760")
+                                .query(line: "Rua Abolição 403, Ap. 13 - Vila Jardini")
+                                .query(city: "Sorocaba")
+                                .query(state: "SP")
+                                .query(postal_code: "18044070")
+                                .query(country_code: "BR")
+                                .query(value:'10.00')
+                                .query(billing_info_email:'gcravista-buyer@gmail.com')
+                                .query(form:'lD26uE')
+                                .expect 200
+                                .expect('Content-Type', /json/)
+                                .expect (res) ->
+                                        payment_id = res.body.payment_id
+                                        res.body.should.have.property 'payment_id'
+                                .then resolve
+                                .catch reject 
+                                
+        it "should GET /paypal/invoices/:id", ->
+                new Promise (resolve, reject) ->
+                        agent.get("/paypal/invoices/#{payment_id}")
+                                .expect 200
+                                .expect 'Content-Type', /json/
+                                .expect (res) ->
+                                        res.body.should.have.property 'status'
+                                .then(resolve)
+                                .catch(reject)
 
+        it "should GET /paypal/invoices/:id/send", ->
+                new Promise (resolve, reject) ->
+                        agent.get("/paypal/invoices/#{payment_id}/send")
+                                .expect 200
+                                .expect (res) ->
+                                        res.body.should.be.String()
+                                .then(resolve)
+                                .catch(reject)
+
+        it "should GET /paypal/invoices/:id/remind", ->
+                new Promise (resolve, reject) ->
+                        agent.get("/paypal/invoices/#{payment_id}/remind")
+                                .expect 200
+                                .expect (res) ->
+                                        res.body.should.be.String()
+                                .then(resolve)
+                                .catch(reject)
+
+        it "should GET /paypal/invoices/:id/cancel", ->
+                new Promise (resolve, reject) ->
+                        agent.get("/paypal/invoices/#{payment_id}/cancel")
+                                .expect 200
+                                .expect (res) ->
+                                        res.body.should.be.String()
+                                .then(resolve)
+                                .catch(reject)
+                        
         it "should GET /docs", ->
                 new Promise (resolve, reject) ->
                         agent.get("/docs")

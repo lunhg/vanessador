@@ -14,7 +14,3 @@ AppManager::boot = ->
         
         # Assets
         @app.use connect_assets(paths: @app.get('assets path'))
-
-        #app.use cookie_parser()
-        @app.use passport.initialize()
-        @app.use passport.session()

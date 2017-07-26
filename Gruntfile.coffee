@@ -38,7 +38,7 @@ module.exports = (grunt) ->
 
         grunt.registerTask 'build:firebase:apiKey', 'Store firebase apiKey on keychain', ->
                 done = @async()
-                keytar.findPassword("#{pkg.name}.firebase.apiKey")
+                keytar.findPassword("#{pkg.firebase.project.name}.firebase.apiKey")
                         .then (r) ->
                                 if r is undefined or r is null
                                         pwd = prompt("Type your #{pkg.firebase.project.name}.firebase.apiKey\n", secure:true)
@@ -58,9 +58,9 @@ module.exports = (grunt) ->
                                                 done()
                                         keytar.setPassword("#{pkg.firebase.project.name}.firebase.messagingSenderId",pkg.author,pwd).then onSet
 
-        grunt.registerTask 'build:typeform:apiKey', 'Store firebase messagingSenderId on keychain', ->
+        grunt.registerTask 'build:typeform:apiKey', 'Store typeform messagingSenderId on keychain', ->
                 done = @async()
-                keytar.findPassword("#{pkg.name}.typeform.apiKey")
+                keytar.findPassword("#{pkg.firebase.project.name}.typeform.apiKey")
                         .then (r) ->
                                 if r is undefined or r is null
                                         pwd = prompt("Type your #{pkg.firebase.project.name}.typeform.apiKey\n", secure:true)
@@ -69,6 +69,28 @@ module.exports = (grunt) ->
                                                 done()
                                         keytar.setPassword("#{pkg.firebase.project.name}.typeform.apiKey",pkg.author,pwd).then onSet
 
+        grunt.registerTask 'build:paypal:apiKey', 'Store paypal apiKey on keychain', ->
+                done = @async()
+                m = "#{pkg.firebase.project.name}.paypal.apiKey"
+                keytar.findPassword(m).then (r) ->
+                        if r is undefined or r is null
+                                t = "Type your #{pkg.firebase.project.name}.paypal.apiKey\n"
+                                pwd = prompt(t, secure:true)
+                                onSet = (r)->
+                                        console.log "Paypal apiKey created"
+                                        done()
+                                keytar.setPassword(m,pkg.author,pwd).then onSet
+
+        grunt.registerTask 'build:paypal:secret', 'Store paypal secret on keychain', ->
+                done = @async()
+                m = "#{pkg.firebase.project.name}.paypal.secret"
+                keytar.findPassword(m).then (r) ->
+                        if r is undefined or r is null
+                                pwd = prompt("Type your #{pkg.firebase.project.name}.paypal.secret\n", secure:true)
+                                onSet = (r)->
+                                        console.log "Paypal secret created"
+                                        done()
+                        keytar.setPassword(m,pkg.author,pwd).then onSet
 
         grunt.registerTask 'build:doc:client', 'Build documentation with docco', ->
                 grunt.config('doc_dir', "app/assets/doc")
@@ -94,4 +116,4 @@ module.exports = (grunt) ->
         grunt.initConfig options
         
         # register tasks
-        grunt.registerTask 'default', ['build:init', 'build:libs', 'build:doc:client', 'coffee', 'usebanner', 'shell']
+        grunt.registerTask 'default', ['build:init', 'build:libs', 'build:doc:client', 'coffee', 'usebanner']#, 'shell']

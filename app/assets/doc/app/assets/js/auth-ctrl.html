@@ -129,7 +129,8 @@ checkout $rootScope.popup message and type</p>
             
             <div class="content"><div class='highlight'><pre>                        user = firebase.auth().currentUser
                         <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> user
-                                toastr.success(<span class="hljs-string">'Logout'</span>, <span class="hljs-string">"você saiu do sistema"</span>)</pre></div></div>
+                                toastr.success(<span class="hljs-string">'Logout'</span>, <span class="hljs-string">"você saiu do sistema"</span>)
+                                $rootScope.user = <span class="hljs-literal">null</span></pre></div></div>
             
         </li>
         
@@ -492,11 +493,13 @@ acompanhado da chave api do aplicatvo</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                $rootScope.confirm = <span class="hljs-function">-&gt;</span>
+            <div class="content"><div class='highlight'><pre>                $rootScope.resetPassword = <span class="hljs-literal">false</span>
+                $rootScope.confirmEmail = <span class="hljs-literal">false</span>
+                $rootScope.confirm = <span class="hljs-function">-&gt;</span>
                         onGetConfig (config) -&gt;
-                                query = $location.search(<span class="hljs-string">'mode'</span>, <span class="hljs-string">'oobCode'</span>, <span class="hljs-string">'apiKey'</span>)
-                                <span class="hljs-keyword">if</span> query.apiKey <span class="hljs-keyword">is</span> config.apiKey
-                                        <span class="hljs-keyword">if</span> mode <span class="hljs-keyword">is</span> <span class="hljs-string">'resetPassword'</span></pre></div></div>
+                                query = $location.search()
+                                <span class="hljs-keyword">if</span> query.apiKey <span class="hljs-keyword">is</span> config.data.apiKey
+                                        <span class="hljs-keyword">if</span> query.mode <span class="hljs-keyword">is</span> <span class="hljs-string">'resetPassword'</span></pre></div></div>
             
         </li>
         
@@ -512,7 +515,7 @@ acompanhado da chave api do aplicatvo</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>                                                onConfirmResetPassword()
-                                        <span class="hljs-keyword">if</span> mode <span class="hljs-keyword">is</span> <span class="hljs-string">'confirmEmail'</span>
+                                        <span class="hljs-keyword">if</span> query.mode <span class="hljs-keyword">is</span> <span class="hljs-string">'confirmEmail'</span>
                                                 onErr <span class="hljs-keyword">new</span> Error <span class="hljs-string">"Função não implementada ainda"</span>
                                 <span class="hljs-keyword">else</span>
                                         onErr <span class="hljs-keyword">new</span> Error <span class="hljs-string">"Chave incorreta"</span></pre></div></div>
@@ -592,24 +595,15 @@ Vamos adicionar as interações</p>
         
                 $rootScope.onDropupmenu = <span class="hljs-function"><span class="hljs-params">(what)</span>-&gt;</span>
                         <span class="hljs-built_in">document</span>.getElementById(what).classList.remove(<span class="hljs-string">'open'</span>)
-                        <span class="hljs-built_in">document</span>.getElementById(what).setAttribute(<span class="hljs-string">'aria-expanded'</span>, <span class="hljs-string">'false'</span>)</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-30">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-30">&#182;</a>
-              </div>
-              <p>Controle a rota de confirmação de conta e de novas senhas</p>
+                        <span class="hljs-built_in">document</span>.getElementById(what).setAttribute(<span class="hljs-string">'aria-expanded'</span>, <span class="hljs-string">'false'</span>)
+                
 
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>                <span class="hljs-keyword">if</span>  $location.url().match <span class="hljs-regexp">/^\/confirm?mode=[a-z]+\&amp;oobCode=[a-zA-Z0-9]+\&amp;apiKey=[a-zA-Z0-9]$/</span>
-                        $rootScope.resetPassword = mode <span class="hljs-keyword">is</span> <span class="hljs-string">'resetPassword'</span>
-                        $rootScope.confirmEmail = mode <span class="hljs-keyword">is</span> <span class="hljs-string">'confirmEmail'</span></pre></div></div>
+                <span class="hljs-keyword">if</span> $location.url().match <span class="hljs-regexp">/\/confirm\?mode\=[a-zA-Z0-9]+\&amp;oobCode\=[a-zA-Z0-9\_\-]+\&amp;apiKey\=[a-zA-Z0-9]+/</span>
+                        query = $location.search()
+                        $rootScope.resetPassword = query.mode <span class="hljs-keyword">is</span> <span class="hljs-string">'resetPassword'</span>
+                        $rootScope.verifyEmail = query.mode <span class="hljs-keyword">is</span> <span class="hljs-string">'verifyEmail'</span>
+                        <span class="hljs-built_in">console</span>.log $rootScope.resetPassword
+                        <span class="hljs-built_in">console</span>.log $rootScope.verifyEmail</pre></div></div>
             
         </li>
         
