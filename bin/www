@@ -249,6 +249,10 @@ AppManager.prototype.templates = function() {
               result.controller = 'TypeformCtrl';
               r = p.split("_");
               result.route = "/" + r[0] + "/novo";
+            } else if (p.match(/boletos_token/)) {
+              result.controller = 'PaypalCtrl';
+              r = p.split("_");
+              result.route = "/boletos/:token";
             } else {
               result.controller = 'AuthCtrl';
               result.route = "/" + p;
@@ -438,27 +442,55 @@ AppManager.prototype.paypal = function() {
     });
     return ppr.data;
   };
-  this.app.get('/paypal/invoices/novo', function(req, res) {
-    return paypal_rest_sdk.invoice.create(create_invoice(req), function(err, payment) {
+  this.app.post('/paypal/invoices/novo', function(req, res) {
+    return paypal_rest_sdk.invoice.create(create_invoice(req), function(err, invoice) {
       if (err) {
         res.json(err);
       }
-      return res.json({
-        payment_id: payment.id
-      });
+      return res.json(invoice.id);
     });
   });
-  this.app.get('/paypal/invoices/:id', function(req, res) {
+  this.app.get('/paypal/invoices/:id/number', function(req, res) {
     return paypal_rest_sdk.invoice.get(req.params.id, function(err, invoice) {
       if (err) {
         res.json(err);
       }
-      return res.json({
-        status: invoice.status
-      });
+      return res.json(invoice.number);
     });
   });
-  this.app.get('/paypal/invoices/:id/send', function(req, res) {
+  this.app.get('/paypal/invoices/:id/status', function(req, res) {
+    return paypal_rest_sdk.invoice.get(req.params.id, function(err, invoice) {
+      if (err) {
+        res.json(err);
+      }
+      return res.json(invoice.status);
+    });
+  });
+  this.app.get('/paypal/invoices/:id/billing_info', function(req, res) {
+    return paypal_rest_sdk.invoice.get(req.params.id, function(err, invoice) {
+      if (err) {
+        res.json(err);
+      }
+      return res.json(invoice.billing_info);
+    });
+  });
+  this.app.get('/paypal/invoices/:id/invoice_date', function(req, res) {
+    return paypal_rest_sdk.invoice.get(req.params.id, function(err, invoice) {
+      if (err) {
+        res.json(err);
+      }
+      return res.json(invoice.invoice_date);
+    });
+  });
+  this.app.get('/paypal/invoices/:id/total_amount', function(req, res) {
+    return paypal_rest_sdk.invoice.get(req.params.id, function(err, invoice) {
+      if (err) {
+        res.json(err);
+      }
+      return res.json(invoice.total_amount);
+    });
+  });
+  this.app.post('/paypal/invoices/:id/send', function(req, res) {
     return paypal_rest_sdk.invoice.send(req.params.id, function(err, rv) {
       if (err) {
         res.json(err);
@@ -466,7 +498,7 @@ AppManager.prototype.paypal = function() {
       return res.json("Um email de notificação está sendo processado pelo PayPal");
     });
   });
-  this.app.get('/paypal/invoices/:id/remind', function(req, res) {
+  this.app.post('/paypal/invoices/:id/remind', function(req, res) {
     var options;
     options = {
       "subject": "Lembrança de pagamento",
@@ -478,10 +510,11 @@ AppManager.prototype.paypal = function() {
       if (err) {
         res.json(err);
       }
+      console.log(chalk.green(rv));
       return res.json("Seu email de notificação está sendo processado pelo PayPal");
     });
   });
-  return this.app.get('/paypal/invoices/:id/cancel', function(req, res) {
+  return this.app.post('/paypal/invoices/:id/cancel', function(req, res) {
     var error1, options;
     options = {
       "subject": "Cancelamento de pagamento",
@@ -494,6 +527,7 @@ AppManager.prototype.paypal = function() {
         if (err) {
           res.json(err);
         }
+        console.log(chalk.green(rv));
         return res.json("Seu email de notificação está sendo processado pelo PayPal");
       });
     } catch (error1) {

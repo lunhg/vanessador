@@ -2,6 +2,7 @@
 #= require config
 #= require auth-ctrl
 #= require typeform-ctrl
+#= require paypal-ctrl
 #= require services
 #= require run
 #= require directives

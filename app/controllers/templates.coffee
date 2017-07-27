@@ -26,6 +26,10 @@ AppManager::templates = ->
                                                         result.controller = 'TypeformCtrl'
                                                         r = p.split("_")
                                                         result.route = "/#{r[0]}/novo"
+                                                else if p.match /boletos_token/
+                                                        result.controller = 'PaypalCtrl'
+                                                        r = p.split("_")
+                                                        result.route = "/boletos/:token"
                                                 else
                                                         result.controller = 'AuthCtrl'
                                                         result.route = "/#{p}"

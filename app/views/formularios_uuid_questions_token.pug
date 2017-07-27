@@ -6,10 +6,14 @@ section.centralize-area(ng-controller="TypeformCtrl")
   br
   br
   br
+  a.btn.btn-default(href="/#!/boletos/{{ currentToken }}") Verificar pagamentos
+  br
+  br
+  br
   table.table.table-striped.table-hover
     tbody
       tr(ng-repeat="(k,v) in questions")
         th {{ v.question }}
         td {{ answers[v.id] }}
-
+    
 

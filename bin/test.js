@@ -97,9 +97,9 @@ describe(chalk.green('Vanessador app'), function() {
       }).then(resolve)["catch"](reject);
     });
   });
-  it("should GET /paypal/boletos/novo", function() {
+  it("should POST /paypal/boletos/novo", function() {
     return new Promise(function(resolve, reject) {
-      return agent.get("/paypal/invoices/novo").query({
+      return agent.post("/paypal/invoices/novo").query({
         first_name: "Guilherme"
       }).query({
         second_name: "Martins"
@@ -124,36 +124,99 @@ describe(chalk.green('Vanessador app'), function() {
       }).query({
         form: 'lD26uE'
       }).expect(200).expect('Content-Type', /json/).expect(function(res) {
-        payment_id = res.body.payment_id;
-        return res.body.should.have.property('payment_id');
+        payment_id = res.body;
+        return res.body.should.match(/[A-Z0-9]+\-[A-Z0-9]+\-[A-Z0-9]+\-[A-Z0-9]+/);
       }).then(resolve)["catch"](reject);
     });
   });
-  it("should GET /paypal/invoices/:id", function() {
+  it("should GET /paypal/invoices/:id/number", function() {
     return new Promise(function(resolve, reject) {
-      return agent.get("/paypal/invoices/" + payment_id).expect(200).expect('Content-Type', /json/).expect(function(res) {
-        return res.body.should.have.property('status');
+      return agent.get("/paypal/invoices/" + payment_id + "/number").expect(200).expect('Content-Type', /json/).expect(function(res) {
+        return res.body.should.match(/\d+/);
       }).then(resolve)["catch"](reject);
     });
   });
-  it("should GET /paypal/invoices/:id/send", function() {
+  it("should GET /paypal/invoices/:id/status", function() {
     return new Promise(function(resolve, reject) {
-      return agent.get("/paypal/invoices/" + payment_id + "/send").expect(200).expect(function(res) {
-        return res.body.should.be.String();
+      return agent.get("/paypal/invoices/" + payment_id + "/status").expect(200).expect('Content-Type', /json/).expect(function(res) {
+        return res.body.should.equal('DRAFT');
       }).then(resolve)["catch"](reject);
     });
   });
-  it("should GET /paypal/invoices/:id/remind", function() {
+  it("should GET /paypal/invoices/:id/billing_info", function() {
     return new Promise(function(resolve, reject) {
-      return agent.get("/paypal/invoices/" + payment_id + "/remind").expect(200).expect(function(res) {
-        return res.body.should.be.String();
-      }).then(resolve)["catch"](reject);
+      return setTimeout(function() {
+        return agent.get("/paypal/invoices/" + payment_id + "/billing_info").expect(200).expect('Content-Type', /json/).expect(function(res) {
+          res.body.should.be.Array();
+          res.body[0].should.be.Object();
+          res.body[0].should.have.property('email');
+          return res.body[0].email.should.match(/[a-z0-9]+\@[a-z]+\.[a-z]{3}/);
+        }).then(resolve)["catch"](reject);
+      }, 1000);
     });
   });
-  it("should GET /paypal/invoices/:id/cancel", function() {
+  it("should GET /paypal/invoices/:id/invoice_date", function() {
     return new Promise(function(resolve, reject) {
-      return agent.get("/paypal/invoices/" + payment_id + "/cancel").expect(200).expect(function(res) {
-        return res.body.should.be.String();
+      return setTimeout(function() {
+        return agent.get("/paypal/invoices/" + payment_id + "/invoice_date").expect(200).expect(function(res) {
+          res.body.should.be.String();
+          return res.body.should.match(/\d{4}\-\d{2}-\d{2}\s[A-Z]{3}/);
+        }).then(resolve)["catch"](reject);
+      }, 1000);
+    });
+  });
+  it("should GET /paypal/invoices/:id/total_amount", function() {
+    return new Promise(function(resolve, reject) {
+      return setTimeout(function() {
+        return agent.get("/paypal/invoices/" + payment_id + "/total_amount").expect(200).expect(function(res) {
+          res.body.should.have.property('currency');
+          res.body.should.have.property('value');
+          res.body.currency.should.match(/[A-Z]{3}/);
+          return res.body.value.should.match(/\d+\.\d+/);
+        }).then(resolve)["catch"](reject);
+      }, 1000);
+    });
+  });
+  it("should POST /paypal/invoices/:id/send", function() {
+    return new Promise(function(resolve, reject) {
+      return setTimeout(function() {
+        return agent.post("/paypal/invoices/" + payment_id + "/send").expect(200).expect('Content-Type', /json/).expect(function(res) {
+          return res.body.should.be.String();
+        }).then(resolve)["catch"](reject);
+      }, 1000);
+    });
+  });
+  it("should GET /paypal/invoices/:id/status a second time with SENT status", function() {
+    return new Promise(function(resolve, reject) {
+      return setTimeout(function() {
+        return agent.get("/paypal/invoices/" + payment_id + "/status").expect(200).expect('Content-Type', /json/).expect(function(res) {
+          return res.body.should.equal('SENT');
+        }).then(resolve)["catch"](reject);
+      }, 1000);
+    });
+  });
+  it("should POST /paypal/invoices/:id/remind", function() {
+    return new Promise(function(resolve, reject) {
+      return setTimeout(function() {
+        return agent.post("/paypal/invoices/" + payment_id + "/remind").expect(200).expect(function(res) {
+          return res.body.should.be.String();
+        }).then(resolve)["catch"](reject);
+      }, 1000);
+    });
+  });
+  it("should POST /paypal/invoices/:id/cancel", function() {
+    return new Promise(function(resolve, reject) {
+      return setTimeout(function() {
+        return agent.post("/paypal/invoices/" + payment_id + "/cancel").expect(200).expect(function(res) {
+          return res.body.should.be.String();
+        }).then(resolve)["catch"](reject);
+      }, 1000);
+    });
+  });
+  it("should GET /paypal/invoices/:id/status a third time, with status CANCELLED", function() {
+    return new Promise(function(resolve, reject) {
+      return agent.get("/paypal/invoices/" + payment_id + "/status").expect(200).expect('Content-Type', /json/).expect(function(res) {
+        return res.body.should.equal('CANCELLED');
       }).then(resolve)["catch"](reject);
     });
   });

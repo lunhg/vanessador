@@ -11,35 +11,23 @@ fetchTypeform = ->
                 # como chcagem de erro, login, logout, envio de email
                 # checkout $rootScope.popup message and type
                 onErr  = (err) ->
-                        console.log err
-                        $rootScope.nextRoute = '/'
-                        $rootScope.dialogMessage =
-                                type: 'danger'
-                                text: "#{err.code}: #{err.message}"
+                        toastr.err(err.code, err.message)
                         
                         # Isso é necessário para reatualizar os dados
                         $window.location.reload()
-
-                fetch = ->
-                        query = ["/typeform/data-api?"]
-                        $rootScope.currentForm = $location.url().split('/formularios/')[1].split('/')[0]
-                        query.push "uuid=#{$rootScope.currentForm}"
-                        query.push "#{k}=#{v}" for k,v of {completed:true, limit:10}
-                        query.join('&')
                         
                 # Dados typeform
                 $rootScope.typeformData = null                          
 
                 $rootScope.onNovo = (id, groups...) ->
-                        _onNovo = -> $location.path('/formularios')
-                        formularioService.novo(id, groups, toastr).then(_onNovo).catch(onErr)
+                        _onNovo = ->
+                                $location.path('/formularios')
+                        console.log id
+                        console.log groups
+                        formularioService.novo(id, groups).then(_onNovo).catch(onErr)
 
                 $rootScope.onDelete = (id, name) ->
-                        _onDel = ->
-                                $rootScope.dialogMessage =
-                                        type: 'success'
-                                        text: "formulário deletado com sucesso"
-                                $location.path('/formularios')
+                        _onDel = -> $location.path('/formularios')
                         _uuid = $location.url().split('/formularios/')[1].split('/')[0]
                         uuid = document.getElementById("#{id}_#{name}").value
                         if _uuid is uuid
@@ -58,6 +46,7 @@ fetchTypeform = ->
                         formularioService.getAll (all) ->
                                 console.log all
                                 $rootScope.registeredForms  = all
+                                $rootScope.onLoading = false
                                 
                 # - /formularios/:uuid/:action
                 if  $location.url().match /^\/formularios\/\w+\/\w+$/
