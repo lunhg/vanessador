@@ -10,11 +10,11 @@ document.addEventListener 'DOMContentLoaded', (event)->
                 .then(fetchTypeform)
                 .then (TypeformCtrl) ->
                         # Registre o controlador
-                        app.controller "TypeformCtrl", ['$rootScope','$http','$location','$window','$controller', 'toastr', 'formularioService', TypeformCtrl]
+                        app.controller "TypeformCtrl", ['$rootScope','$http','$location','$window','$controller', 'toastr', 'formularioService', 'boletoService', TypeformCtrl]
                 .then(fetchPaypal)
                 .then (PaypalCtrl) ->
                         # Registre o controlador
-                        app.controller "TypeformCtrl", ['$rootScope','$http','$location','$window','$controller', 'toastr', 'boletoService', PaypalCtrl]
+                        app.controller "PaypalCtrl", ['$rootScope','$http','$location','$window','$controller', 'toastr', 'boletoService', PaypalCtrl]
                 .then(fetchRun)
                 .then (Run) ->
                         app.run(['$rootScope', '$http', '$location', '$route', '$window', Run])

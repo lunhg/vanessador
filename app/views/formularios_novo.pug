@@ -8,13 +8,14 @@ section.centralize-area(ng-controller="TypeformCtrl")
   br
   form 
     fieldset 
-    - var form = {'input_typeform_nome':{'type':'text', 'placeholder':'nome', 'label':'Nome do formulário'}, 'input_typeform_tags':{'type':'text', 'placeholder':'#tags... (ex. #alunos #workshop)', 'label': 'Tags'}, 'input_typeform_uuid':{'type':'text', 'placeholder':'lD2u6E', 'label': 'Identificador'}, 'input_typeform_url':{'type':'text', 'placeholder':'lunhg.typeform.com/to', 'label': 'URL de base'}}
+    - var form = {'input_typeform_name':{'type':'text', 'placeholder':'nome', 'label':'Nome do formulário'}, 'input_typeform_tags':{'type':'text', 'placeholder':'#tags... (ex. #alunos #workshop)', 'label': 'Tags'}, 'input_typeform_uuid':{'type':'text', 'placeholder':'lD2u6E', 'label': 'Identificador'}, 'input_typeform_base_url':{'type':'text', 'placeholder':'lunhg.typeform.com/to', 'label': 'URL de base'}}
     - for(var key in form)
       - var val = form[key]
       div.form-group
         label.control-label(for=""+key)= val.label
           br
+          br
           div
             input.form-control(type=""+val.type id=""+key placeholder=""+val.placeholder)
 
-    a.btn.btn-default(ng-click="onNovo('input_typeform', 'nome', 'tags', 'uuid', 'url')") Registrar
+    a.btn.btn-default(ng-click="onNovo('input_typeform', 'name', 'tags', 'uuid', 'url')") Registrar

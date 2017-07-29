@@ -1,0 +1,17 @@
+section.centralize-area(ng-controller="TypeformCtrl")
+  br
+  br
+  h1 Questão {{ currentQuestion }}
+    p 
+  br
+  br
+  table.table.table-striped.table-hover
+    thead
+      tr
+        th ID Questão
+        th ID Resposta
+    tbody
+      tr {{ currentQuestion }}
+        td {{ currentQuestion.field_id }}
+        td 
+          a(href="/#!/formularios/{{ currentForm }}/responses/{{ currentResponse.field_id }}") {{ v.question }} 

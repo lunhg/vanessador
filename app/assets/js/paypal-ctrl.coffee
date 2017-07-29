@@ -36,4 +36,21 @@ fetchPaypal= ->
                 #if  $location.url().match /^\/boletos\/\w+$/
                 #        boletoService.getAll().then (boletos) ->
 
+                # - /boletos/:invoiceid
+                if  $location.url().match /^\/boletos\/[a-zA-Z0-9]+$/
+                        $rootScope.onLoading = true
+                        $rootScope.currentBoleto = $location.url().split('/boletos/')[1].split('/')[0]
+                        invoiceid = $location.url().split('/boletos/')[1].split('/')[1]
+                        user = firebase.auth().currentUser.uid
+                        db = firebase.database()
+
+                        # TODO
+                        db.ref("boletos").once 'value', (boletos) ->
+                                for b in boletos.val()
+                                        for _b in b
+                                                console.log _b.invoice
+                                                console.log(invoiceid)
+                                                if _b.invoice is invoiceid 
+                                                        $rootScope.boleto = _b
+                                
                 #angular.extend this, $controller('AuthCtrl', {$scope:$rootScope})

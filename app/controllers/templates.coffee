@@ -11,25 +11,41 @@ AppManager::templates = ->
                                                 opt = {filename: _p, doctype:'html'}
                                                 html = pug.compile(content, opt)()
                                                 result = template: html, controller:'', route: ''
+                                                # No angular isso cria rotas através
+                                                # dos hashbangs (onde /#!/ é a página inicial)
+                                                #
+                                                # GET /#!/
                                                 if p.match /_index/
                                                         result.controller = 'AuthCtrl'
                                                         result.route = "/"
+
+                                                # GET /#!/formularios/:uuid/stats
+                                                # GET /#!/formularios/:uuid/questions
+                                                # GET /#!/formularios/:uuid/responses
                                                 else if p.match /^formularios_uuid_[a-z]+$/
                                                         result.controller = 'TypeformCtrl'
                                                         r = p.split("_")
                                                         result.route = "/#{r[0]}/:uuid/#{r[2]}"
-                                                else if p.match /^formularios_uuid_[a-z]+_\w+$/
+
+                                                # GET /#!/formularios/:uuid/responses/:token
+                                                else if p.match /^formularios_uuid_\w+_[a-z]+$/
                                                         result.controller = 'TypeformCtrl'
                                                         r = p.split("_")
                                                         result.route = "/#{r[0]}/:uuid/#{r[2]}/:token"
+
+                                                # GET /#!/formularios/novo
                                                 else if p.match /formularios_novo/
                                                         result.controller = 'TypeformCtrl'
                                                         r = p.split("_")
                                                         result.route = "/#{r[0]}/novo"
-                                                else if p.match /boletos_token/
+
+                                                # GET /#!/boletos/:invoiceid
+                                                else if p.match /boletos_id/
                                                         result.controller = 'PaypalCtrl'
                                                         r = p.split("_")
-                                                        result.route = "/boletos/:token"
+                                                        result.route = "/boletos/:invoiceid"
+
+                                                # GET otherwise
                                                 else
                                                         result.controller = 'AuthCtrl'
                                                         result.route = "/#{p}"

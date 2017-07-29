@@ -1,0 +1,27 @@
+section.centralize-area(ng-controller="TypeformCtrl")
+  br
+  br
+  br
+  h1 Respostas do formulário {{ currentForm }}
+  br
+  br
+  br
+  
+  table.table.table-striped.table-hover
+    thead
+      tr
+        th Token
+        th Completado
+        th Horário de início
+        th Horário de submissão
+        th Navegador
+    tbody
+      tr(ng-repeat="(i,e) in responses")
+        td {{ e.token }}
+        td {{ e.completed }} 
+        td {{ e.metadata.date_land }}
+        td {{ e.metadata.date_submit }}
+        td {{ e.metadata.user_agent }}
+        td
+          a(href="/#!/formularios/{{ currentForm }}/responses/{{ e.token }}") Respostas
+

@@ -100,21 +100,21 @@ describe(chalk.green('Vanessador app'), function() {
   it("should POST /paypal/boletos/novo", function() {
     return new Promise(function(resolve, reject) {
       return agent.post("/paypal/invoices/novo").query({
-        first_name: "Guilherme"
+        first_name: "NodeJS"
       }).query({
-        second_name: "Martins"
+        second_name: "Teste"
       }).query({
         phone_country_code: "51"
       }).query({
-        phone_national_number: "15998006760"
+        phone_national_number: "1234567890"
       }).query({
-        line: "Rua Abolição 403, Ap. 13 - Vila Jardini"
+        line: "Internet, Proxy IP"
       }).query({
-        city: "Sorocaba"
+        city: "Provedor"
       }).query({
-        state: "SP"
+        state: "Web"
       }).query({
-        postal_code: "18044070"
+        postal_code: "127.0.0.0"
       }).query({
         country_code: "BR"
       }).query({

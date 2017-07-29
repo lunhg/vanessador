@@ -17,5 +17,5 @@ section.centralize-area(ng-controller="TypeformCtrl")
           div
             input.form-control(type=""+val.type id=""+key placeholder=""+val.placeholder)
 
-    a.btn.btn-danger(ng-click="onDelete('input_typeform', 'uuid')") Deletar
+        a.btn.btn-danger(ng-click="onDelete(currentForm)") Deletar
   

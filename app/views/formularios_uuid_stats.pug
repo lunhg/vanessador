@@ -4,13 +4,14 @@ section.centralize-area(ng-controller="TypeformCtrl")
   h1 Estatísticas para {{ currentForm }}
   br
   br
+  p {{ stats }}
   img(ng-show="onLoading" src="/assets/images/loading.gif")
-  table.table.table-striped.table-hover(ng-show="onLoading === false && typeformData")
+  table.table.table-striped.table-hover(ng-show="onLoading === false && stats")
     thead
       tr
-        th(ng-repeat="(k,v) in typeformData.stats.responses") {{ k }}
+        th(ng-repeat="(k,v) in stats.responses") {{ k }}
     tbody
       tr
-        td(ng-repeat="(k,v) in typeformData.stats.responses") {{ v }}
+        td(ng-repeat="(k,v) in stats.responses") {{ v }}
 
     a.btn.btn-default(href="/#!/formularios/{{ currentForm }}/questions") Ver respostas

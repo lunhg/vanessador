@@ -1,0 +1,23 @@
+section.centralize-area(ng-controller="TypeformCtrl")
+  br
+  br
+  br
+  h1 Resposta {{ token }} do formulário {{ currentForm }}
+  br
+  br
+  br
+  a.btn.btn-success(ng-show="boleto" href="/#!/boletos/{{ boleto.invoice }}") Verificar boleto de pagamento
+  a.btn.btn-success(ng-show="!boleto" ng-click="onNovoBoleto()") Criar um boleto de pagamento
+  table.table.table-striped.table-hover
+    thead
+      tr
+        th N
+        th Chave
+        th Resposta
+        th Ações
+    tbody
+      tr(ng-repeat="(k,v) in answers")
+        th {{ k }}
+        td.typeform-question {{ v.question }}
+        td.typeform-answer {{ v.response }}
+

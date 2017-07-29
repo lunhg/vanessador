@@ -241,7 +241,7 @@ AppManager.prototype.templates = function() {
               result.controller = 'TypeformCtrl';
               r = p.split("_");
               result.route = "/" + r[0] + "/:uuid/" + r[2];
-            } else if (p.match(/^formularios_uuid_[a-z]+_\w+$/)) {
+            } else if (p.match(/^formularios_uuid_\w+_[a-z]+$/)) {
               result.controller = 'TypeformCtrl';
               r = p.split("_");
               result.route = "/" + r[0] + "/:uuid/" + r[2] + "/:token";
@@ -249,10 +249,10 @@ AppManager.prototype.templates = function() {
               result.controller = 'TypeformCtrl';
               r = p.split("_");
               result.route = "/" + r[0] + "/novo";
-            } else if (p.match(/boletos_token/)) {
+            } else if (p.match(/boletos_id/)) {
               result.controller = 'PaypalCtrl';
               r = p.split("_");
-              result.route = "/boletos/:token";
+              result.route = "/boletos/:invoiceid";
             } else {
               result.controller = 'AuthCtrl';
               result.route = "/" + p;

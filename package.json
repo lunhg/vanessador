@@ -64,8 +64,9 @@
 	"formularios_uuid_stats",
 	"formularios_uuid_questions",
 	"formularios_uuid_delete",
-	"formularios_uuid_questions_token",
-	"boletos_token",
+	"formularios_uuid_responses",
+	"formularios_uuid_responses_token",
+	"boletos_id",
 	"conta"
     ],
     "angular-directives": [

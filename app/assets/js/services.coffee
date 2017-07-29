@@ -10,44 +10,67 @@ fetchServices = ->
         services =
 
                 # Serviço de boletos
-                boletoService: ['$http', ($http) ->
+                boletoService: ['$http', 'toastr', ($http, toastr) ->
 
                         BoletoService = {}
 
 
-                        create = (uid, options) ->
+                        # Referencia um boleto a um token de um formulario
+                        create = (uuid, token, data) ->
                                 new Promise (resolve, reject) ->
-                                        url = ['/paypal/invoices/novo?']
-                                        url.push "#{k}=#{v}" for k,v in options
-                                        url = url.join('&')
-                                        $http.get(url).then (r1) ->
-                                                firebase.database()
-                                                        .ref("boletos/#{result.uid}/#{result.pid}")
-                                                        .set(status: 'DRAFT')
-                                                        .then ->
-                                                                resolve {uid: uid, pid: r1.data.payment_id}
-
-                        _on = (what, uid, pid) ->
-                                new Promise (resolve, reject) ->
-                                        $http.get('/paypal/invoices/#{pid}/#{what}').then (r1) ->
-                                                $http.get('/paypal/invoices/#{pid}').then (r2) ->
-                                                        firebase.database()
-                                                                .ref("boletos/#{uid}/#{pid}")
-                                                                .set(status:r2.data.status)
-                                                                .then resolve
-                                                                .catch reject
+                                        console.log data
+                                        url = []
+                                        url.push "#{k}=#{v}" for k,v of data
+                                        url = '/paypal/invoices/novo?'+url.join('&')
+                                        $http.post(url).then (invoiceid)->
+                                                db = firebase.database()
+                                                db.ref("boletos/#{uuid}").once 'value', (boletos) ->
+                                                        b =  if boletos.val() isnt null then boletos.val() else []
+                                                        b.push({
+                                                                token: token
+                                                                invoice: invoiceid.data
+                                                                status: 'DRAFT'
+                                                        })
+                                                        db.ref("boletos/#{uuid}").set(b).then(-> resolve invoiceid.data).catch(reject)
+                                                        
+                        
+                        _on = (what, uuid, token,  pid) ->
+                                
                                                                                                         
                         # Crie um novo boleto requisitando
                         # a API do paypal (que está no backend)
                         # e atualize os dados na base de dados
-                        BoletoService.novo = (uid, options)->
+                        BoletoService.novo = (uuid, token, options)->
                                 new Promise (resolve, reject) ->
-                                        onCreate = (result) -> resolve uid: result.uid, payment_id:result.pid
-                                        create(uid, options).then(onCreate).catch reject 
-                                
+                                        onCreate = (result) ->
+                                                toastr.success("Boleto", "boleto #{result} criado")
+                                        create(uuid, token, options).then(onCreate).then(resolve).catch reject 
+
+                        BoletoService.status = (pid) ->
+                                new Promise (resolve, reject) ->
+                                        $http.post("/paypal/invoices/#{pid}/status").then (r) ->
+                                                resolve r.data
+                                                
                         # Crie uma suíte de requisições para o paypal
                         # - enviar uma notificação
-                        BoletoService.send = (uid, pid) -> new Promise (resolve, reject) -> _on('send', uid, pid).then(->resolve pid).catch(reject)
+                        BoletoService.send = (uuid, token, pid) ->
+                                new Promise (resolve, reject) ->
+                                                
+                                        $http.post("/paypal/invoices/#{pid}/send").then (r) ->
+                                                onSend = -> toastr.info("Email", r.data)
+                                                BoletoService.status(pid).then (_r) ->
+                                                        boletos = firebase.database().ref("boletos/#{uuid}")
+                                                        boletos.once 'value', (boleto) ->
+                                                                b = boleto.val()
+                                                                for b in boleto.val()
+                                                                        if pid is b.invoice
+                                                                                if b.status != _r.data
+                                                                                        b.status = _r.data
+                                                                        
+                                                                boletos.set(b)
+                                                                        .then(onSend)
+                                                                        .then(resolve)
+                                                                        .catch(reject)
 
                         # - relembrar a notificação
                         BoletoService.remind = (uid, pid) -> new Promise (resolve, reject) -> _on('remind', uid, pid).then(->resolve pid).catch(reject)
@@ -66,50 +89,66 @@ fetchServices = ->
 
                         fetch = (uuid) ->
                                 new Promise (resolve, reject) ->
-                                        query = ["/typeform/data-api?"]
+                                        query = ["/typeform/data-api?completed=true"]
                                         query.push "uuid=#{uuid}"
                                         query = query.join('&')
-                                        $http.get(query).then (result) ->
-                                                console.log result.data
-                                                resolve result.data
-                                                
-                                
-                        FormularioService.getAll = (fn) ->
-                                firebase.database().ref('formularios/').once 'value', (snapshot) ->
-                                        fn snapshot.val()
+                                        $http.get(query).then (result) -> resolve {uuid:uuid,form:result.data}
 
-                        FormularioService.get = (uuid, fn) ->
-                                firebase.database().ref("formularios/#{uuid}").once 'value', (snapshot) ->
-                                        fn snapshot.val()
-
-                        FormularioService.delete = (uuid) ->
-                                onDel = -> toastr.warning('Atenção', "formulário #{uuid} deletado")
-                                firebase.database().ref("formularios/#{uuid}").set(null).then(onDel)
-
-                                
-                        FormularioService.novo = (id_group, groups) ->
+                        # popule a base de dados
+                        onFetch = (result) ->
+                                # O proprietário atual do formulário
+                                user = firebase.auth().currentUser
+                                        
                                 # Pegue os dados do formulario e organize-os em um objeto
                                 # para inserir no firebase
                                 o = {}
-                                for e in groups
-                                        if e isnt 'uuid'
-                                                if e isnt 'tags'
-                                                        o[e] = document.getElementById("#{id_group}_#{e}").value
-                                                else
-                                                        o[e] = document.getElementById("#{id_group}_#{e}").value.split(" ")
+                                if FormularioService.isNovo
+                                        for e in ['name', 'tags', 'base_url']
+                                                d = document.getElementById("input_typeform_#{e}")
+                                                if e isnt 'tags' then o[e] = d.value
+                                                if e is 'tags' then o[e] = d.value.split(" ")
+                                        dataForm =
+        
+                                                # Proprietário do formulário
+                                                owner: user.uid
 
+                                                # url de base
+                                                base_url: o.base_url
+                        
+                                                # Propriedades gerais
+                                                name: o.name
+                                                tags: o.tags
 
-                                # O proprietário atual do formulário
-                                user = firebase.auth().currentUser
-                                o.owner = user.uid
-
-                                # uuid do typeform
-                                uuid = document.getElementById("#{id_group}_uuid").value
+                                        firebase.database().ref("formularios/#{result.uuid}").set(dataForm)
                                 
-                                onSet = ->  toastr.success('Formulário', "formulário #{uuid} registrado")
-                                onFetch = (form) -> firebase.database().ref("formularios/#{uuid}").set(form).then(onSet)
-                                fetch(uuid).then(onFetch).then(onSet)
+                                for e in ['questions', 'responses', 'stats']
+                                        firebase.database().ref("#{e}/#{result.uuid}").set(result.form[e]) 
+
+                        FormularioService.delete = (uuid) ->
+                                new Promise (resolve, reject) ->
+                                        onDel = -> toastr.success('Formulario',"#{uuid} deletado com sucesso")
+                                        Promise.all(firebase.database().ref("#{e}/#{uuid}").set(null) for e in ['formularios', 'questions', 'responses', 'stats']).then(onDel)
+                                        
+
+                        onSet = ->
+                                self = this
+                                new Promise (resolve, reject) ->
+                                        msg = "formulário #{self.uuid} #{self.type}"
+                                        toastr.success('Formulário', msg)
+                                        resolve()
                                 
+                        FormularioService.update = (uuid) ->
+                                # notificar e resolver quando terminar de criar o formulario
+                                FormularioService.isNovo = false
+                                fetch(uuid).then(onFetch).then(onSet.bind(uuid:uuid, type: 'atualizado'))
+                                
+                        FormularioService.novo = (id_group, groups) ->
+                                new Promise (resolve, reject) ->
+                                        # uuid do typeform
+                                        uuid = document.getElementById("input_typeform_uuid").value
+                                        FormularioService.isNovo = true
+                                        fetch(uuid).then(onFetch).then(onSet.bind(uuid:uuid, type:'criado'))
+                                                                        
 
                         return FormularioService
                 ]

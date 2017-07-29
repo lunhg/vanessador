@@ -3,7 +3,7 @@ section.centralize-area(ng-controller="PaypalCtrl")
     br
     br
     br
-    h2 Inspecione o boleto {{ currentInvoice }}
+    h2 Inspecione o boleto {{ boleto.id }}
     br
     br
     br
@@ -12,11 +12,13 @@ section.centralize-area(ng-controller="PaypalCtrl")
         tr
           th Payment ID
           th Status
+          th Resposta de Formulário
           th Ações
       tbody
-        tr(ng-repeat="(e) in registeredInvoice") 
+        tr(ng-repeat="(i, e) in boleto") 
           td {{ e.id }}
           td {{ e.status }}
+          td {{ e.token }}
           td
             a.btn.btn-default(ng-show="e.status === 'DRAFT'" ng-click="send('{{ e.id }}')") Enviar email de notificação
             a.btn.btn-default(ng-show="e.status === 'SENT'" ng-click="remind('{{ e.id }}')") Reenviar email de notificação
