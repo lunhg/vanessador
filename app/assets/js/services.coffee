@@ -32,9 +32,6 @@ fetchServices = ->
                                                                 status: 'DRAFT'
                                                         })
                                                         db.ref("boletos/#{uuid}").set(b).then(-> resolve invoiceid.data).catch(reject)
-                                                        
-                        
-                        _on = (what, uuid, token,  pid) ->
                                 
                                                                                                         
                         # Crie um novo boleto requisitando
@@ -48,7 +45,7 @@ fetchServices = ->
 
                         BoletoService.status = (pid) ->
                                 new Promise (resolve, reject) ->
-                                        $http.post("/paypal/invoices/#{pid}/status").then (r) ->
+                                        $http.get("/paypal/invoices/#{pid}/status").then (r) ->
                                                 resolve r.data
                                                 
                         # Crie uma suíte de requisições para o paypal
@@ -59,26 +56,19 @@ fetchServices = ->
                                         $http.post("/paypal/invoices/#{pid}/send").then (r) ->
                                                 onSend = -> toastr.info("Email", r.data)
                                                 BoletoService.status(pid).then (_r) ->
-                                                        boletos = firebase.database().ref("boletos/#{uuid}")
-                                                        boletos.once 'value', (boleto) ->
-                                                                b = boleto.val()
-                                                                for b in boleto.val()
-                                                                        if pid is b.invoice
-                                                                                if b.status != _r.data
-                                                                                        b.status = _r.data
+                                                        boletos = firebase.database().ref("boletos/")
+                                                        boletos.once 'value', (boletos) ->
+                                                                _boletos = boletos.val()
+                                                                for k,v of _boletos
+                                                                        for b in v
+                                                                                if pid is b.invoice and token is b.token then b.status = _r.data
                                                                         
                                                                 boletos.set(b)
                                                                         .then(onSend)
                                                                         .then(resolve)
                                                                         .catch(reject)
 
-                        # - relembrar a notificação
-                        BoletoService.remind = (uid, pid) -> new Promise (resolve, reject) -> _on('remind', uid, pid).then(->resolve pid).catch(reject)
 
-                        
-                        # - cancelar o pagamento
-                        BoletoService.cancel = (uid, pid) -> new Promise (resolve, reject) -> _on('cancel', uid, pid).then(->resolve pid).catch(reject)
-                                                
                         return BoletoService
                 ]
                                 

@@ -3,10 +3,11 @@ section.centralize-area(ng-controller="PaypalCtrl")
     br
     br
     br
-    h2 Inspecione o boleto {{ boleto.id }}
+    h2 Inspecione o boleto {{ boleto.invoice }}
     br
     br
     br
+    p {{ boleto }}
     table.table.table-striped.table-hover
       thead
         tr
@@ -15,14 +16,14 @@ section.centralize-area(ng-controller="PaypalCtrl")
           th Resposta de Formulário
           th Ações
       tbody
-        tr(ng-repeat="(i, e) in boleto") 
-          td {{ e.id }}
-          td {{ e.status }}
-          td {{ e.token }}
+        tr
+          td {{ boleto.invoice }}
+          td {{ boleto.status }}
+          td {{ boleto.token }}
           td
-            a.btn.btn-default(ng-show="e.status === 'DRAFT'" ng-click="send('{{ e.id }}')") Enviar email de notificação
-            a.btn.btn-default(ng-show="e.status === 'SENT'" ng-click="remind('{{ e.id }}')") Reenviar email de notificação
-            a.btn.btn-default(ng-show="e.status === 'SENT'" ng-click="cancel('{{ e.id }}')") Cancelar pagamento
-            p(ng-show="e.status === 'CANCELLED'") Boleto cancelado
+            a.btn.btn-success(ng-show="boleto.status === 'DRAFT'" ng-click="onSend()") Enviar email de notificação
+            a.btn.btn-success(ng-show="boleto.status === 'SENT'" ng-click="onRemind()") Reenviar email de notificação
+            a.btn.btn-danger(ng-show="boleto.status === 'SENT'" ng-click="onCancel()") Cancelar pagamento
+            p(ng-show="boleto.status === 'CANCELLED'") Boleto cancelado
             
             
