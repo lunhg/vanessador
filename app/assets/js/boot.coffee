@@ -1,12 +1,10 @@
 document.addEventListener 'DOMContentLoaded', (event)->
 
-        fetchConfig().then(fetchServices)
-                .then (services) ->
-                        app.service("#{service}", v) for service, v of services
-                .then(fetchAuthCtrl)
+        fetchConfig().then(fetchAuthCtrl)
                 .then (AuthCtrl) ->
+                        console.log AuthCtrl
                         # Registre o controlador
-                        app.controller "AuthCtrl", ['$rootScope','$http','$location','$window', '$route', 'toastr', AuthCtrl]
+                        app.controller "AuthCtrl", ['$rootScope','$http','$location','$window', '$route','authService', 'toastr', AuthCtrl]
                 .then(fetchTypeform)
                 .then (TypeformCtrl) ->
                         # Registre o controlador
@@ -18,6 +16,15 @@ document.addEventListener 'DOMContentLoaded', (event)->
                 .then(fetchRun)
                 .then (Run) ->
                         app.run(['$rootScope', '$http', '$location', '$route', '$window', Run])
+                .then(fetchAuthService)
+                .then (service) ->
+                        app.service("authService", service)
+                .then(fetchFormularioService)
+                .then (service) ->
+                        app.service("formularioService", service)
+                .then(fetchBoletoService)
+                .then (service) ->
+                        app.service("boletoService", service)
                 .then(fetchDirectives)
                 .then (directives) ->
                         app.directive(_directive.name, _directive.fn) for _directive in directives

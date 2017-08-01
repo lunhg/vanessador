@@ -1,0 +1,22 @@
+section.centralize-area(ng-controller="PaypalCtrl")
+  div
+    br
+    br
+    br
+    h2 Inspecione um boleto
+    br
+    br
+    br 
+    p {{ boletos }}
+    table.table.table-striped.table-hover
+      thead
+        tr
+          th Formulário
+          th Ações
+      tbody
+        tr(ng-repeat="(k,v) in boletos")
+          td {{ k }}
+          
+          //td
+            //a(href="/#!/boletos/{{ b.token }}") Inspecionar
+          

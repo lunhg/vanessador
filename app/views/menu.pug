@@ -18,7 +18,10 @@ nav.navbar.navbar-default.navbar-fixed-top(role="navigation", ng-controller="Aut
         li(ng-show="user === null")
           a.nav-link(href="/#!/signup" ng-show="user == null") Cadastre-se
       
-      ul.nav.navbar-nav(ng-show="user != null")  
+      ul.nav.navbar-nav(ng-show="user != null")
+        li#boletos-menu(ng-show="user !== null" ng-mouseenter="onDropdownmenu('boletos-menu')" ng-mouseleave="onDropupmenu('boletos-menu')")
+          a(href="/#!/boletos") Boletos 
+          
         li#formularios-menu(ng-show="user !== null" ng-mouseenter="onDropdownmenu('formularios-menu')" ng-mouseleave="onDropupmenu('formularios-menu')")
           a.btn-btn-default.dropdown-toogle(data-toogle="dropdown" aria-expanded="true") Formulários
             span.caret

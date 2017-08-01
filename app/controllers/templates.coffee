@@ -40,6 +40,12 @@ AppManager::templates = ->
                                                         result.route = "/#{r[0]}/novo"
 
                                                 # GET /#!/boletos/:invoiceid
+                                                else if p.match /^boletos$/
+                                                        result.controller = 'PaypalCtrl'
+                                                        result.route = "/boletos"
+
+
+                                                # GET /#!/boletos/:invoiceid
                                                 else if p.match /boletos_id/
                                                         result.controller = 'PaypalCtrl'
                                                         r = p.split("_")

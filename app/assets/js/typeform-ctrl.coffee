@@ -50,9 +50,8 @@ fetchTypeform = ->
                                 phone_national_number: answers.item(5).innerHTML
                                 state:"RJ"
                                 country_code: "BR"
-                                value:'10.00'
-                        $rootScope.boleto = null  
-                        onBoleto = -> $location.path("/formularios/#{$rootScope.currentForm}/responses/#{$rootScope.token}")
+                                value:'10.00'  
+                        onBoleto = -> $location.path("/formularios")
                         boletoService.novo($rootScope.currentForm, $rootScope.token, data).then(onBoleto).catch(onErr)
         
                 # - /formularios
@@ -79,6 +78,7 @@ fetchTypeform = ->
                         $rootScope.onLoading = true
                         $rootScope.boleto = null
                         $rootScope.currentForm = $location.url().split('/formularios/')[1].split('/')[0]
+                        $rootScope.boleto = null
                         action = $location.url().split('/formularios/')[1].split('/')[1]
                         token = $location.url().split('/formularios/')[1].split('/')[2]
                         user = firebase.auth().currentUser.uid

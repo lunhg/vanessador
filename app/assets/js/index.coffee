@@ -1,9 +1,11 @@
 #= require app
 #= require config
+#= require auth-service
+#= require formulario-service
+#= require boleto-service
 #= require auth-ctrl
 #= require typeform-ctrl
 #= require paypal-ctrl
-#= require services
 #= require run
 #= require directives
 #= require boot

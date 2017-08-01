@@ -66,6 +66,7 @@
 	"formularios_uuid_delete",
 	"formularios_uuid_responses",
 	"formularios_uuid_responses_token",
+	"boletos",
 	"boletos_id",
 	"conta"
     ],

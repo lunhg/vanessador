@@ -6,7 +6,7 @@ fetchAuthCtrl = ->
         loader = document.getElementById('masterLoader')
         p = loader.children[9]
         p.innerHTML = "Trabalhando na autorização..."
-        AuthCtrl = ($rootScope, $http, $location, $window, $route, dialogService) ->
+        AuthCtrl = ($rootScope, $http, $location, $window, $route, authService, toastr) ->
 
                 # # Apresentação de dados
                 # - /contas
@@ -18,190 +18,27 @@ fetchAuthCtrl = ->
                 $rootScope.onAccountConfiguracoes = ->
                         $rootScope.configuracoes = true
                         $rootScope.dadosPessoais = false
-                
-                # # Funções auxiliares
-                # Estas funções auxiliam as funções principais do $rootScope
-                # como chcagem de erro, login, logout, envio de email
-                # checkout $rootScope.popup message and type
-                onErr  = (err) ->
-                        toastr.error("Erro #{err.code}", err.message)
-                        $location.path('/')
-                        $route.reload()
-                # checkout $rootScope.popup message success on signout
-                onSignout = ->
-        
-                        # Apresente ao usuário uma mensagem de sucesso
-                        user = firebase.auth().currentUser
-                        if not user
-                                toastr.success('Logout', "você saiu do sistema")
-                                $rootScope.user = null
-                                # Isso é necessário para reatualizar os dados
-                                $location.path('/login')
-                        else
-                                onErr new Error("Usuário #{user.uid} ainda está logado")
-                                $location.path('/formularios')
-                        $route.reload()
-                # checkout $rootScope.popup message success on login
-                onLogin = (result) ->
-                        # Apresente ao usuário uma mensagem de sucesso
-                        user = firebase.auth().currentUser
-                        toastr.success('Bem vindo', "#{user.displayName or user.email}")
-                        # Isso é necessário para reatualizar os dados
-                        $location.path('/formularios')
-                        $route.reload()
-                
-                # Funcao para enviar email de verificação após criar conta
-                onSendEmailVerify =  ->
-                        nextRoute = "/login"
-                        if firebase.auth().currentUser
-                                user = firebase.auth().currentUser
-        
-                                # memorize um popup
-                                onSend = ->
-                                        msg = "Enviamos um email  #{user.displayName or user.email}"
-                                        toastr.success('Email', msg)
-                                        $location.path('/formularios')
-                                        $route.reload()
-                                user.sendEmailVerification().then(onSend).catch(onErr)
-                        
-        
-                # Recupere dados de configuração do servidor
-                onGetConfig = (callback) -> $http(method: 'GET',url: '/config').then(callback).catch(onErr)
-                
-                # checkout $rootScope.popup message success on login
-                onConfirmEmailVerify = ->
-                        query = $location.search('mode', 'oobCode', 'apiKey')
-                        onGetConfig (config) ->
-                                onSend = ->
-                                        user = firebase.auth().current
-                                        toastr.success('Email', "#{user.email} verificado")
-                                        $location.path('/formularios')
-                                        $route.reload()
-                                if query.apiKey is config.apiKey
-                                        firebase.auth().applyActionCode(query.oobCode).then(onSend).catch(onErr)
-                                else
-                                        onErr new Error 'apiKey incorrect'
 
-                # Função que confirma a troca de senha
-                onConfirmResetPassword = ->
-                        b = document.getElementById('reset_login_password').value is document.getElementById('reset_login_password_confirm').value
-
-                        if b
-                                user = firebase.auth().currentUser
-                                
-                                # Verifique o código oob e depois resete a senha e notifique o usuário
-                                firebase.auth().applyActionCode(query.oobCode).then(onApply).catch(onErr)
-                                # Quando a verificação do código de ação for possível
-                                # Aplique a atualização da senha 
-                                onApply = ->
-                                        _onApply = -> toastr.success('Senha', 'Senha trocada com sucesso!')
-                                        pwd  = document.getElementById('reset_login_password_confirm').value
-                                        user.updatePassword(pwd).then(_onApply).catch onErr
-                
-                                
-                        else
-                                onErr new Error 'Senhas não coincidem'
-                # # Funções princiapis de login
-                #
-                # ## Login
-                # 
-                # ### Login Google
-                # - realizado com o firebase
-                # - Necessita do provedor Google
-                # - ASsim que autorizar, o usuário é notificado que logou
-                # - Utiliza a função auxiliar `onLogin`
                 $rootScope.loginGoogle = ->
-                        if not firebase.auth().currentUser
-                                provider = new firebase.auth.GoogleAuthProvider()
-                                provider.addScope('https://www.googleapis.com/auth/userinfo.profile')
-                                firebase.auth().signInWithPopup(provider).then(onLogin).catch(onErr)
-                        else
-                               onErr new Error  "User already logged"
+                        authService.loginGoogle()
                 
-                # ### Login email e senha 
-                # - realizado com o firebase
-                # - requer email e senha independentes
-                # - Os únicos autorizados são aqueles com domínio @itsrio.org e o desenvolvedor 
-                # - Assim que autorizar, o usuário é notificado que entrou no sistema
-                # - Utiliza a função auxiliar `onLogin`
                 $rootScope.loginEmailAndPassword = ->
-                        if not firebase.auth().currentUser
-                                email = document.getElementById('input_login_email').value
-                                if email.match(/\w+@itsrio.org/) or email.match(/gcravista@gmail.com/)
-                                        firebase.auth().signInWithEmailAndPassword(email,(document.getElementById('input_login_password').value)).then(onLogin).catch(onErr)
-                                else
-                                        onErr(new Error("Conta de email não permitida"))
-                        else
-                                onErr new Error "User already logged"                                
+                        authService.loginEmailAndPassword('input_login_email',
+                                'input_login_password',
+                                /\w+@itsrio.org|gcravista@gmail.com/)                            
 
                 
-                # ### Cadastro
-                # - realizado com o firebase
-                # - requer email e senha independentes
-                # - Os únicos autorizados são aqueles com domínio @itsrio.org e o desenvolvedor
-                # - Assim que autorizar, o usuário é notificado que foi enviado um email de confirmação e o usuário entra no sistema
                 $rootScope.createUserWithEmailAndPassword = ->
-                        if not firebase.auth().currentUser
-                                # check email domain
-                                email = document.getElementById('input_signup_email').value
-        
-                                # Permitido apenas para @itsrio.org e o desenvolvedor
-                                if email.match(/\w+@itsrio.org/) or email.match(/gcravista@gmail.com/)
-                                        pwd = document.getElementById('input_signup_senha').value
-                                        firebase.auth().createUserWithEmailAndPassword(email, pwd).then(onSendEmailVerify).catch(onErr)
-                                        
-                                else
-                                       onErr(new Error("Conta de email não permitida")) 
-                        else
-                                onLoginOrCreateErr()
-        
-                # ### Resete a senha
-                # - realizado com o firebase
-                # - enviamos  uma requisição por email para executar posteriormente $rootScope.confirmResetPassword
+                       authService.createUserWithEmailAndPassword('input_signup_email',
+                               'input_signup_senha',
+                                /\w+@itsrio.org|gcravista@gmail.com/)
+
                 $rootScope.sendPasswordResetEmail = ->
-                        email = document.getElementById('reset_login_email').value
-                        firebase.auth().sendPasswordResetEmail(email).then(->
-                                msg = "Enviamos um email para #{email} com um novo token"
-                                toastr.info('Recuperação de senha', msg)
-                                $location.path('/login')
-                                $route.reload()
-                        ).catch(onErr)
+                        authService.sendPasswordResetEmail('reset_login_email')
         
-                # Quando receber um email de resetar a senha e clicar ou copiar e colar
-                # o endereço de confirmação, o cliente recebe um oobCode que deve ser
-                # acompanhado da chave api do aplicatvo
-                $rootScope.resetPassword = false
-                $rootScope.confirmEmail = false
-                $rootScope.confirm = ->
-                        onGetConfig (config) ->
-                                query = $location.search()
-                                if query.apiKey is config.data.apiKey
-                                        if query.mode is 'resetPassword'
-                                                # Checar se os emails estão iguais
-                                                onConfirmResetPassword()
-                                        if query.mode is 'confirmEmail'
-                                                onErr new Error "Função não implementada ainda"
-                                else
-                                        onErr new Error "Chave incorreta"
-                # callback para o logout
-                $rootScope.logout = ->
-                        # É necessário limpar parte da base de dados que
-                        # memorizavam qual é o formulário atual de cada usuário
-                        user = firebase.auth().currentUser
-                        _onSignout = -> firebase.auth().signOut().then(onSignout).catch(onErr)
-                        firebase.database().ref("users/#{user.uid}/currentForm").remove().then(_onSignout).catch(onErr)
+                $rootScope.confirm = -> if $location.url().match /\/confirm\?mode\=[a-zA-Z0-9]+\&oobCode\=[a-zA-Z0-9\_\-]+\&apiKey\=[a-zA-Z0-9]+/ then authService.confirm('reset_login_password', 'reset_login_password_confirm')
+                $rootScope.linkAccount = -> authService.linkAccount()
                 
-
-                # Esta função vincula a autenticação por email e senha com a autenticação por oauth
-                # https://firebase.google.com/docs/auth/web/account-linking
-                $rootScope.linkAccount = ->
-                        if firebase.auth().currentUser
-                                provider = new firebase.auth.GoogleAuthProvider()
-                                onLinkProvider = (result) ->
-                                        credential = result.credential;
-                                        user = result.user;
-                                        firebase.auth().currentUser.linkWithPopup(provider).then(onLinkProvider).catch(onErr)
-
                        # Para o menu funcionar corretamente com o bootstrap
                 # Vamos adicionar as interações
                 $rootScope.onDropdownmenu = (what)->                     
@@ -212,10 +49,5 @@ fetchAuthCtrl = ->
                         document.getElementById(what).classList.remove('open')
                         document.getElementById(what).setAttribute('aria-expanded', 'false')
                 
-
-                if $location.url().match /\/confirm\?mode\=[a-zA-Z0-9]+\&oobCode\=[a-zA-Z0-9\_\-]+\&apiKey\=[a-zA-Z0-9]+/
-                        query = $location.search()
-                        $rootScope.resetPassword = query.mode is 'resetPassword'
-                        $rootScope.verifyEmail = query.mode is 'verifyEmail'
-                        console.log $rootScope.resetPassword
-                        console.log $rootScope.verifyEmail
+        new Promise (resolve) -> resolve AuthCtrl
+                
