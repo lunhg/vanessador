@@ -5,19 +5,16 @@ section.centralize-area
   h1 Resposta {{ token }} do formulário {{ currentForm }}
   br
   br
-  br
-  a.btn.btn-success(ng-show="boleto" href="/#!/boletos/{{ boleto.invoice }}") Verificar boleto de pagamento
-  a.btn.btn-success(ng-show="!boleto" ng-click="onNovoBoleto()") Criar um boleto de pagamento
+  br 
+  a.btn.btn-default(ng-show="boleto !== null" href="/#!/boletos/{{ boleto.invoice }}") Verificar boleto de pagamento
+  a.btn.btn-success(ng-show="boleto === null" ng-click="onNovoBoleto()") Criar um boleto de pagamento
   table.table.table-striped.table-hover
     thead
       tr
-        th N
-        th Chave
+        th Pergunta
         th Resposta
-        th Ações
     tbody
       tr(ng-repeat="(k,v) in answers")
-        th {{ k }}
-        td.typeform-question {{ v.question }}
-        td.typeform-answer {{ v.response }}
+        th {{ questions[k] }}
+        td.typeform-answer {{ v }}
 

@@ -13,8 +13,10 @@ fetchConfig = ->
                 app.config ($routeProvider, $locationProvider) ->
         
                         # Primeiro inicialize as rotas angular
-                        $routeProvider.when(e.route,{template:e.template, controller:e.controller}) for e in templates.data
-                                
+                        
+                        for e in templates.data
+                                obj = {template:e.template, controller: 'MainCtrl'}
+                                $routeProvider.when(e.route,obj)
                         # Ponto inicial
                         $routeProvider.otherwise({redirectTo: '/'})
         

@@ -220,6 +220,47 @@ describe(chalk.green('Vanessador app'), function() {
       }).then(resolve)["catch"](reject);
     });
   });
+  it("should POST /paypal/boletos/novo", function() {
+    return new Promise(function(resolve, reject) {
+      return agent.post("/paypal/invoices/novo").query({
+        first_name: "NodeJS"
+      }).query({
+        second_name: "Teste 2"
+      }).query({
+        phone_country_code: "51"
+      }).query({
+        phone_national_number: "1234567890"
+      }).query({
+        line: "Internet, Proxy IP"
+      }).query({
+        city: "Provedor"
+      }).query({
+        state: "Web"
+      }).query({
+        postal_code: "127.0.0.0"
+      }).query({
+        country_code: "BR"
+      }).query({
+        value: '10.00'
+      }).query({
+        billing_info_email: 'gcravista-buyer@gmail.com'
+      }).query({
+        form: 'lD26uE'
+      }).expect(200).expect('Content-Type', /json/).expect(function(res) {
+        payment_id = res.body;
+        return res.body.should.match(/[A-Z0-9]+\-[A-Z0-9]+\-[A-Z0-9]+\-[A-Z0-9]+/);
+      }).then(resolve)["catch"](reject);
+    });
+  });
+  it("should DELETE /paypal/invoices/:id", function() {
+    return new Promise(function(resolve, reject) {
+      return setTimeout(function() {
+        return agent["delete"]("/paypal/invoices/" + payment_id).expect(200).expect(function(res) {
+          return res.body.should.be.String();
+        }).then(resolve)["catch"](reject);
+      }, 1000);
+    });
+  });
   it("should GET /docs", function() {
     return new Promise(function(resolve, reject) {
       return agent.get("/docs").expect(200).expect('Content-Type', /html/).end(function(err, res) {

@@ -1,4 +1,4 @@
-section.centralize-area(ng-controller="PaypalCtrl")
+section.centralize-area
   div
     br
     br
@@ -19,9 +19,9 @@ section.centralize-area(ng-controller="PaypalCtrl")
           td
             a(href="/#!/formularios/{{ currentForm }}/responses/{{ boleto.token }}") {{ boleto.token }}
           td 
-            a.btn.btn-success(ng-show="boleto.status === 'DRAFT'" ng-click="onSend()") Enviar
-            a.btn.btn-default(ng-show="boleto.status === 'SENT'" ng-click="onRemind()") Reenviar
-            a.btn.btn-danger(ng-show="boleto.status === 'SENT'" ng-click="onCancel()") Cancelar
-            p(ng-show="boleto.status === 'CANCELLED'") Boleto cancelado
-            
-            
+            a.btn.btn-success(ng-show="boleto.status === 'DRAFT'" ng-click="onSendBoleto()") Enviar
+            a.btn.btn-danger(ng-show="boleto.status === 'DRAFT'" ng-click="onDeleteBoleto()") Delete
+            a.btn.btn-success(ng-show="boleto.status === 'SENT'" ng-click="onRemindBoleto()") Reenviar
+            a.btn.btn-danger(ng-show="boleto.status === 'SENT'" ng-click="onCancelBoleto()") Cancelar
+ 
+ 

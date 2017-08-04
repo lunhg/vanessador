@@ -117,3 +117,8 @@ AppManager::paypal = ->
                                 res.json "Seu email de notificação está sendo processado pelo PayPal"
                 catch
                         res.json err
+
+        @app.delete '/paypal/invoices/:id', (req, res) ->
+                paypal_rest_sdk.invoice.del req.params.id, (err, rv) ->
+                        if err then res.json err
+                        res.json "Boleto #{req.params.id} deletado"

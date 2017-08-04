@@ -7,8 +7,8 @@ fetchAuthService = ->
         loader = document.getElementById('masterLoader')
         p = loader.children[9]
         p.innerHTML = "Construindo serviço de autorização..."
-        Service =  ($http, $location, $route, toastr) ->
-
+        Service =  ($http, $location, $route, $window, $rootScope, mainService, toastr) ->
+                                
                 AuthService = {}
                 # # Funções auxiliares
                 # Estas funções auxiliam as funções principais do $rootScope
@@ -26,11 +26,12 @@ fetchAuthService = ->
                         if not user
                                 toastr.success('Logout', "você saiu do sistema")
                                 # Isso é necessário para reatualizar os dados
+                                $rootScope.user = null
                                 $location.path('/login')
                         else
                                 AuthService.onErr new Error("Usuário #{user.uid} ainda está logado")
                                 $location.path('/formularios')
-                        
+                                
                 # checkout $rootScope.popup message success on login
                 AuthService.onLogin = (result) ->
                         # Apresente ao usuário uma mensagem de sucesso
@@ -45,10 +46,12 @@ fetchAuthService = ->
                         nextRoute = "/login"
                         if firebase.auth().currentUser
                                 user = firebase.auth().currentUser
-        
+                                
                                 # memorize um popup
                                 onSend = ->
                                         msg = "Enviamos um email  #{user.displayName or user.email}"
+                                        $rootScope.resetPassword = true
+                                        $rootScope.verifyEmail = false
                                         toastr.success('Email', msg)
                                         $location.path('/formularios')
                                         $route.reload()
@@ -137,7 +140,7 @@ fetchAuthService = ->
                                 # Permitido apenas para @itsrio.org e o desenvolvedor
                                 if email.match(restricted)
                                         pwd = document.getElementById(id_password).value
-                                        firebase.auth().createUserWithEmailAndPassword(email, pwd).then(onSendEmailVerify).catch(onErr)
+                                        firebase.auth().createUserWithEmailAndPassword(email, pwd).then(AuthService.onSendEmailVerify).catch(onErr)
                                         
                                 else
                                        AuthService.onErr(new Error("Conta de email não permitida")) 
@@ -155,17 +158,41 @@ fetchAuthService = ->
                         ).catch(onErr)
 
 
-                AuthService.confirm = ->
-                        AuthService.onGetConfig().then (config) ->
-                                query = $location.search()
-                                if query.apiKey is config.data.apiKey
-                                        if query.mode is 'resetPassword'
-                                                # Checar se os emails estão iguais
-                                                onConfirmResetPassword()
-                                        if query.mode is 'confirmEmail'
-                                                onErr new Error "Função não implementada ainda"
-                                else
-                                        AuthService.onErr new Error "Chave incorreta"
+                AuthService.verifyPhone = (id) ->
+                        tel = document.getElementById(id).value
+                        PhoneAuthProvider = firebase.auth.PhoneAuthProvider
+                        provider = new PhoneAuthProvider()
+                        provider.verifyPhoneNumber(tel,mainService.applicationVerifier)
+                        
+                AuthService.sendSMS = (id, query) ->
+                        
+                AuthService.confirmSMS = (code) ->
+                                
+                # Para trocar a senha, é necessário
+                # que o usuário esteja logado ou tenha
+                # logado recentemente. Supondo que alguém
+                # nunca logou, vamos buscar reautenticar o usuário
+                # através do login por celular e depois
+                # trocamos a senha
+                AuthService.confirm = (id_a, id_b, query) ->
+                        _confirmationResult = null
+                        b1 = document.getElementById(id_a).value
+                        b2 = document.getElementById(id_b).value
+                        if b1 is b2                
+                                AuthService.onGetConfig().then (config) ->
+                                        if query.apiKey is config.data.apiKey
+                                                if query.mode is 'resetPassword'
+                                                        # Checar se os emails estão iguais
+                                                        AuthService.onConfirmResetPassword(id_a, id_b)
+                                                if query.mode is 'confirmEmail'
+                                                        m = "Função não implementada ainda"
+                                                        onErr new Error m
+                                                else
+                                                        AuthService.onErr new Error "Chave incorreta"
+                        
+
+                        
+                        
 
 
                 # callback para o logout
@@ -173,8 +200,8 @@ fetchAuthService = ->
                         # É necessário limpar parte da base de dados que
                         # memorizavam qual é o formulário atual de cada usuário
                         user = firebase.auth().currentUser
-                        _onSignout = -> firebase.auth().signOut().then(onSignout).catch(onErr)
-                        firebase.database().ref("users/#{user.uid}/currentForm").remove().then(_onSignout).catch(onErr)
+                        _onSignout = -> firebase.auth().signOut().then(AuthService.onSignout).catch(AuthService.onErr)
+                        firebase.database().ref("users/#{user.uid}/currentForm").remove().then(_onSignout).catch(AuthService.onErr)
 
                 # Esta função vincula a autenticação por email e senha com a autenticação por oauth
                 # https://firebase.google.com/docs/auth/web/account-linking
@@ -183,8 +210,14 @@ fetchAuthService = ->
                                 provider = new firebase.auth.GoogleAuthProvider()
                                 onLinkProvider = (result) ->
                                         credential = result.credential;
-                                        user = result.user;
-                                        firebase.auth().currentUser.linkWithPopup(provider).then(onLinkProvider).catch(onErr)
-                                        
+                                        user = result.user
+                                        user.reauthenticate(credential)
+                                                .then ->
+                                                        toastr.info "Login", "usuário reautenticado"
+                                                        $rootScope.user = user
+                                                .catch(AuthService.onErr)
+                                firebase.auth().currentUser.linkWithPopup(provider).then(onLinkProvider).catch(AuthService.onErr)
+
+                        
                 return AuthService
-        ['$http', '$location', '$route', 'toastr', Service]
+        ['$http', '$location', '$route', '$window', '$rootScope', 'mainService', 'toastr', Service]

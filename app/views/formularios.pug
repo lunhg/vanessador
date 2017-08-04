@@ -1,4 +1,4 @@
-section.centralize-area(ng-controller="TypeformCtrl")
+section.centralize-area
   div
     br
     br
@@ -7,14 +7,8 @@ section.centralize-area(ng-controller="TypeformCtrl")
     br
     br
     br
-
-    form.navbar-form(ng-show="forms === null")
-      div.form-group
-        p Nenhum curso encontrado. Registre um novo formulário typeform clicando no botão abaixo
-        a.btn.btn-default(href="/#!/formularios/novo") Registrar
-
-    img(src="/assets/images/loading.gif" ng-show="typeforms === null && onLoading")
-    table.table.table-striped.table-hover(ng-show="typeforms !== null && !onLoading")
+    p {{ registeredForms }}
+    table.table.table-striped.table-hover
       thead
         tr
           th uuid
@@ -23,7 +17,7 @@ section.centralize-area(ng-controller="TypeformCtrl")
           th Proprietários
           th Ações
       tbody
-        tr(ng-repeat="(k,v) in typeforms") 
+        tr(ng-repeat="(k,v) in registeredForms") 
           td 
             a(href="https://{{ v.base_url }}/{{ k }}") {{ k }}
           td {{ v.name }}

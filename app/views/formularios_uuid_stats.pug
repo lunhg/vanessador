@@ -1,12 +1,12 @@
-section.centralize-area(ng-controller="TypeformCtrl")
+section.centralize-area
+  br
   br
   br
   h1 Estatísticas para {{ currentForm }}
   br
   br
-  p {{ stats }}
-  img(ng-show="onLoading" src="/assets/images/loading.gif")
-  table.table.table-striped.table-hover(ng-show="onLoading === false && stats")
+  br
+  table.table.table-striped.table-hover(ng-show="stats")
     thead
       tr
         th(ng-repeat="(k,v) in stats.responses") {{ k }}

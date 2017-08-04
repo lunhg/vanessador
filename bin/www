@@ -242,22 +242,20 @@ AppManager.prototype.templates = function() {
               r = p.split("_");
               result.route = "/" + r[0] + "/:uuid/" + r[2];
             } else if (p.match(/^formularios_uuid_\w+_[a-z]+$/)) {
-              result.controller = 'TypeformCtrl';
               r = p.split("_");
               result.route = "/" + r[0] + "/:uuid/" + r[2] + "/:token";
             } else if (p.match(/formularios_novo/)) {
-              result.controller = 'TypeformCtrl';
               r = p.split("_");
               result.route = "/" + r[0] + "/novo";
             } else if (p.match(/^boletos$/)) {
-              result.controller = 'PaypalCtrl';
               result.route = "/boletos";
             } else if (p.match(/boletos_id/)) {
-              result.controller = 'PaypalCtrl';
               r = p.split("_");
               result.route = "/boletos/:invoiceid";
+            } else if (p.match(/^conta_\w+_\w+$/)) {
+              r = p.split("_");
+              result.route = "/" + r[0] + "/:option/:action";
             } else {
-              result.controller = 'AuthCtrl';
               result.route = "/" + p;
             }
             console.log(result);
@@ -517,7 +515,7 @@ AppManager.prototype.paypal = function() {
       return res.json("Seu email de notificação está sendo processado pelo PayPal");
     });
   });
-  return this.app.post('/paypal/invoices/:id/cancel', function(req, res) {
+  this.app.post('/paypal/invoices/:id/cancel', function(req, res) {
     var error1, options;
     options = {
       "subject": "Cancelamento de pagamento",
@@ -536,6 +534,14 @@ AppManager.prototype.paypal = function() {
     } catch (error1) {
       return res.json(err);
     }
+  });
+  return this.app["delete"]('/paypal/invoices/:id', function(req, res) {
+    return paypal_rest_sdk.invoice.del(req.params.id, function(err, rv) {
+      if (err) {
+        res.json(err);
+      }
+      return res.json("Boleto " + req.params.id + " deletado");
+    });
   });
 };
 

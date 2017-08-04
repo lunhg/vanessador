@@ -29,31 +29,30 @@ AppManager::templates = ->
 
                                                 # GET /#!/formularios/:uuid/responses/:token
                                                 else if p.match /^formularios_uuid_\w+_[a-z]+$/
-                                                        result.controller = 'TypeformCtrl'
                                                         r = p.split("_")
                                                         result.route = "/#{r[0]}/:uuid/#{r[2]}/:token"
 
                                                 # GET /#!/formularios/novo
                                                 else if p.match /formularios_novo/
-                                                        result.controller = 'TypeformCtrl'
                                                         r = p.split("_")
                                                         result.route = "/#{r[0]}/novo"
 
                                                 # GET /#!/boletos/:invoiceid
                                                 else if p.match /^boletos$/
-                                                        result.controller = 'PaypalCtrl'
                                                         result.route = "/boletos"
 
 
                                                 # GET /#!/boletos/:invoiceid
                                                 else if p.match /boletos_id/
-                                                        result.controller = 'PaypalCtrl'
                                                         r = p.split("_")
                                                         result.route = "/boletos/:invoiceid"
 
+                                                # GET /#!/conta/telefone/vincular
+                                                else if p.match /^conta_\w+_\w+$/
+                                                        r = p.split("_")
+                                                        result.route = "/#{r[0]}/:option/:action"
                                                 # GET otherwise
                                                 else
-                                                        result.controller = 'AuthCtrl'
                                                         result.route = "/#{p}"
                                                 
                                                 console.log result

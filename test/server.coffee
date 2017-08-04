@@ -229,6 +229,40 @@ describe chalk.green('Vanessador app'), ->
                                         res.body.should.equal 'CANCELLED'
                                 .then(resolve)
                                 .catch(reject)
+
+         it "should POST /paypal/boletos/novo", ->
+                new Promise (resolve, reject) ->
+                        agent.post("/paypal/invoices/novo")
+                                .query(first_name: "NodeJS")
+                                .query(second_name: "Teste 2")
+                                .query(phone_country_code: "51")
+                                .query(phone_national_number: "1234567890")
+                                .query(line: "Internet, Proxy IP")
+                                .query(city: "Provedor")
+                                .query(state: "Web")
+                                .query(postal_code: "127.0.0.0")
+                                .query(country_code: "BR")
+                                .query(value:'10.00')
+                                .query(billing_info_email:'gcravista-buyer@gmail.com')
+                                .query(form:'lD26uE')
+                                .expect 200
+                                .expect('Content-Type', /json/)
+                                .expect (res) ->
+                                        payment_id = res.body
+                                        res.body.should.match /[A-Z0-9]+\-[A-Z0-9]+\-[A-Z0-9]+\-[A-Z0-9]+/
+                                .then resolve
+                                .catch reject
+                                
+        it "should DELETE /paypal/invoices/:id", ->
+                new Promise (resolve, reject) ->
+                        setTimeout ->
+                                agent.delete("/paypal/invoices/#{payment_id}")
+                                        .expect 200
+                                        .expect (res) ->
+                                                res.body.should.be.String()
+                                        .then(resolve)
+                                        .catch(reject)
+                        , 1000
                         
         it "should GET /docs", ->
                 new Promise (resolve, reject) ->

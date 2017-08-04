@@ -1,4 +1,4 @@
-section.centralize-area(ng-controller="PaypalCtrl")
+section.centralize-area
   div
     br
     br
@@ -7,16 +7,26 @@ section.centralize-area(ng-controller="PaypalCtrl")
     br
     br
     br 
-    p {{ boletos }}
-    table.table.table-striped.table-hover
-      thead
+    table.table.table-striped.table-hover(ng-repeat="(k,v) in boletos") 
+      thead 
         tr
           th Formulário
-          th Ações
+          th N  
+          th ID
+          th Status
+          th Token
       tbody
-        tr(ng-repeat="(k,v) in boletos")
+        tr(ng-repeat="(q,w) in v") 
           td {{ k }}
+          td {{ q }}  
+          td 
+            a(href="/#!/boletos/{{ w.invoice }}") {{ w.invoice }}
+          td {{ w.status }} 
+          td 
+            a(href="/#!/formularios/{{ k }}/responses/{{ w.token }}") {{ w.token }} 
+      br
+      br
+      br
           
-          //td
-            //a(href="/#!/boletos/{{ b.token }}") Inspecionar
-          
+
+

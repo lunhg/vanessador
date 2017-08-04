@@ -1,22 +1,6 @@
 document.addEventListener 'DOMContentLoaded', (event)->
 
-        fetchConfig().then(fetchAuthCtrl)
-                .then (AuthCtrl) ->
-                        console.log AuthCtrl
-                        # Registre o controlador
-                        app.controller "AuthCtrl", ['$rootScope','$http','$location','$window', '$route','authService', 'toastr', AuthCtrl]
-                .then(fetchTypeform)
-                .then (TypeformCtrl) ->
-                        # Registre o controlador
-                        app.controller "TypeformCtrl", ['$rootScope','$http','$location','$window','$controller', 'toastr', 'formularioService', 'boletoService', TypeformCtrl]
-                .then(fetchPaypal)
-                .then (PaypalCtrl) ->
-                        # Registre o controlador
-                        app.controller "PaypalCtrl", ['$rootScope','$http','$location','$window','$controller', 'toastr', 'boletoService', PaypalCtrl]
-                .then(fetchRun)
-                .then (Run) ->
-                        app.run(['$rootScope', '$http', '$location', '$route', '$window', Run])
-                .then(fetchAuthService)
+        fetchConfig().then(fetchAuthService)
                 .then (service) ->
                         app.service("authService", service)
                 .then(fetchFormularioService)
@@ -25,9 +9,37 @@ document.addEventListener 'DOMContentLoaded', (event)->
                 .then(fetchBoletoService)
                 .then (service) ->
                         app.service("boletoService", service)
+                .then(fetchMainService)
+                .then (service) ->
+                        app.service("mainService", service)
+                .then(fetchMainCtrl)
+                .then (MainCtrl) ->
+                        app.controller('MainCtrl', [
+                                '$rootScope'
+                                '$http'
+                                '$location'
+                                '$route'
+                                '$window'
+                                'authService'
+                                'formularioService'
+                                'boletoService'
+                                'mainService'
+                                'toastr'
+                                 MainCtrl
+                        ])
+                .then (fetchRun)
+                .then (Run) ->
+                        app.run([
+                                '$rootScope'
+                                '$http'
+                                '$location'
+                                 Run
+                        ])
                 .then(fetchDirectives)
                 .then (directives) ->
-                        app.directive(_directive.name, _directive.fn) for _directive in directives
+                        for directive in directives.data
+                                name = 'modal'+directive.name.charAt(0).toUpperCase()+directive.name.slice(1)
+                                app.directive(name, -> directive.options) 
                         ["vanessador"]
                 .then (apps) ->
                         # A mensagem de carregamento inicial

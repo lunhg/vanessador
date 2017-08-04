@@ -9,13 +9,13 @@ fetchBoletoService = ->
         p.innerHTML = "Construindo serviços..."
         
         # Serviço de boletos
-        Service = ($http, toastr) ->
+        Service = ($http, $q, toastr) ->
 
                 BoletoService = {}
         
                 # Referencia um boleto a um token de um formulario
                 create = (uuid, token, data) ->
-                        new Promise (resolve, reject) ->
+                        $q (resolve, reject) ->
                                 url = []
                                 url.push "#{k}=#{v}" for k,v of data
                                 url = '/paypal/invoices/novo?'+url.join('&')
@@ -37,17 +37,20 @@ fetchBoletoService = ->
                                                                 .then(-> resolve invoiceid.data)
                                                                 .catch(reject)
                                 
-                                                                                                        
+                onErr  = (err) ->
+                        toastr.error(err.code, err.message)
+                        console.error(err.code, err.message)
+                        
                 # Crie um novo boleto requisitando
                 # a API do paypal (que está no backend)
                 # e atualize os dados na base de dados
                 BoletoService.novo = (uuid, token, options)->
-                        new Promise (resolve, reject) ->
+                        $q (resolve, reject) ->
                                 onCreate = (result) -> toastr.success("Boleto", "boleto #{result} criado")
                                 create(uuid, token, options).then(onCreate).then(resolve).catch reject 
 
                 BoletoService.status = (pid) ->
-                        new Promise (resolve, reject) ->
+                        $q (resolve, reject) ->
                                 $http.get("/paypal/invoices/#{pid}/status").then( (r) ->
                                         resolve r.data
                                 ).catch (e) -> toastr.error(e.code, e.message)
@@ -55,7 +58,7 @@ fetchBoletoService = ->
                 # Crie uma suíte de requisições para o paypal
                 # - enviar uma notificação
                 BoletoService.send = (token, pid) ->
-                        new Promise (resolve, reject) ->
+                        $q (resolve, reject) ->
                                 $http.post("/paypal/invoices/#{pid}/send").then (r) ->
                                         BoletoService.status(pid).then (status) ->
                                                 db = firebase.database()
@@ -70,7 +73,7 @@ fetchBoletoService = ->
                                                         db.ref("boletos/").set(_boletos).then(onSend).then(resolve).catch(reject)
 
                 BoletoService.remind = (token, pid) ->
-                        new Promise (resolve, reject) ->
+                        $q (resolve, reject) ->
                                 db = firebase.database()
                                 db.ref("boletos/").once 'value', (boletos) ->
                                         onRemind = (r) ->
@@ -85,7 +88,7 @@ fetchBoletoService = ->
                                                                         $http.post("/paypal/invoices/#{pid}/remind").then(onRemind).catch (e) -> toastr.error(e.code, e.message)
 
                 BoletoService.cancel = (token, pid) ->
-                        new Promise (resolve, reject) ->
+                        $q (resolve, reject) ->
                                 $http.post("/paypal/invoices/#{pid}/cancel").then((status) ->
                                         db = firebase.database()
                                         BoletoService.status(pid).then (status) ->
@@ -96,9 +99,41 @@ fetchBoletoService = ->
                                                                 for b in v
                                                                         if b.token is token and b.invoice is pid then b.status = status
                                                         db.ref("boletos/").set(_boletos).then(onSend).then(resolve).catch(reject)
-                                ).catch (e) -> toastr.error(e.code, e.message)
+                                ).catch onErr
 
+                Array.prototype.remove = (from, to) ->
+                        rest = @slice((to or from) + 1 or @length)
+                        @length = if from < 0 then @length + from else from;
+                        @push.apply(this, rest)
+                        
+                BoletoService.delete = (pid) ->
+                        $q (resolve, reject) ->
+                                onDelete = (status) ->
+                                        db = firebase.database()
+                                        _onBoletos = (boletos) ->
+                                                _boletos = boletos.val()
+                                                _onToast = ->
+                                                        
+                                                for k,v in _boletos
+                                                        for b in v
+                                                                _b = b.token is $rootScope.currentToken
+                                                                _b = b.invoice.id is $rootScope.boleto.invoice
+                                                                _b = b.status is 'DRAFT'
+                                                                if _b
+                                                                        i = _boletos[k].remove(i)
+                                                                        _boletos[k].remove(i)
+                                                                        if not _boletos[k][i]
+                                                                                m = "Boleto #{pid} deletado"
+                                                                                toastr.warning(m, status.data)
+                                                                                resolve status.data
+                                                                        else
+                                                                                reject new Error _boletos[k][i]
+                                                db.ref("boletos/").set(_boletos)
+                                        db.ref("boletos/").on('value',_onBoletos).catch(onErr) 
+                                $http.delete("/paypal/invoices/#{pid}").then(onDelete).catch(onErr)
+                                        
+                                        
                 return BoletoService
 
         # Retorne um conjunto contendo a definição do serviço 
-        ['$http', 'toastr', Service]
+        ['$http', '$q', 'toastr', Service]

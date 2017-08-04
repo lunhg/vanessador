@@ -1,56 +1,30 @@
-section(ng-controller="AuthCtrl" ng-show="user !== null")
+section.centralize-area
   br
   br
   br
   br
-  div.col-lg-3.col-md-3.col-sm-4.navbar-left
-    img.img-circle(ng-show="user.photoURL" width="128" heigth="128" src="{{ user.photoURL }}")
-    img.img-circle(ng-show="user.photoURL === null" width="128" heigth="128" src="{{ defaultPhotoURL }}")
-    br
-    br
-    div.list-group.table-of-contents
-      div.list-group-item
-        a(data-ng-click="onAccountDadosPessoais()") Dados Pessoais
-      div.list-group-item
-        a(data-ng-click="onAccountConfiguracoes()") Configurações
+  img.img-circle(ng-show="user.photoURL !== null" width="128" heigth="128" ng-src="{{ user.photoURL }}")
+  img.img-circle(ng-show="user.photoURL === null" width="128" heigth="128" ng-src="{{ defaultPhotoURL }}")
+  br
+  br
+  table.table.table-striped.table-hover
+    tbody
+      tr
+        td Nome 
+        td {{ user.displayName || "Não disponível" }}
+      tr
+        td Email
+        td {{ user.email }}
+      tr
+        td Número de telefone 
+        td 
+          p {{ user.phoneNumber || "Vincule um número de telefone"}} 
+          a.btn.btn-default(href="/#!/conta/telefone/vincular") Vincular 
+      tr
+        td Google 
+        td
+          p(ng-show="user.linkedAccount") Conta Google vinculada 
+          a.btn.btn-default(ng-show="!user.linkedAccount" ng-click="linkAccount()") Vincular
+            img(style="width:2%;heigth:2%" src="https://cdn.worldvectorlogo.com/logos/google-icon.svg")
 
 
-  div.col-lg-9.col-md-9.col-sm-10.navbar-right(ng-show="dadosPessoais")
-    br
-    br
-    br
-    br
-    table.table.table-striped.table-hover
-      thead
-        tr
-          th Nome
-        tr
-          th Email
-          td 
-            p {{ user.email }}
-            a.btn-btn-success(ng-show="user.emailVerified") verificado
-            button.btn-btn-danger(ng-show="!user.emailVerified") não verificado
-        tr
-          th Número de telefone
-          td 
-            p {{ user.phoneNumber }} 
-        tr
-          th Google 
-          td 
-            a.btn-btn-success(ng-show="user.linkedAccount") conta vinculada
-            a.btn-btn-success(ng-show="!user.linkedAccount") conta não vinculada
-            
-           
-  div.col-lg-9.col-md-9.col-sm-10.navbar-right(ng-show="configuracoes")
-    br
-    br
-    br
-    br
-    table.table.table-striped.table-hover
-      thead
-        tr
-          th Senha
-        tr
-          th Alterar endereço de email
-          td 
-            p {{ user.email }}

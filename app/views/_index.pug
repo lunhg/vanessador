@@ -2,18 +2,16 @@ section.centralize-area
   br
   br
   br
-  div(ng-controller="AuthCtrl" ng-show="onLoading")
-    br
-    br
-    br
-    br
-    br
-    img(src="/assets/images/loading.gif")
-
-  div(ng-controller="AuthCtrl" ng-show="!onLoading")
+  div(ng-show="user === null")
     h1 Gerencie cursos
     br
     br
     h2 O vanessador auxilia administradores do ITS a gerenciar formulários 
       a(href="https://www.typeform.com/") typeform.
+
+  div(ng-show="user !== null")
+    h1 Bem vindo
+    br
+    br
+    h2 Escolha alguma das opções do menu acima
         

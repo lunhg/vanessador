@@ -1,0 +1,36 @@
+section.centralize-area(ng-show="whoisPhoneNumber")
+  br
+  br
+  br
+  br
+  form 
+    fieldset 
+      div.form-group
+        label.control-label Telefone
+          br
+          br
+          div
+            input#telephone.form-control(type="tel" placeholder="+1234912345678")
+            br
+            br
+            div#recaptcha-container
+
+    a.btn.btn-default(ng-click="addPhoneNumber('telephone')") Enviar código SMS
+
+
+section.centralize-area(ng-show="confirmationCode")
+  br
+  br
+  br
+  br
+  h1 Insira o código recebido por SMS
+  br
+  br
+  form
+    fieldset
+      div.form-group
+        label.control-label Código de confirmação
+          br
+          div
+            input#confirmationCode.form-control(type="text")
+    a.btn.btn-default(ng-click="confirmSMScode('confirmationCode')") Enviar código SMS

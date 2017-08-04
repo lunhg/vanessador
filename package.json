@@ -68,10 +68,10 @@
 	"formularios_uuid_responses_token",
 	"boletos",
 	"boletos_id",
-	"conta"
+	"conta",
+	"conta_telefone_vincular"
     ],
     "angular-directives": [
-	"dialog",
 	"menu"
     ],
     "angular-services": [],

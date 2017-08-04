@@ -3,9 +3,8 @@
 #= require auth-service
 #= require formulario-service
 #= require boleto-service
-#= require auth-ctrl
-#= require typeform-ctrl
-#= require paypal-ctrl
-#= require run
+#= require main-service
+#= require main-ctrl
 #= require directives
+#= require run
 #= require boot

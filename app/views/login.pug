@@ -22,6 +22,7 @@ section.centralize-area(ng-show="user === null")
     br
     div.section-divider
       a(href="#!/signup" ng-show="user == null") Cadastre-se
+      br
       a(href="#!/resetPassword" ng-show="user == null") Esqueceu sua senha?
     br
     br
@@ -31,11 +32,8 @@ section.centralize-area(ng-show="user === null")
       hr.navbar-right
 
     div.container  
-      - var form = {'input_login_google':{'img':'https://cdn.worldvectorlogo.com/logos/google-icon.svg', 'ng-click': 'loginGoogle()', 'text': 'Entrar com sua conta google'}}
-      - for(var key in form)
-        - var val = form[key]
-          a.btn.btn-default(ng-click=""+val['ng-click'])= val.text
-            img(style="margin: 5px; width: 30px; height: 30px;" src=""+val.img)
+      a#input_login_google.btn.btn-default(ng-click="loginGoogle()") Entrar com sua conta google
+        img(style="width:2.5%; height: 2.5%" src="https://cdn.worldvectorlogo.com/logos/google-icon.svg")
 
     
 

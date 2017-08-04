@@ -4,27 +4,45 @@ fetchRun = ->
         loader = document.getElementById('masterLoader')
         p = loader.children[9]
         p.innerHTML =  "Verificando autorizações prévias"
-        Run = ($rootScope, $http, $location, $route, $window) ->
+        Run = ($rootScope, $http, $location) ->
 
+                # Dados do usuário
                 $rootScope.user = null
-                $rootScope.typeformData = null
+
+                # Dados de um ou vários formularios
                 $rootScope.registeredForms = null
+                $rootScope.currentForm = null
+                $rootScope.questions = {}
+                $rootScope.responses = {}
+                $rootScope.answers = []
                 
-                $rootScope.$on '$routeChangeSuccess', (event, next, current) ->
-                        event.preventDefault();
-                        console.log $location.url()   
-                        
+                # Variável para dizer se estamos carregando ou não
                 $rootScope.onLoading = true
+
+                # Imagem da vanessadora
                 $rootScope.defaultPhotoURL = '/assets/images/vanessadora.png'
 
-                # Atualize a configuração do firebase
-                $http({
-                        method: 'GET',
-                        url: '/config'
-                }).then (config) ->
-                        if not firebase.apps.length then firebase.initializeApp config.data            
-                        
-                        # Somente após reconhecer o login,
-                        # o usuário é carregado e a página muda
-                        # alguns elementos
-                        firebase.auth().onAuthStateChanged (user) -> if user then $rootScope.user = user
+                # Um token servirá para relacionar uma
+                # resposta de um formulário
+                $rootScope.token = null
+                
+                # # Apresentação de dados
+                # - /contas
+                $rootScope.dadosPessoais = true
+                $rootScope.configuracoes = false
+
+                # # Resetar senha de dados
+                # - /confirm
+                $rootScope.whoisPhoneNumber = true
+                $rootScope.confirmCode = false
+                $rootScope.resetPassword = false
+                $rootScope.verifyEmail = false
+
+                # # Boletos
+                # - /boletos
+                $rootScope.boletos = []
+                
+                # ## Boleto
+                # - /boleto/:invoiceid
+                $rootScope.boleto = null
+                

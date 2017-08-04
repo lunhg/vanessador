@@ -1,4 +1,4 @@
-nav.navbar.navbar-default.navbar-fixed-top(role="navigation", ng-controller="AuthCtrl")
+nav.navbar.navbar-default.navbar-fixed-top(role="navigation")
   div.container
     div.navbar-header
       button.navbar-toggle(type="button" data-toggle="collapse" data-target="#navCollapse")
@@ -19,10 +19,11 @@ nav.navbar.navbar-default.navbar-fixed-top(role="navigation", ng-controller="Aut
           a.nav-link(href="/#!/signup" ng-show="user == null") Cadastre-se
       
       ul.nav.navbar-nav(ng-show="user != null")
-        li#boletos-menu(ng-show="user !== null" ng-mouseenter="onDropdownmenu('boletos-menu')" ng-mouseleave="onDropupmenu('boletos-menu')")
+        // https://stackoverflow.com/questions/27837220/ie10-ng-repeat-mousedown-mouseenter#27841532
+        li#boletos-menu(ng-show="user !== null" ng-,mouseenter="onDropdownmenu('boletos-menu', $event)" ng-mouseleave="onDropupmenu('boletos-menu', $event)")
           a(href="/#!/boletos") Boletos 
           
-        li#formularios-menu(ng-show="user !== null" ng-mouseenter="onDropdownmenu('formularios-menu')" ng-mouseleave="onDropupmenu('formularios-menu')")
+        li#formularios-menu(ng-show="user !== null" ng-mouseenter="onDropdownmenu('formularios-menu', $event)" ng-mouseleave="onDropupmenu('formularios-menu', $event)")
           a.btn-btn-default.dropdown-toogle(data-toogle="dropdown" aria-expanded="true") Formulários
             span.caret
           ul.dropdown-menu(aria-labelledby="formularios-menu")
@@ -31,7 +32,7 @@ nav.navbar.navbar-default.navbar-fixed-top(role="navigation", ng-controller="Aut
             li
               a(href="/#!/formularios") Ver seus formulários
 
-        li#user-menu(ng-mouseenter="onDropdownmenu('user-menu')" ng-mouseleave="onDropupmenu('user-menu')")
+        li#user-menu(ng-mouseenter="onDropdownmenu('user-menu', $event)" ng-mouseleave="onDropupmenu('user-menu', $event)")
           a.btn-btn-default.dropdown-toogle(data-toogle="dropdown" href="#" aria-expanded="true") {{ user.displayName || user.email }}
             img.img-responsive.img-circle.navbar-right(width="32" heigth="32" ng-show="user.photoUrl !== null" ng-src="{{ user.photoURL }}")
             span.caret
