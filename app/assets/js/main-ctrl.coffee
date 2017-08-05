@@ -77,14 +77,16 @@ fetchMainCtrl = ->
                 
                 # ### Adiciona número de telefone
                 $rootScope.addPhoneNumber = (id)->
-                        onAdd = ->
                         onVerify = (verificationId) ->
                                 $rootScope.whoisPhoneNumber = false
                                 $rootScope.confirmationCode = true
                                 $rootScope.verificationId = verificationId
                                 console.log verificationId
                                 toastr.success("Telefone adicionado")
-                        authService.verifyPhone(id).then(onVerify).catch(onErr)
+                        mainService.applicationVerifier.verify()
+                                .then authService.verifyPhone(id)
+                                .then(onVerify)
+                                .catch(onErr)
 
                 $rootScope.confirmSMSCode = (id) ->
                         user = firebase.auth().currentUser
@@ -165,18 +167,30 @@ fetchMainCtrl = ->
                 # ### Cria um boleto
                 # #### a partir de uma resposta específica
                 # ##### de um formulário específico
+                
+                                
                 $rootScope.onNovoBoleto = ->
+                        questions = document.getElementsByClassName('typeform-question')
                         answers = document.getElementsByClassName('typeform-answer')
                         data =
-                                first_name: answers.item(0).innerHTML
-                                second_name: answers.item(1).innerHTML
-                                city: answers.item(3).innerHTML
-                                billing_info_email:answers.item(4).innerHTML
                                 phone_country_code: "55"
-                                phone_national_number: answers.item(5).innerHTML
                                 state:"RJ"
                                 country_code: "BR"
-                                value:'10.00'  
+                                value:'10.00' 
+
+                        for i,q of questions
+                                for j,a of answers
+                                        if i is j
+                                                v = a.innerHTML
+                                                switch(q.innerHTML)
+                                                        when 'Email' then data['billing_info_email'] = v
+                                                        when 'Nome' then data['first_name'] = v
+                                                        when 'Sobrenome' then data['second_name'] = v
+                                                        when 'Cidade' then data['city'] = v
+                                                        when 'Telefone' then data['phone_national_number']=v
+                                                
+                                        
+                         
                         onBoleto = -> $location.path("/formularios")
                         boletoService.novo($rootScope.currentForm, $rootScope.token, data).then(onBoleto).catch(onErr)
 
@@ -218,28 +232,22 @@ fetchMainCtrl = ->
                 # Relembra o email ao usuário caso seja notado
                 # uma demora
                 $rootScope.onRemindBoleto = ->
-                        _onSend = (result) -> $location.path('/formularios')
-                        db = firebase.database()
-                        db.ref("boletos/#{$rootScope.currentForm}").once 'value', (boletos) ->
-                                for b in boletos.val()
-                                        if b.token is $rootScope.token and b.invoice is $rootScope.boleto.invoice
-                                                if b.status is 'SENT'
-                                                        boletoService.remind($rootScope.token, $rootScope.boleto.invoice).then(_onSend).then(onSent).catch(onErr)
+                        _onSend = (result) ->
+                                $location.path('/formularios')
+                        boletoService.remind($rootScope.token, $rootScope.boleto.invoice)
+                                .then(_onSend)
+                                .catch(onErr)
                 
 
                 $rootScope.onDeleteBoleto = ->
-                        _onDelete = (result) ->
+                        form = $rootScope.currentForm
+                        id = $rootScope.boleto.invoice
+                        _onDelete = ->
+                                toastr.success("Formulário #{form}", "Boleto #{id} deletado")
                                 $rootScope.boleto = null
                                 $location.path('/formularios')
-                        db = firebase.database()
-                        db.ref("boletos/#{$rootScope.currentForm}").once 'value', (boletos) ->
-                                for b in boletos.val()
-                                        _b = b.token is $rootScope.token
-                                        _b = _b and b.invoice is $rootScope.boleto.invoice
-                                        _b = _b and b.status is 'DRAFT'
-                                        if _b
-                                                id = $rootScope.boleto.invoice
-                                                boletoService.delete(id).then(_onDelete).catch(onErr)
+                        
+                        boletoService.delete(form, id).then(_onDelete)
 
                 
                 
@@ -291,17 +299,19 @@ fetchMainCtrl = ->
 
                         mainService._on(/^\/boletos$/)
                                 .then mainService.onBoletos
-                                .then (result) ->
-                                        console.log result
+                                .then (boletos) ->
+                                        $rootScope.boletos = boletos
+                                        
                         mainService._on(/^\/boletos\/[a-zA-Z0-9]+$/)
                                 .then mainService.onBoletosInvoice
-                                .then (result) ->
-                                        console.log result
+                                .then (boleto) ->
+                                        $rootScope.boleto = boleto
 
                         mainService._on(/^\/conta\/telefone\/vincular/)
                                 .then mainService.onVincularPhone
                                 .then (result) ->
                                         console.log result
+                                        
                                         
 
                 

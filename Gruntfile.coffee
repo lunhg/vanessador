@@ -102,9 +102,11 @@ module.exports = (grunt) ->
                         'index'
                         'app'
                         'config'
-                        'auth-ctrl'
-                        'typeform-ctrl'
-                        'services'
+                        'auth-service'
+                        'main-service'
+                        'formulario-service'
+                        'boleto-service'
+                        'main-ctrl'
                         'run'
                         'directives'
                         'boot'
@@ -116,4 +118,4 @@ module.exports = (grunt) ->
         grunt.initConfig options
         
         # register tasks
-        grunt.registerTask 'default', ['build:init', 'build:libs', 'build:doc:client', 'coffee', 'usebanner']#, 'shell']
+        grunt.registerTask 'default', ['build:init', 'build:libs', 'build:doc:client', 'coffee', 'usebanner', 'shell']

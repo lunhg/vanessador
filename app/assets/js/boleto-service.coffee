@@ -49,11 +49,13 @@ fetchBoletoService = ->
                                 onCreate = (result) -> toastr.success("Boleto", "boleto #{result} criado")
                                 create(uuid, token, options).then(onCreate).then(resolve).catch reject 
 
+
                 BoletoService.status = (pid) ->
                         $q (resolve, reject) ->
                                 $http.get("/paypal/invoices/#{pid}/status").then( (r) ->
                                         resolve r.data
                                 ).catch (e) -> toastr.error(e.code, e.message)
+
                                                 
                 # Crie uma suíte de requisições para o paypal
                 # - enviar uma notificação
@@ -106,31 +108,22 @@ fetchBoletoService = ->
                         @length = if from < 0 then @length + from else from;
                         @push.apply(this, rest)
                         
-                BoletoService.delete = (pid) ->
+                BoletoService.delete = (form, pid) ->
                         $q (resolve, reject) ->
-                                onDelete = (status) ->
-                                        db = firebase.database()
-                                        _onBoletos = (boletos) ->
-                                                _boletos = boletos.val()
-                                                _onToast = ->
-                                                        
-                                                for k,v in _boletos
-                                                        for b in v
-                                                                _b = b.token is $rootScope.currentToken
-                                                                _b = b.invoice.id is $rootScope.boleto.invoice
-                                                                _b = b.status is 'DRAFT'
-                                                                if _b
-                                                                        i = _boletos[k].remove(i)
-                                                                        _boletos[k].remove(i)
-                                                                        if not _boletos[k][i]
-                                                                                m = "Boleto #{pid} deletado"
-                                                                                toastr.warning(m, status.data)
-                                                                                resolve status.data
-                                                                        else
-                                                                                reject new Error _boletos[k][i]
-                                                db.ref("boletos/").set(_boletos)
-                                        db.ref("boletos/").on('value',_onBoletos).catch(onErr) 
-                                $http.delete("/paypal/invoices/#{pid}").then(onDelete).catch(onErr)
+                                db = firebase.database()
+                                _onBoletos = (boletos) ->
+                                        _boletos = boletos.val()
+                                        for i,b of _boletos
+                                                _b = b.invoice.id is pid
+                                                _b = b.status is 'DRAFT'
+                                                if _b
+                                                        delete _boletos[i]
+                                                        break
+                                       
+                                        db.ref("boletos/").set(_boletos)
+                                        
+                                onDelete = (status) -> db.ref("boletos/#{form}").on('value',_onBoletos)
+                                $http.delete("/paypal/invoices/#{pid}").then(onDelete)
                                         
                                         
                 return BoletoService

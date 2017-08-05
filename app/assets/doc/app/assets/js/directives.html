@@ -68,22 +68,7 @@ deve ser atualizada</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        angular.injector([<span class="hljs-string">"ng"</span>]).get(<span class="hljs-string">"$http"</span>).get(<span class="hljs-string">'/directives'</span>).<span class="hljs-keyword">then</span> (directives) -&gt;
-                a = []
-             
-                <span class="hljs-keyword">for</span> d <span class="hljs-keyword">in</span> directives.data
-                        <span class="hljs-keyword">if</span> d.name <span class="hljs-keyword">is</span> <span class="hljs-string">'dialog'</span>
-                                d.options.link = <span class="hljs-function"><span class="hljs-params">(scope, element, attrs)</span> -&gt;</span>
-                                        scope.dialogStyle = {}
-                                        <span class="hljs-keyword">if</span> attrs.width <span class="hljs-keyword">then</span> scope.dialogStyle.width = attrs.width
-                                        <span class="hljs-keyword">if</span> attrs.height <span class="hljs-keyword">then</span> scope.dialogStyle.height = attrs.height
-                                        scope.hideModal = <span class="hljs-function">-&gt;</span> scope.dialogShown = <span class="hljs-literal">false</span>
-                        a.push d.options
-
-                [
-                        {name:<span class="hljs-string">'modalDialog'</span>, fn: <span class="hljs-function">-&gt;</span> a[<span class="hljs-number">0</span>]}
-                        {name:<span class="hljs-string">'modalMenu'</span>, fn: <span class="hljs-function">-&gt;</span> a[<span class="hljs-number">1</span>]}
-                ]</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        angular.injector([<span class="hljs-string">"ng"</span>]).get(<span class="hljs-string">"$http"</span>).get(<span class="hljs-string">'/directives'</span>)</pre></div></div>
             
         </li>
         

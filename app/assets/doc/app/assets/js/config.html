@@ -70,7 +70,10 @@ deve ser atualizada</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                        $routeProvider.<span class="hljs-keyword">when</span>(e.route,{template:e.template,controller:e.controller}) <span class="hljs-keyword">for</span> e <span class="hljs-keyword">in</span> templates.data</pre></div></div>
+            <div class="content"><div class='highlight'><pre>                        
+                        <span class="hljs-keyword">for</span> e <span class="hljs-keyword">in</span> templates.data
+                                obj = {template:e.template, controller: <span class="hljs-string">'MainCtrl'</span>}
+                                $routeProvider.<span class="hljs-keyword">when</span>(e.route,obj)</pre></div></div>
             
         </li>
         

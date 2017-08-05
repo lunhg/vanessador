@@ -100,7 +100,10 @@ fetchMainService = ->
 
                                                 obj = {questions:{}}
                                                 if boletos isnt null
-                                                        obj.boleto = b for b in boletos when b.token is $rootScope.token                                                      
+                                                        for b in boletos
+                                                                if b.token is $rootScope.token
+                                                                        if b.status isnt 'CANCELLED'
+                                                                                obj.boleto = b 
                                                 obj.answers = response.answers for response in responses when response.token is $rootScope.token
                                                 obj.questions[q.id] = q.question for q in questions
                                                         
@@ -108,26 +111,37 @@ fetchMainService = ->
                  # ## /boletos
                 MainService.onBoletos = (pass) ->
                         $q (resolve, reject) ->
-                                if pass
+                                if (pass)
                                         db = firebase.database()
                                         db.ref("boletos/").once 'value', (boletos) ->
-                                                resolve boletos.val()
+                                                if boletos.val() is null
+                                                        resolve []
+                                                else
+                                                        resolve boletos.val()
 
                 MainService.onBoletosInvoice = (pass) ->
                         onBoletos = (bols) -> _b for _b in b when _b.invoice is $rootScope.invoiceid for b in bols
                         $q (resolve, reject) ->
                                 if pass
-                                        db.ref("boletos/").once 'value', (boletos) ->
-                                                 resolve onBoletos(boletos.val())
+                                        db.ref("boletos/#{$rootScope.currentForm}").once 'value', (boletos) ->
+                                                # Pegar o último boleto válido
+                                                boleto = null
+                                                _boletos = boletos.val()
+                                                for b in _boletos
+                                                        if b.status isnt 'CANCELLED'
+                                                                boleto = b
+                                                                break
 
+                                                resolve boleto
 
                 MainService.onVincularPhone = (pass) ->
-                         $q (resolve, reject) ->
+                        $q (resolve, reject) ->
                                 if pass
-                                        reCAPTCHA = document.getElementById('recaptcha-container')
-                                        ReCaptcha = firebase.auth.RecaptchaVerifier
-                                        MainService.applicationVerifier = new ReCaptcha(reCAPTCHA)
-                                        MainService.applicationVerifier.render()
-                                        MainService.applicationVerifier.verify().then(resolve).catch reject
+                                        $rootScope.$watch 'whoisPhoneNumber', ->
+                                                container = document.getElementById('recaptcha-container')
+                                                Verifier = firebase.auth.RecaptchaVerifier
+                                                MainService.applicationVerifier = new Verifier container  
+                                                MainService.applicationVerifier.render().then(resolve).catch(MainService.onErr)
+                                        
                 return MainService
         ['$rootScope', '$location', '$route', '$rootScope', '$q', 'toastr', Service]

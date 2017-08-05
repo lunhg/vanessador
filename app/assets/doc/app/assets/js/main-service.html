@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>main-service.coffee</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>main-service.coffee</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              <p>Primeiro inicialize as rotas angular atraves
+de templates. Para recuperar esses templates, precisamos
+antes requerilos do servidor.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-title">fetchMainService</span> = -&gt;</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>A mensagem de carregamento inicial
+deve ser atualizada</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        loader = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'masterLoader'</span>)
+        p = loader.children[<span class="hljs-number">9</span>]
+        p.innerHTML = <span class="hljs-string">"Construindo serviço principal..."</span>
+<span class="hljs-function">        <span class="hljs-title">Service</span> =  <span class="hljs-params">($http, $location, $route, $rootScope, $q, toastr)</span> -&gt;</span>
+
+                MainService = {}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <h1 id="fun-es-auxiliares">Funções auxiliares</h1>
+<p>Estas funções auxiliam as funções principais do $rootScope
+como chcagem de erro, login, logout, envio de email
+checkout $rootScope.popup message and type</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>                MainService.onErr  = <span class="hljs-function"><span class="hljs-params">(err)</span> -&gt;</span>
+                        toastr.error(<span class="hljs-string">"Erro <span class="hljs-subst">#{err.code}</span>"</span>, err.message)
+                        $location.path(<span class="hljs-string">'/'</span>)
+                        
+                MainService.onTypeformAction = <span class="hljs-function"><span class="hljs-params">(action, form)</span> -&gt;</span>
+                        <span class="hljs-keyword">new</span> Promise (resolve, reject) -&gt;
+                                db = firebase.database()
+                                db.ref(<span class="hljs-string">"<span class="hljs-subst">#{action}</span>/<span class="hljs-subst">#{form}</span>"</span>).once <span class="hljs-string">'value'</span>, <span class="hljs-function"><span class="hljs-params">(r)</span> -&gt;</span>
+                                        resolve r.val()               
+
+                MainService._on = <span class="hljs-function"><span class="hljs-params">(regexpr)</span> -&gt;</span>
+                        $q (resolve, reject) -&gt;
+                                $rootScope.$<span class="hljs-literal">on</span> <span class="hljs-string">'$locationChangeSuccess'</span>, <span class="hljs-function"><span class="hljs-params">(event, next, current)</span> -&gt;</span>
+                                        event.preventDefault()
+                                        match = $location.url().match regexpr
+                                        <span class="hljs-keyword">if</span> match
+                                                resolve match
+                                        <span class="hljs-keyword">else</span>
+                                                resolve <span class="hljs-literal">false</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <h2 id="-confirm">/confirm</h2>
+<p>atualize a base de dados</p>
+<ul>
+<li>Firebase: <code>formularios/</code>:  <code>{:uuid =&gt; :base_url, :name, :owner, :tags}</code></li>
+<li>Angular: <code>$rootScope.registeredForms</code></li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>                MainService.onConfirm = <span class="hljs-function"><span class="hljs-params">(pass)</span> -&gt;</span>
+                        $q (resolve, reject) -&gt;
+                                <span class="hljs-keyword">if</span> pass
+                                        $rootScope.whoisPhoneNumber = <span class="hljs-literal">true</span>
+                                        $rootScope.confirmationCode = <span class="hljs-literal">false</span>
+                                        $rootScope.resetPassword = <span class="hljs-literal">false</span>
+                                        $rootScope.verifyEmail = <span class="hljs-literal">false</span>
+                                <span class="hljs-keyword">else</span>
+                                        resolve <span class="hljs-literal">false</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <h2 id="-formularios">/formularios</h2>
+<p>atualize a base de dados</p>
+<ul>
+<li>Firebase: <code>formularios/</code>:  <code>{:uuid =&gt; :base_url, :name, :owner, :tags}</code></li>
+<li>Angular: <code>$rootScope.registeredForms</code></li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>                MainService.onFormularios = <span class="hljs-function"><span class="hljs-params">(pass)</span> -&gt;</span>
+                        $q (resolve, reject) -&gt;
+                                <span class="hljs-keyword">if</span> pass
+                                        fetch = firebase.database().ref(<span class="hljs-string">'formularios/'</span>).once(<span class="hljs-string">'value'</span>)
+                                        $q.<span class="hljs-keyword">when</span>(fetch)
+                                                .<span class="hljs-keyword">then</span> (snapshot) -&gt; resolve snapshot.val()
+                                                .<span class="hljs-keyword">catch</span> (e) -&gt; resolve <span class="hljs-literal">false</span>
+                                <span class="hljs-keyword">else</span>
+                                        resolve <span class="hljs-literal">false</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <h2 id="-formularios-uuid-action">/formularios/:uuid/:action</h2>
+<p>Captura um formulário com várias respostas</p>
+<ul>
+<li>Action<ul>
+<li>UUID typeform</li>
+</ul>
+</li>
+<li>Firebase:<ul>
+<li><code>:action/questions</code> – <code>{:uuid =&gt; Array[{:field_id, :id, :question}]}</code></li>
+<li><code>:action/responses</code> – <code>{:uuid =&gt; Array[{:answers, :completed, :metadata, :token}</code></li>
+<li><code>:action/stats</code> – <code>{uuid =&gt; Array[{:completed, :showing, :total}</code></li>
+</ul>
+</li>
+<li>Angular: <code>$rootScope[:action]</code></li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>                MainService.onFormulariosAction = <span class="hljs-function"><span class="hljs-params">(pass)</span> -&gt;</span>
+                        $q (resolve, reject) -&gt;
+                                <span class="hljs-keyword">if</span> (pass)
+                                        $rootScope.currentForm = pass[<span class="hljs-number">0</span>].split(<span class="hljs-string">'/formularios/'</span>)[<span class="hljs-number">1</span>].split(<span class="hljs-string">'/'</span>)[<span class="hljs-number">0</span>]
+                                        action = pass[<span class="hljs-number">0</span>].split(<span class="hljs-string">'/formularios/'</span>)[<span class="hljs-number">1</span>].split(<span class="hljs-string">'/'</span>)[<span class="hljs-number">1</span>]
+                                        db = firebase.database()
+                                        MainService.onTypeformAction(action, $rootScope.currentForm).<span class="hljs-keyword">then</span> (snapshot) -&gt;
+                                                resolve {action: action, val: snapshot}
+                                <span class="hljs-keyword">else</span>
+                                        resolve <span class="hljs-literal">false</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <h2 id="-formularios-uuid-action-token">/formularios/:uuid/:action/:token</h2>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>                MainService.onFormulariosActionToken = <span class="hljs-function"><span class="hljs-params">(pass)</span> -&gt;</span>
+                        $q (resolve, reject) -&gt;
+                                <span class="hljs-keyword">if</span> pass
+                                        
+                                        action = pass[<span class="hljs-number">0</span>].split(<span class="hljs-string">'/formularios/'</span>)[<span class="hljs-number">1</span>].split(<span class="hljs-string">'/'</span>)[<span class="hljs-number">1</span>]
+                                        $rootScope.token = pass[<span class="hljs-number">0</span>].split(<span class="hljs-string">'/formularios/'</span>)[<span class="hljs-number">1</span>].split(<span class="hljs-string">'/'</span>)[<span class="hljs-number">2</span>]
+                                        onQuestions  = MainService.onTypeformAction(<span class="hljs-string">'questions'</span>, $rootScope.currentForm)
+                                        onBoletos = MainService.onTypeformAction(<span class="hljs-string">'boletos'</span>, $rootScope.currentForm)
+                                        onResponses = MainService.onTypeformAction(<span class="hljs-string">'responses'</span>, $rootScope.currentForm)
+                                        $q.all([onQuestions, onBoletos, onResponses]).<span class="hljs-keyword">then</span> (results) -&gt;
+                                                questions = results[<span class="hljs-number">0</span>]
+                                                boletos = results[<span class="hljs-number">1</span>]
+                                                responses = results[<span class="hljs-number">2</span>]
+
+                                                obj = {questions:{}}
+                                                <span class="hljs-keyword">if</span> boletos <span class="hljs-keyword">isnt</span> <span class="hljs-literal">null</span>
+                                                        <span class="hljs-keyword">for</span> b <span class="hljs-keyword">in</span> boletos
+                                                                <span class="hljs-keyword">if</span> b.token <span class="hljs-keyword">is</span> $rootScope.token
+                                                                        <span class="hljs-keyword">if</span> b.status <span class="hljs-keyword">isnt</span> <span class="hljs-string">'CANCELLED'</span>
+                                                                                obj.boleto = b 
+                                                obj.answers = response.answers <span class="hljs-keyword">for</span> response <span class="hljs-keyword">in</span> responses <span class="hljs-keyword">when</span> response.token <span class="hljs-keyword">is</span> $rootScope.token
+                                                obj.questions[q.id] = q.question <span class="hljs-keyword">for</span> q <span class="hljs-keyword">in</span> questions
+                                                        
+                                                resolve obj</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <h2 id="-boletos">/boletos</h2>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>                MainService.onBoletos = <span class="hljs-function"><span class="hljs-params">(pass)</span> -&gt;</span>
+                        $q (resolve, reject) -&gt;
+                                <span class="hljs-keyword">if</span> (pass)
+                                        db = firebase.database()
+                                        db.ref(<span class="hljs-string">"boletos/"</span>).once <span class="hljs-string">'value'</span>, <span class="hljs-function"><span class="hljs-params">(boletos)</span> -&gt;</span>
+                                                <span class="hljs-keyword">if</span> boletos.val() <span class="hljs-keyword">is</span> <span class="hljs-literal">null</span>
+                                                        resolve []
+                                                <span class="hljs-keyword">else</span>
+                                                        resolve boletos.val()
+
+                MainService.onBoletosInvoice = <span class="hljs-function"><span class="hljs-params">(pass)</span> -&gt;</span>
+<span class="hljs-function">                        <span class="hljs-title">onBoletos</span> = <span class="hljs-params">(bols)</span> -&gt;</span> _b <span class="hljs-keyword">for</span> _b <span class="hljs-keyword">in</span> b <span class="hljs-keyword">when</span> _b.invoice <span class="hljs-keyword">is</span> $rootScope.invoiceid <span class="hljs-keyword">for</span> b <span class="hljs-keyword">in</span> bols
+                        $q (resolve, reject) -&gt;
+                                <span class="hljs-keyword">if</span> pass
+                                        db.ref(<span class="hljs-string">"boletos/<span class="hljs-subst">#{$rootScope.currentForm}</span>"</span>).once <span class="hljs-string">'value'</span>, <span class="hljs-function"><span class="hljs-params">(boletos)</span> -&gt;</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p>Pegar o último boleto válido</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>                                                boleto = <span class="hljs-literal">null</span>
+                                                _boletos = boletos.val()
+                                                <span class="hljs-keyword">for</span> b <span class="hljs-keyword">in</span> _boletos
+                                                        <span class="hljs-keyword">if</span> b.status <span class="hljs-keyword">isnt</span> <span class="hljs-string">'CANCELLED'</span>
+                                                                boleto = b
+                                                                <span class="hljs-keyword">break</span>
+
+                                                resolve boleto
+
+                MainService.onVincularPhone = <span class="hljs-function"><span class="hljs-params">(pass)</span> -&gt;</span>
+                        $q (resolve, reject) -&gt;
+                                <span class="hljs-keyword">if</span> pass
+                                        $rootScope.$watch <span class="hljs-string">'whoisPhoneNumber'</span>, <span class="hljs-function">-&gt;</span>
+                                                container = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'recaptcha-container'</span>)
+                                                Verifier = firebase.auth.RecaptchaVerifier
+                                                MainService.applicationVerifier = <span class="hljs-keyword">new</span> Verifier container  
+                                                MainService.applicationVerifier.render().<span class="hljs-keyword">then</span>(resolve).<span class="hljs-keyword">catch</span>(MainService.onErr)
+                                        
+                <span class="hljs-keyword">return</span> MainService
+        [<span class="hljs-string">'$rootScope'</span>, <span class="hljs-string">'$location'</span>, <span class="hljs-string">'$route'</span>, <span class="hljs-string">'$rootScope'</span>, <span class="hljs-string">'$q'</span>, <span class="hljs-string">'toastr'</span>, Service]</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

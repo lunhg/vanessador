@@ -6,8 +6,8 @@ section.centralize-area
   br
   br
   br 
-  a.btn.btn-default(ng-show="boleto !== null" href="/#!/boletos/{{ boleto.invoice }}") Verificar boleto de pagamento
-  a.btn.btn-success(ng-show="boleto === null" ng-click="onNovoBoleto()") Criar um boleto de pagamento
+  a.btn.btn-default(ng-show="boleto !== null && boleto.status !== 'CANCELLED'" href="/#!/boletos/{{ boleto.invoice }}") Verificar boleto de pagamento
+  a.btn.btn-success(ng-show="boleto === null || boleto.status !== 'CANCELLED'" ng-click="onNovoBoleto()") Criar um boleto de pagamento
   table.table.table-striped.table-hover
     thead
       tr
@@ -15,6 +15,6 @@ section.centralize-area
         th Resposta
     tbody
       tr(ng-repeat="(k,v) in answers")
-        th {{ questions[k] }}
+        th.typeform-question {{ questions[k] }}
         td.typeform-answer {{ v }}
 

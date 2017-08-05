@@ -49,7 +49,7 @@ deve ser atualizada</p>
             <div class="content"><div class='highlight'><pre>        loader = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'masterLoader'</span>)
         p = loader.children[<span class="hljs-number">9</span>]
         p.innerHTML =  <span class="hljs-string">"Verificando autorizações prévias"</span>
-<span class="hljs-function">        <span class="hljs-title">Run</span> = <span class="hljs-params">($rootScope, $http, $location, $route, $<span class="hljs-built_in">window</span>)</span> -&gt;</span></pre></div></div>
+<span class="hljs-function">        <span class="hljs-title">Run</span> = <span class="hljs-params">($rootScope, $http, $location)</span> -&gt;</span></pre></div></div>
             
         </li>
         
@@ -60,16 +60,11 @@ deve ser atualizada</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              <p>Usuário atual</p>
+              <p>Dados do usuário</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                $rootScope.user = <span class="hljs-literal">null</span>
-                $rootScope.popup = <span class="hljs-literal">null</span>
-                $rootScope.typeformData = <span class="hljs-literal">null</span>
-                $rootScope.registeredForms = <span class="hljs-literal">null</span>
-                $rootScope.dialogShown = <span class="hljs-literal">false</span>
-                $rootScope.dialogMessage = <span class="hljs-string">"Nenhuma mensagem"</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>                $rootScope.user = <span class="hljs-literal">null</span></pre></div></div>
             
         </li>
         
@@ -80,26 +75,15 @@ deve ser atualizada</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              <p>Historico de uso, para poder
-atualizar corretamente as páginas
-<a href="https://stackoverflow.com/questions/15175429/angularjs-getting-previous-route-path">https://stackoverflow.com/questions/15175429/angularjs-getting-previous-route-path</a></p>
+              <p>Dados de um ou vários formularios</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                history = [];
-        
-                $rootScope.$<span class="hljs-literal">on</span> <span class="hljs-string">'$routeChangeSuccess'</span>, <span class="hljs-function"><span class="hljs-params">(event, next, current)</span> -&gt;</span>
-                        event.preventDefault();
-                        <span class="hljs-built_in">console</span>.log $location.url()   
-                        history.push($location.$$path);
-<span class="hljs-function">                
-                        
-                <span class="hljs-title">back</span> = -&gt;</span>
-                        prevUrl = <span class="hljs-keyword">if</span> history.length &gt; <span class="hljs-number">1</span> <span class="hljs-keyword">then</span> history.splice(<span class="hljs-number">-2</span>)[<span class="hljs-number">0</span>] <span class="hljs-keyword">else</span> <span class="hljs-string">"/"</span>
-                        $location.path(prevUrl)
-                        
-                $rootScope.onLoading = <span class="hljs-literal">true</span>
-                $rootScope.defaultPhotoURL = <span class="hljs-string">'/assets/images/vanessadora.png'</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>                $rootScope.registeredForms = <span class="hljs-literal">null</span>
+                $rootScope.currentForm = <span class="hljs-literal">null</span>
+                $rootScope.questions = {}
+                $rootScope.responses = {}
+                $rootScope.answers = []</pre></div></div>
             
         </li>
         
@@ -110,15 +94,11 @@ atualizar corretamente as páginas
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
-              <p>Atualize a configuração do firebase</p>
+              <p>Variável para dizer se estamos carregando ou não</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                $http({
-                        method: <span class="hljs-string">'GET'</span>,
-                        url: <span class="hljs-string">'/config'</span>
-                }).<span class="hljs-keyword">then</span> (config) -&gt;
-                        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> firebase.apps.length <span class="hljs-keyword">then</span> firebase.initializeApp config.data</pre></div></div>
+            <div class="content"><div class='highlight'><pre>                $rootScope.onLoading = <span class="hljs-literal">true</span></pre></div></div>
             
         </li>
         
@@ -129,15 +109,11 @@ atualizar corretamente as páginas
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
-              <p>Somente após reconhecer o login,
-o usuário é carregado e a página muda
-alguns elementos</p>
+              <p>Imagem da vanessadora</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                        firebase.auth().onAuthStateChanged (user) -&gt;
-                                <span class="hljs-keyword">if</span> user
-                                        $rootScope.user = user</pre></div></div>
+            <div class="content"><div class='highlight'><pre>                $rootScope.defaultPhotoURL = <span class="hljs-string">'/assets/images/vanessadora.png'</span></pre></div></div>
             
         </li>
         
@@ -148,24 +124,88 @@ alguns elementos</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
-              <p>Notifique o usuário atual de qq mudança importante</p>
+              <p>Um token servirá para relacionar uma
+resposta de um formulário</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                                        firebase.database()
-                                                .ref(<span class="hljs-string">"/users/<span class="hljs-subst">#{user.uid}</span>/popup"</span>)
-                                                .once <span class="hljs-string">'value'</span>, <span class="hljs-function"><span class="hljs-params">(snapshot)</span> -&gt;</span>
-                                                        val = snapshot.val()
-                                                        <span class="hljs-keyword">if</span> val
-                                                                $rootScope.dialogMessage = snapshot.val()
-                                                        <span class="hljs-keyword">else</span>
-                                                                $rootScope.dialogMessage = <span class="hljs-string">"Usuário deslogado"</span>
-                                                        $rootScope.dialogShown = <span class="hljs-keyword">not</span> $rootScope.dialogShown
+            <div class="content"><div class='highlight'><pre>                $rootScope.token = <span class="hljs-literal">null</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <h1 id="apresenta-o-de-dados">Apresentação de dados</h1>
+<ul>
+<li>/contas</li>
+</ul>
 
-                                
-                                
-                                                
-                        $rootScope.onLoading = <span class="hljs-literal">false</span></pre></div></div>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>                $rootScope.dadosPessoais = <span class="hljs-literal">true</span>
+                $rootScope.configuracoes = <span class="hljs-literal">false</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <h1 id="resetar-senha-de-dados">Resetar senha de dados</h1>
+<ul>
+<li>/confirm</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>                $rootScope.whoisPhoneNumber = <span class="hljs-literal">true</span>
+                $rootScope.confirmCode = <span class="hljs-literal">false</span>
+                $rootScope.resetPassword = <span class="hljs-literal">false</span>
+                $rootScope.verifyEmail = <span class="hljs-literal">false</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <h1 id="boletos">Boletos</h1>
+<ul>
+<li>/boletos</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>                $rootScope.boletos = []</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <h2 id="boleto">Boleto</h2>
+<ul>
+<li>/boleto/:invoiceid</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>                $rootScope.boleto = <span class="hljs-literal">null</span></pre></div></div>
             
         </li>
         

@@ -32,11 +32,48 @@
             
             <div class="content"><div class='highlight'><pre><span class="hljs-built_in">document</span>.addEventListener <span class="hljs-string">'DOMContentLoaded'</span>, <span class="hljs-function"><span class="hljs-params">(event)</span>-&gt;</span>
 
-        fetchConfig().<span class="hljs-keyword">then</span>(fetchServices)
-                .<span class="hljs-keyword">then</span> (services) -&gt;
-                        app.service(<span class="hljs-string">"<span class="hljs-subst">#{service}</span>"</span>, <span class="hljs-function">-&gt;</span> v) <span class="hljs-keyword">for</span> service, v <span class="hljs-keyword">of</span> services
-                .<span class="hljs-keyword">then</span>(fetchAuthCtrl)
-                .<span class="hljs-keyword">then</span> (AuthCtrl) -&gt;</pre></div></div>
+        fetchConfig().<span class="hljs-keyword">then</span>(fetchAuthService)
+                .<span class="hljs-keyword">then</span> (service) -&gt;
+                        app.service(<span class="hljs-string">"authService"</span>, service)
+                .<span class="hljs-keyword">then</span>(fetchFormularioService)
+                .<span class="hljs-keyword">then</span> (service) -&gt;
+                        app.service(<span class="hljs-string">"formularioService"</span>, service)
+                .<span class="hljs-keyword">then</span>(fetchBoletoService)
+                .<span class="hljs-keyword">then</span> (service) -&gt;
+                        app.service(<span class="hljs-string">"boletoService"</span>, service)
+                .<span class="hljs-keyword">then</span>(fetchMainService)
+                .<span class="hljs-keyword">then</span> (service) -&gt;
+                        app.service(<span class="hljs-string">"mainService"</span>, service)
+                .<span class="hljs-keyword">then</span>(fetchMainCtrl)
+                .<span class="hljs-keyword">then</span> (MainCtrl) -&gt;
+                        app.controller(<span class="hljs-string">'MainCtrl'</span>, [
+                                <span class="hljs-string">'$rootScope'</span>
+                                <span class="hljs-string">'$http'</span>
+                                <span class="hljs-string">'$location'</span>
+                                <span class="hljs-string">'$route'</span>
+                                <span class="hljs-string">'$window'</span>
+                                <span class="hljs-string">'authService'</span>
+                                <span class="hljs-string">'formularioService'</span>
+                                <span class="hljs-string">'boletoService'</span>
+                                <span class="hljs-string">'mainService'</span>
+                                <span class="hljs-string">'toastr'</span>
+                                 MainCtrl
+                        ])
+                .<span class="hljs-keyword">then</span> (fetchRun)
+                .<span class="hljs-keyword">then</span> (Run) -&gt;
+                        app.run([
+                                <span class="hljs-string">'$rootScope'</span>
+                                <span class="hljs-string">'$http'</span>
+                                <span class="hljs-string">'$location'</span>
+                                 Run
+                        ])
+                .<span class="hljs-keyword">then</span>(fetchDirectives)
+                .<span class="hljs-keyword">then</span> (directives) -&gt;
+                        <span class="hljs-keyword">for</span> directive <span class="hljs-keyword">in</span> directives.data
+                                name = <span class="hljs-string">'modal'</span>+directive.name.charAt(<span class="hljs-number">0</span>).toUpperCase()+directive.name.slice(<span class="hljs-number">1</span>)
+                                app.directive(name, <span class="hljs-function">-&gt;</span> directive.options) 
+                        [<span class="hljs-string">"vanessador"</span>]
+                .<span class="hljs-keyword">then</span> (apps) -&gt;</pre></div></div>
             
         </li>
         
@@ -46,46 +83,6 @@
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-2">&#182;</a>
-              </div>
-              <p>Registre o controlador</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>                        app.controller <span class="hljs-string">"AuthCtrl"</span>, [<span class="hljs-string">'$rootScope'</span>,<span class="hljs-string">'$http'</span>,<span class="hljs-string">'$location'</span>,<span class="hljs-string">'$window'</span>, <span class="hljs-string">'$route'</span>, <span class="hljs-string">'toastr'</span>, AuthCtrl]
-                .<span class="hljs-keyword">then</span>(fetchTypeform)
-                .<span class="hljs-keyword">then</span> (TypeformCtrl) -&gt;</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-3">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-3">&#182;</a>
-              </div>
-              <p>Registre o controlador</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>                        app.controller <span class="hljs-string">"TypeformCtrl"</span>, [<span class="hljs-string">'$rootScope'</span>,<span class="hljs-string">'$http'</span>,<span class="hljs-string">'$location'</span>,<span class="hljs-string">'$window'</span>,<span class="hljs-string">'$controller'</span>, <span class="hljs-string">'toastr'</span>, <span class="hljs-string">'formularioService'</span>, TypeformCtrl]              
-                .<span class="hljs-keyword">then</span>(fetchRun)
-                .<span class="hljs-keyword">then</span> (Run) -&gt;
-                        app.run([<span class="hljs-string">'$rootScope'</span>, <span class="hljs-string">'$http'</span>, <span class="hljs-string">'$location'</span>, <span class="hljs-string">'$route'</span>, <span class="hljs-string">'$window'</span>, Run])
-                .<span class="hljs-keyword">then</span>(fetchDirectives)
-                .<span class="hljs-keyword">then</span> (directives) -&gt;
-                        app.directive(_directive.name, _directive.fn) <span class="hljs-keyword">for</span> _directive <span class="hljs-keyword">in</span> directives
-                        [<span class="hljs-string">"vanessador"</span>]
-                .<span class="hljs-keyword">then</span> (apps) -&gt;</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-4">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
               <p>A mensagem de carregamento inicial
 deve ser atualizada</p>
@@ -102,11 +99,11 @@ deve ser atualizada</p>
         </li>
         
         
-        <li id="section-5">
+        <li id="section-3">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-5">&#182;</a>
+                <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
               <p>A mensagem de carregamento inicial
 deve ser atualizada</p>

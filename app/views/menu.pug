@@ -19,6 +19,30 @@ nav.navbar.navbar-default.navbar-fixed-top(role="navigation")
           a.nav-link(href="/#!/signup" ng-show="user == null") Cadastre-se
       
       ul.nav.navbar-nav(ng-show="user != null")
+
+        li#docs-menu(ng-show="user !== null" ng-mouseenter="onDropdownmenu('docs-menu', $event)" ng-mouseleave="onDropupmenu('docs-menu', $event)")
+          a.btn-btn-default.dropdown-toogle(data-toogle="dropdown" aria-expanded="true") Docs
+            span.caret
+          ul.dropdown-menu(aria-labelledby="docs-menu")
+            li
+              a(href="/docs/index") Novo formulário 
+            li
+              a(href="/docs/app") App
+            li
+              a(href="/docs/config") Config
+            li
+              a(href="/docs/auth-service") Auth Service
+            li
+              a(href="/docs/formulario-service") Formulario Service
+            li
+              a(href="/docs/main-service") Main Service
+            li
+              a(href="/docs/boleto-service") Boleto Service
+            li
+              a(href="/docs/main-ctrl") Main Control
+            li
+              a(href="/docs/directives") Directives
+
         // https://stackoverflow.com/questions/27837220/ie10-ng-repeat-mousedown-mouseenter#27841532
         li#boletos-menu(ng-show="user !== null" ng-,mouseenter="onDropdownmenu('boletos-menu', $event)" ng-mouseleave="onDropupmenu('boletos-menu', $event)")
           a(href="/#!/boletos") Boletos 
