@@ -18,12 +18,22 @@ libsecret
     
 ##  Instalando chaves de acesso firebase
 
-    npm build build:firebase:apiKey
-    npm build build:firebase:messagingSenderId
+    grunt build:firebase:apiKey
+    grunt build:firebase:messagingSenderId
     
 ##  Instalando chaves de acesso typeform
 
-    grunt build build:typeform:apiKey
+    grunt build:typeform:apiKey
+
+##  Instalando chaves de acesso paypal
+
+    grunt build:paypal:apiKey
+    grunt build:paypal:secret
+    
+##  Instalando chaves de acesso pagseguro
+
+    grunt build:pagseguro:apiKey
+    grunt build:pagseguro:email
     
 # Executando
 
