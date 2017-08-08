@@ -20,6 +20,7 @@ document.addEventListener 'DOMContentLoaded', (event)->
                                 '$location'
                                 '$route'
                                 '$window'
+                                '$q'
                                 'authService'
                                 'formularioService'
                                 'boletoService'

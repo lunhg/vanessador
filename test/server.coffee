@@ -33,17 +33,13 @@ describe chalk.green('Vanessador app'), ->
                                 .expect 200
                                 .expect('Content-Type', /json/)
                                 .expect (res) ->
-                                        console.log res.body
                                         for e in res.body
-                                                console.log e
                                                 e.should.have.property 'template'
                                                 e.should.have.property 'route'
                                                 e.should.have.property 'controller'
                                                 e.template.should.be.String()
                                                 e.route.should.be.String()
                                                 e.route.should.match /\/(\w+(\/\w+)?)?/
-                                                e.controller.should.be.String()
-                                                e.controller.should.match /[A-Z][a-z]+[A-Z][a-z]+/
                                                 
                                 .then resolve
                                 .catch reject

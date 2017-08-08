@@ -555,6 +555,13 @@ AppManager.prototype.docs = function() {
       'root': root
     });
   });
+  this.app.get("/docs/index", function(req, res) {
+    var _index;
+    _index = "doc/app/assets/js/index.html";
+    return res.sendFile(_index, {
+      'root': root
+    });
+  });
   this.app.get("/docs/app", function(req, res) {
     var _index;
     _index = "doc/app/assets/js/app.html";
@@ -569,9 +576,44 @@ AppManager.prototype.docs = function() {
       'root': root
     });
   });
-  this.app.get("/docs/auth-ctrl", function(req, res) {
+  this.app.get("/docs/auth-service", function(req, res) {
     var _index;
-    _index = "doc/app/assets/js/auth-ctrl.html";
+    _index = "doc/app/assets/js/auth-service.html";
+    return res.sendFile(_index, {
+      'root': root
+    });
+  });
+  this.app.get("/docs/formulario-service", function(req, res) {
+    var _index;
+    _index = "doc/app/assets/js/formulario-service.html";
+    return res.sendFile(_index, {
+      'root': root
+    });
+  });
+  this.app.get("/docs/boleto-service", function(req, res) {
+    var _index;
+    _index = "doc/app/assets/js/boleto-service.html";
+    return res.sendFile(_index, {
+      'root': root
+    });
+  });
+  this.app.get("/docs/main-service", function(req, res) {
+    var _index;
+    _index = "doc/app/assets/js/main-service.html";
+    return res.sendFile(_index, {
+      'root': root
+    });
+  });
+  this.app.get("/docs/main-ctrl", function(req, res) {
+    var _index;
+    _index = "doc/app/assets/js/main-ctrl.html";
+    return res.sendFile(_index, {
+      'root': root
+    });
+  });
+  this.app.get("/docs/directives", function(req, res) {
+    var _index;
+    _index = "doc/app/assets/js/directives.html";
     return res.sendFile(_index, {
       'root': root
     });
@@ -583,9 +625,9 @@ AppManager.prototype.docs = function() {
       'root': root
     });
   });
-  this.app.get("/docs/services", function(req, res) {
+  this.app.get("/docs/boot", function(req, res) {
     var _index;
-    _index = "doc/app/assets/js/services.html";
+    _index = "doc/app/assets/js/boot.html";
     return res.sendFile(_index, {
       'root': root
     });

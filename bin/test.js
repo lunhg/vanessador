@@ -46,20 +46,16 @@ describe(chalk.green('Vanessador app'), function() {
       array.push('route');
       return agent.get("/templates").expect(200).expect('Content-Type', /json/).expect(function(res) {
         var e, i, len, ref, results;
-        console.log(res.body);
         ref = res.body;
         results = [];
         for (i = 0, len = ref.length; i < len; i++) {
           e = ref[i];
-          console.log(e);
           e.should.have.property('template');
           e.should.have.property('route');
           e.should.have.property('controller');
           e.template.should.be.String();
           e.route.should.be.String();
-          e.route.should.match(/\/(\w+(\/\w+)?)?/);
-          e.controller.should.be.String();
-          results.push(e.controller.should.match(/[A-Z][a-z]+[A-Z][a-z]+/));
+          results.push(e.route.should.match(/\/(\w+(\/\w+)?)?/));
         }
         return results;
       }).then(resolve)["catch"](reject);

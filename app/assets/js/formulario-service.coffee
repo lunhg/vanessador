@@ -50,8 +50,13 @@ fetchFormularioService = ->
 
                 FormularioService.delete = (uuid) ->
                         new Promise (resolve, reject) ->
-                                onDel = -> toastr.success('Formulario',"#{uuid} deletado com sucesso")
-                                p = firebase.database().ref("#{e}/#{uuid}").set(null) for e in ['formularios', 'questions', 'responses', 'stats']
+                                onDel = -> toastr.success('Formulario\nQuestões\nRespostas\nEstatísticas',"#{uuid} deletados com sucesso")
+                                p = [
+                                        firebase.database().ref("formularios/#{uuid}").set(null)
+                                        firebase.database().ref("questions/#{uuid}").set(null)
+                                        firebase.database().ref("responses/#{uuid}").set(null)
+                                        firebase.database().ref("stats/#{uuid}").set(null)
+                                ]
                                 Promise.all(p).then(onDel)
                                         
 

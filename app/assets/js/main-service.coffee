@@ -86,10 +86,8 @@ fetchMainService = ->
                 # ## /formularios/:uuid/:action/:token
                 MainService.onFormulariosActionToken = (pass) ->
                         $q (resolve, reject) ->
-                                if pass
-                                        
-                                        action = pass[0].split('/formularios/')[1].split('/')[1]
-                                        $rootScope.token = pass[0].split('/formularios/')[1].split('/')[2]
+                                if pass 
+                                        token = pass[0].split('/formularios/')[1].split('/')[2]
                                         onQuestions  = MainService.onTypeformAction('questions', $rootScope.currentForm)
                                         onBoletos = MainService.onTypeformAction('boletos', $rootScope.currentForm)
                                         onResponses = MainService.onTypeformAction('responses', $rootScope.currentForm)
@@ -97,16 +95,20 @@ fetchMainService = ->
                                                 questions = results[0]
                                                 boletos = results[1]
                                                 responses = results[2]
-
-                                                obj = {questions:{}}
+        
+                                                obj = {questions:{}, token: token}
                                                 if boletos isnt null
                                                         for b in boletos
-                                                                if b.token is $rootScope.token
+                                                                if b.token is obj.token
                                                                         if b.status isnt 'CANCELLED'
-                                                                                obj.boleto = b 
+                                                                                obj.boleto = b
+                                                                        else
+                                                                                obj.bolet = null
+                                                                else
+                                                                        obj.boleto = null
+                                                                        
                                                 obj.answers = response.answers for response in responses when response.token is $rootScope.token
                                                 obj.questions[q.id] = q.question for q in questions
-                                                        
                                                 resolve obj
                  # ## /boletos
                 MainService.onBoletos = (pass) ->

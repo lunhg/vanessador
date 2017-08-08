@@ -168,8 +168,13 @@ para inserir no firebase</p>
 
                 FormularioService.<span class="hljs-keyword">delete</span> = <span class="hljs-function"><span class="hljs-params">(uuid)</span> -&gt;</span>
                         <span class="hljs-keyword">new</span> Promise (resolve, reject) -&gt;
-<span class="hljs-function">                                <span class="hljs-title">onDel</span> = -&gt;</span> toastr.success(<span class="hljs-string">'Formulario'</span>,<span class="hljs-string">"<span class="hljs-subst">#{uuid}</span> deletado com sucesso"</span>)
-                                p = firebase.database().ref(<span class="hljs-string">"<span class="hljs-subst">#{e}</span>/<span class="hljs-subst">#{uuid}</span>"</span>).set(<span class="hljs-literal">null</span>) <span class="hljs-keyword">for</span> e <span class="hljs-keyword">in</span> [<span class="hljs-string">'formularios'</span>, <span class="hljs-string">'questions'</span>, <span class="hljs-string">'responses'</span>, <span class="hljs-string">'stats'</span>]
+<span class="hljs-function">                                <span class="hljs-title">onDel</span> = -&gt;</span> toastr.success(<span class="hljs-string">'Formulario\nQuestões\nRespostas\nEstatísticas'</span>,<span class="hljs-string">"<span class="hljs-subst">#{uuid}</span> deletados com sucesso"</span>)
+                                p = [
+                                        firebase.database().ref(<span class="hljs-string">"formularios/<span class="hljs-subst">#{uuid}</span>"</span>).set(<span class="hljs-literal">null</span>)
+                                        firebase.database().ref(<span class="hljs-string">"questions/<span class="hljs-subst">#{uuid}</span>"</span>).set(<span class="hljs-literal">null</span>)
+                                        firebase.database().ref(<span class="hljs-string">"responses/<span class="hljs-subst">#{uuid}</span>"</span>).set(<span class="hljs-literal">null</span>)
+                                        firebase.database().ref(<span class="hljs-string">"stats/<span class="hljs-subst">#{uuid}</span>"</span>).set(<span class="hljs-literal">null</span>)
+                                ]
                                 Promise.all(p).<span class="hljs-keyword">then</span>(onDel)
 <span class="hljs-function">                                        
 

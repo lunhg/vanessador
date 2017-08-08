@@ -4,7 +4,7 @@ fetchMainCtrl = ->
         loader = document.getElementById('masterLoader')
         p = loader.children[9]
         p.innerHTML = "Trabalhando no controlador principal"
-        MainCtrl = ($rootScope, $http, $location, $route, $window, authService, formularioService, boletoService, mainService, toastr)->
+        MainCtrl = ($rootScope, $http, $location, $route, $window, $q, authService, formularioService, boletoService, mainService, toastr)->
 
                
                         
@@ -154,11 +154,21 @@ fetchMainCtrl = ->
                 # - Dependencias:
                 #   - formularioService
                 $rootScope.onDeleteFormulario = (uuid)->
-                        _onDel = ->
+                        _onDel = ->                              
                                 $location.path('/formularios')
                         _uuid = document.getElementById('input_typeform_uuid').value
-                        if uuid is _uuid 
-                                formularioService.delete(uuid, _uuid).then(_onDel).catch(onErr)
+                        if uuid is _uuid
+                                db = firebase.database()
+                                db.ref("boletos/#{$rootScope.currentForm}").once 'value', (boletos) ->
+                                        p = []
+                                        if boletos.val() isnt null
+                                                for b in boletos.val()
+                                                        if b.status is 'DRAFT'
+                                                                p.push boletoService.delete(_uuid, b.invoice)
+                                                        if b.status is 'SENT'
+                                                                p.push boletoService.cancel(b.token, b.invoice)
+                                        $q.all(p).then ->
+                                                formularioService.delete(uuid, _uuid).then(_onDel).catch(onErr)
                         else
                                 onErr new Error("Formulario Error", "Invalid uuid")
                         
@@ -294,6 +304,7 @@ fetchMainCtrl = ->
                         mainService._on(/^\/formularios\/\w+\/\w+\/[a-zA-Z0-9]+$/)
                                 .then mainService.onFormulariosActionToken
                                 .then (result) ->
+                                        
                                         for k,v of result
                                                 $rootScope[k] = v
 

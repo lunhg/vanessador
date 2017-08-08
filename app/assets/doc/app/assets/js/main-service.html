@@ -201,10 +201,8 @@ checkout $rootScope.popup message and type</p>
             
             <div class="content"><div class='highlight'><pre>                MainService.onFormulariosActionToken = <span class="hljs-function"><span class="hljs-params">(pass)</span> -&gt;</span>
                         $q (resolve, reject) -&gt;
-                                <span class="hljs-keyword">if</span> pass
-                                        
-                                        action = pass[<span class="hljs-number">0</span>].split(<span class="hljs-string">'/formularios/'</span>)[<span class="hljs-number">1</span>].split(<span class="hljs-string">'/'</span>)[<span class="hljs-number">1</span>]
-                                        $rootScope.token = pass[<span class="hljs-number">0</span>].split(<span class="hljs-string">'/formularios/'</span>)[<span class="hljs-number">1</span>].split(<span class="hljs-string">'/'</span>)[<span class="hljs-number">2</span>]
+                                <span class="hljs-keyword">if</span> pass 
+                                        token = pass[<span class="hljs-number">0</span>].split(<span class="hljs-string">'/formularios/'</span>)[<span class="hljs-number">1</span>].split(<span class="hljs-string">'/'</span>)[<span class="hljs-number">2</span>]
                                         onQuestions  = MainService.onTypeformAction(<span class="hljs-string">'questions'</span>, $rootScope.currentForm)
                                         onBoletos = MainService.onTypeformAction(<span class="hljs-string">'boletos'</span>, $rootScope.currentForm)
                                         onResponses = MainService.onTypeformAction(<span class="hljs-string">'responses'</span>, $rootScope.currentForm)
@@ -212,16 +210,20 @@ checkout $rootScope.popup message and type</p>
                                                 questions = results[<span class="hljs-number">0</span>]
                                                 boletos = results[<span class="hljs-number">1</span>]
                                                 responses = results[<span class="hljs-number">2</span>]
-
-                                                obj = {questions:{}}
+        
+                                                obj = {questions:{}, token: token}
                                                 <span class="hljs-keyword">if</span> boletos <span class="hljs-keyword">isnt</span> <span class="hljs-literal">null</span>
                                                         <span class="hljs-keyword">for</span> b <span class="hljs-keyword">in</span> boletos
-                                                                <span class="hljs-keyword">if</span> b.token <span class="hljs-keyword">is</span> $rootScope.token
+                                                                <span class="hljs-keyword">if</span> b.token <span class="hljs-keyword">is</span> obj.token
                                                                         <span class="hljs-keyword">if</span> b.status <span class="hljs-keyword">isnt</span> <span class="hljs-string">'CANCELLED'</span>
-                                                                                obj.boleto = b 
+                                                                                obj.boleto = b
+                                                                        <span class="hljs-keyword">else</span>
+                                                                                obj.bolet = <span class="hljs-literal">null</span>
+                                                                <span class="hljs-keyword">else</span>
+                                                                        obj.boleto = <span class="hljs-literal">null</span>
+                                                                        
                                                 obj.answers = response.answers <span class="hljs-keyword">for</span> response <span class="hljs-keyword">in</span> responses <span class="hljs-keyword">when</span> response.token <span class="hljs-keyword">is</span> $rootScope.token
                                                 obj.questions[q.id] = q.question <span class="hljs-keyword">for</span> q <span class="hljs-keyword">in</span> questions
-                                                        
                                                 resolve obj</pre></div></div>
             
         </li>
