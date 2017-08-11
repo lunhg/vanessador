@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>services.coffee</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>services.coffee</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>AppManager::services = <span class="hljs-function">-&gt;</span>
+<span class="hljs-function">
+        <span class="hljs-title">getTemplate</span> = <span class="hljs-params">(p)</span> -&gt;</span>
+                <span class="hljs-keyword">new</span> Promise (resolve, reject) -&gt;
+                        _p = path.resolve <span class="hljs-string">"<span class="hljs-subst">#{path.join(__dirname)}</span>/../app/views/<span class="hljs-subst">#{p}</span>.pug"</span>
+                        fs.readFile _p, <span class="hljs-string">'utf8'</span>, <span class="hljs-function"><span class="hljs-params">(err, content)</span> -&gt;</span>
+                                <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> err
+                                        html = pug.compile(content, {filename:_p,doctype:<span class="hljs-string">'html'</span>})()
+                                        resolve {
+                                                name: p
+                                                options: {
+                                                        restrict: <span class="hljs-string">'A'</span>
+                                                        template: html
+                                                        replace: <span class="hljs-literal">true</span>
+                                                        transclude: <span class="hljs-literal">true</span>
+                                                }
+                                        }
+                                <span class="hljs-keyword">else</span>
+                                        reject err
+<span class="hljs-function">
+        <span class="hljs-title">_on</span> = <span class="hljs-params">(what)</span> -&gt;</span>
+                a = []
+                <span class="hljs-keyword">for</span> w <span class="hljs-keyword">in</span> <span class="hljs-built_in">require</span>(<span class="hljs-string">"../package.json"</span>)[<span class="hljs-string">"angular-<span class="hljs-subst">#{what}</span>"</span>]
+                        a.push getTemplate(w) 
+                Promise.all(a)
+
+        @app.get <span class="hljs-string">"/services"</span>, <span class="hljs-function"><span class="hljs-params">(req, res)</span> -&gt;</span>
+<span class="hljs-function">                <span class="hljs-title">onSuccess</span> = <span class="hljs-params">(result)</span> -&gt;</span> res.json result
+<span class="hljs-function">                <span class="hljs-title">onErr</span> = <span class="hljs-params">(err)</span> -&gt;</span> res.json err
+                _on(<span class="hljs-string">'services'</span>).<span class="hljs-keyword">then</span>(onSuccess).<span class="hljs-keyword">catch</span>(onErr)
+                
+        @app.get <span class="hljs-string">"/directives"</span>, <span class="hljs-function"><span class="hljs-params">(req, res)</span> -&gt;</span>
+<span class="hljs-function">                <span class="hljs-title">onSuccess</span> = <span class="hljs-params">(result)</span> -&gt;</span> res.json result
+<span class="hljs-function">                <span class="hljs-title">onErr</span> = <span class="hljs-params">(err)</span> -&gt;</span> res.json err
+                _on(<span class="hljs-string">'directives'</span>).<span class="hljs-keyword">then</span>(onSuccess).<span class="hljs-keyword">catch</span>(onErr)</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

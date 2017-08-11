@@ -100,6 +100,7 @@ deve ser atualizada</p>
                                                                 token: token
                                                                 invoice: invoiceid.data
                                                                 status: status
+                                                                email: data[<span class="hljs-string">'billing_info_email'</span>]
                                                         })
                                                         db.ref(<span class="hljs-string">"boletos/<span class="hljs-subst">#{uuid}</span>"</span>)
                                                                 .set(bol)

@@ -4,10 +4,8 @@ fetchMainCtrl = ->
         loader = document.getElementById('masterLoader')
         p = loader.children[9]
         p.innerHTML = "Trabalhando no controlador principal"
-        MainCtrl = ($rootScope, $http, $location, $route, $window, authService, formularioService, boletoService, mainService, toastr)->
-
-               
-                        
+        MainCtrl = ($rootScope, $http, $location, $route, $window, $cookies, $q, authService, formularioService, boletoService, mainService, toastr)->
+    
                 $rootScope.onAccountDadosPessoais = ->
                         $rootScope.dadosPessoais = true
                         $rootScope.configuracoes = false
@@ -47,7 +45,7 @@ fetchMainCtrl = ->
                 $rootScope.loginEmailAndPassword = ->
                         authService.loginEmailAndPassword('input_login_email',
                                 'input_login_password',
-                                /\w+@itsrio.org|gcravista@gmail.com/)                            
+                                /\w+@itsrio.org|gcravista@gmail.com/)                        
 
 
                 $rootScope.logout = -> authService.logout()
@@ -121,7 +119,16 @@ fetchMainCtrl = ->
                         document.getElementById(what).classList.remove('open')
                         document.getElementById(what).setAttribute('aria-expanded', 'false')
                                 
-                                
+
+                $rootScope.onDropdownmenuForm = (what,form, event)->
+                        event.preventDefault()                     
+                        document.getElementById(what+'-'+form).classList.add('open')
+                        document.getElementById(what+'-'+form).setAttribute('aria-expanded', 'true')
+
+                $rootScope.onDropupmenuForm = (what, form,  event)->
+                        event.preventDefault()
+                        document.getElementById(what+'-'+form).classList.remove('open')
+                        document.getElementById(what+'-'+form).setAttribute('aria-expanded', 'false')
                 # Esta função auxilia verificar erros de qq natureza
                 onErr  = (err) ->
                         toastr.error(err.code, err.message)
@@ -136,7 +143,7 @@ fetchMainCtrl = ->
                 $rootScope.onNovoFormulario = (id, groups...) ->
                         _onNovo = ->
                                 $location.path('/formularios')
-                                $window.reload()
+                                $route.reload()
                         formularioService.novo(id, groups).then(_onNovo).catch(onErr)
 
                 # ## Recupera novamente um formulário
@@ -244,39 +251,21 @@ fetchMainCtrl = ->
                         id = $rootScope.boleto.invoice
                         _onDelete = ->
                                 toastr.success("Formulário #{form}", "Boleto #{id} deletado")
-                                $rootScope.boleto = null
-                                $location.path('/formularios')
-                        
+                                $location.path('/boletos')
+                                $route.reload()
                         boletoService.delete(form, id).then(_onDelete)
 
-                
-                
-
-
-
-                # ## Configuração de aplicativo
-                # GET /config
-                $http.get('/config').then (config) ->
-                        if not firebase.apps.length
-                                firebase.initializeApp config.data
-
-                        # # Reconhecimento
-                        # Somente após reconhecer o login,
-                        # o usuário é carregado e a página muda
-                        # alguns elementos
-
-                        firebase.auth().onAuthStateChanged (user) ->
-                                if user then $rootScope.user = user
-
-                phase = $rootScope.$$phase
-                apply = @$apply
+                # # Reconhecimento
+                # Somente após reconhecer o login,
+                # o usuário é carregado e a página muda
+                # alguns elementos
                         
                 $rootScope.$watch 'user', (newUser, oldUser) ->
-                        #if phase is '$apply' or phase is '$digest'
-                        #        fn()
-                        #else
-                        #        apply(fn)
-                        #
+                        if $rootScope.user is null and $location.url().match /^\/$/ 
+                                $location.path('/login')
+                                
+                        mainService._on(/^\/confirm\?.*$/)
+                                .then mainService.onConfirm
                         
                         mainService._on(/^\/confirm\?.*$/)
                                 .then mainService.onConfirm
@@ -292,6 +281,7 @@ fetchMainCtrl = ->
                                         $rootScope[result.action] = result.val
                                         
                         mainService._on(/^\/formularios\/\w+\/\w+\/[a-zA-Z0-9]+$/)
+
                                 .then mainService.onFormulariosActionToken
                                 .then (result) ->
                                         for k,v of result

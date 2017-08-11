@@ -6,6 +6,9 @@ section.centralize-area
   br
   br
   br
+  a.btn.btn-default(href="/#!/formularios/{{ currentForm }}/questions") Ver tipo de questões
+  a.btn.btn-default(href="/#!/formularios/{{ currentForm }}/responses") Ver respostas
+
   table.table.table-striped.table-hover(ng-show="stats")
     thead
       tr
@@ -14,4 +17,3 @@ section.centralize-area
       tr
         td(ng-repeat="(k,v) in stats.responses") {{ v }}
 
-    a.btn.btn-default(href="/#!/formularios/{{ currentForm }}/questions") Ver respostas

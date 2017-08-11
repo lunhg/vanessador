@@ -52,7 +52,7 @@ deve ser atualizada</p>
             <div class="content"><div class='highlight'><pre>        loader = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'masterLoader'</span>)
         p = loader.children[<span class="hljs-number">9</span>]
         p.innerHTML = <span class="hljs-string">"Construindo serviço principal..."</span>
-<span class="hljs-function">        <span class="hljs-title">Service</span> =  <span class="hljs-params">($http, $location, $route, $rootScope, $q, toastr)</span> -&gt;</span>
+<span class="hljs-function">        <span class="hljs-title">Service</span> =  <span class="hljs-params">($rootScope, $location, $route, $http, $q, toastr)</span> -&gt;</span>
 
                 MainService = {}</pre></div></div>
             
@@ -75,7 +75,8 @@ checkout $rootScope.popup message and type</p>
             <div class="content"><div class='highlight'><pre>                MainService.onErr  = <span class="hljs-function"><span class="hljs-params">(err)</span> -&gt;</span>
                         toastr.error(<span class="hljs-string">"Erro <span class="hljs-subst">#{err.code}</span>"</span>, err.message)
                         $location.path(<span class="hljs-string">'/'</span>)
-                        
+
+                                        
                 MainService.onTypeformAction = <span class="hljs-function"><span class="hljs-params">(action, form)</span> -&gt;</span>
                         <span class="hljs-keyword">new</span> Promise (resolve, reject) -&gt;
                                 db = firebase.database()
@@ -159,19 +160,6 @@ checkout $rootScope.popup message and type</p>
               </div>
               <h2 id="-formularios-uuid-action">/formularios/:uuid/:action</h2>
 <p>Captura um formulário com várias respostas</p>
-<ul>
-<li>Action<ul>
-<li>UUID typeform</li>
-</ul>
-</li>
-<li>Firebase:<ul>
-<li><code>:action/questions</code> – <code>{:uuid =&gt; Array[{:field_id, :id, :question}]}</code></li>
-<li><code>:action/responses</code> – <code>{:uuid =&gt; Array[{:answers, :completed, :metadata, :token}</code></li>
-<li><code>:action/stats</code> – <code>{uuid =&gt; Array[{:completed, :showing, :total}</code></li>
-</ul>
-</li>
-<li>Angular: <code>$rootScope[:action]</code></li>
-</ul>
 
             </div>
             
@@ -196,6 +184,10 @@ checkout $rootScope.popup message and type</p>
                 <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
               <h2 id="-formularios-uuid-action-token">/formularios/:uuid/:action/:token</h2>
+<ul>
+<li>Captura uma resposta de um formulário</li>
+<li>Verifica se existe um boleto para esta resposta</li>
+</ul>
 
             </div>
             
@@ -213,14 +205,17 @@ checkout $rootScope.popup message and type</p>
                                                 boletos = results[<span class="hljs-number">1</span>]
                                                 responses = results[<span class="hljs-number">2</span>]
 
-                                                obj = {questions:{}}
+                                                obj = {questions:{}, boleto:<span class="hljs-literal">null</span>}
                                                 <span class="hljs-keyword">if</span> boletos <span class="hljs-keyword">isnt</span> <span class="hljs-literal">null</span>
                                                         <span class="hljs-keyword">for</span> b <span class="hljs-keyword">in</span> boletos
                                                                 <span class="hljs-keyword">if</span> b.token <span class="hljs-keyword">is</span> $rootScope.token
-                                                                        <span class="hljs-keyword">if</span> b.status <span class="hljs-keyword">isnt</span> <span class="hljs-string">'CANCELLED'</span>
-                                                                                obj.boleto = b 
-                                                obj.answers = response.answers <span class="hljs-keyword">for</span> response <span class="hljs-keyword">in</span> responses <span class="hljs-keyword">when</span> response.token <span class="hljs-keyword">is</span> $rootScope.token
-                                                obj.questions[q.id] = q.question <span class="hljs-keyword">for</span> q <span class="hljs-keyword">in</span> questions
+                                                                        obj.boleto = b 
+                                                <span class="hljs-keyword">for</span> response <span class="hljs-keyword">in</span> responses
+                                                        <span class="hljs-keyword">if</span> response.token <span class="hljs-keyword">is</span> $rootScope.token
+                                                                obj.answers = response.answers
+                                                                
+                                                <span class="hljs-keyword">for</span> q <span class="hljs-keyword">in</span> questions
+                                                        obj.questions[q.id] = q.question
                                                         
                                                 resolve obj</pre></div></div>
             
@@ -234,6 +229,7 @@ checkout $rootScope.popup message and type</p>
                 <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
               <h2 id="-boletos">/boletos</h2>
+<p>Checa quais boletos existem</p>
 
             </div>
             
@@ -245,13 +241,7 @@ checkout $rootScope.popup message and type</p>
                                                 <span class="hljs-keyword">if</span> boletos.val() <span class="hljs-keyword">is</span> <span class="hljs-literal">null</span>
                                                         resolve []
                                                 <span class="hljs-keyword">else</span>
-                                                        resolve boletos.val()
-
-                MainService.onBoletosInvoice = <span class="hljs-function"><span class="hljs-params">(pass)</span> -&gt;</span>
-<span class="hljs-function">                        <span class="hljs-title">onBoletos</span> = <span class="hljs-params">(bols)</span> -&gt;</span> _b <span class="hljs-keyword">for</span> _b <span class="hljs-keyword">in</span> b <span class="hljs-keyword">when</span> _b.invoice <span class="hljs-keyword">is</span> $rootScope.invoiceid <span class="hljs-keyword">for</span> b <span class="hljs-keyword">in</span> bols
-                        $q (resolve, reject) -&gt;
-                                <span class="hljs-keyword">if</span> pass
-                                        db.ref(<span class="hljs-string">"boletos/<span class="hljs-subst">#{$rootScope.currentForm}</span>"</span>).once <span class="hljs-string">'value'</span>, <span class="hljs-function"><span class="hljs-params">(boletos)</span> -&gt;</span></pre></div></div>
+                                                        resolve boletos.val()</pre></div></div>
             
         </li>
         
@@ -261,6 +251,31 @@ checkout $rootScope.popup message and type</p>
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <h2 id="-boeltos-invoiceid">/boeltos/:invoiceid</h2>
+<p>Checa se o boleto está nas seguintes condições</p>
+<ul>
+<li>DRAFT =&gt; Criado apenas. Pode enviar uma solicitação de pagamento</li>
+<li>SENT =&gt; Criado e enviado. Pode re-enviar a solicitação, ou apagar o boleto</li>
+<li>CANCELLED =&gt; Boleto criado e enviado. Não pode fazer nada.</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>                MainService.onBoletosInvoice = <span class="hljs-function"><span class="hljs-params">(pass)</span> -&gt;</span>
+<span class="hljs-function">                        <span class="hljs-title">onBoletos</span> = <span class="hljs-params">(bols)</span> -&gt;</span> _b <span class="hljs-keyword">for</span> _b <span class="hljs-keyword">in</span> b <span class="hljs-keyword">when</span> _b.invoice <span class="hljs-keyword">is</span> $rootScope.invoiceid <span class="hljs-keyword">for</span> b <span class="hljs-keyword">in</span> bols
+                        $q (resolve, reject) -&gt;
+                                <span class="hljs-keyword">if</span> pass
+                                        db.ref(<span class="hljs-string">"boletos/<span class="hljs-subst">#{$rootScope.currentForm}</span>"</span>).once <span class="hljs-string">'value'</span>, <span class="hljs-function"><span class="hljs-params">(boletos)</span> -&gt;</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
               </div>
               <p>Pegar o último boleto válido</p>
 
@@ -273,9 +288,23 @@ checkout $rootScope.popup message and type</p>
                                                                 boleto = b
                                                                 <span class="hljs-keyword">break</span>
 
-                                                resolve boleto
+                                                resolve boleto</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <h2 id="-conta-telefone-vincula">/conta/telefone/vincula</h2>
+<p>Vincula um telefone, útil para resetar senhas</p>
 
-                MainService.onVincularPhone = <span class="hljs-function"><span class="hljs-params">(pass)</span> -&gt;</span>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>                MainService.onVincularPhone = <span class="hljs-function"><span class="hljs-params">(pass)</span> -&gt;</span>
                         $q (resolve, reject) -&gt;
                                 <span class="hljs-keyword">if</span> pass
                                         $rootScope.$watch <span class="hljs-string">'whoisPhoneNumber'</span>, <span class="hljs-function">-&gt;</span>
@@ -285,7 +314,7 @@ checkout $rootScope.popup message and type</p>
                                                 MainService.applicationVerifier.render().<span class="hljs-keyword">then</span>(resolve).<span class="hljs-keyword">catch</span>(MainService.onErr)
                                         
                 <span class="hljs-keyword">return</span> MainService
-        [<span class="hljs-string">'$rootScope'</span>, <span class="hljs-string">'$location'</span>, <span class="hljs-string">'$route'</span>, <span class="hljs-string">'$rootScope'</span>, <span class="hljs-string">'$q'</span>, <span class="hljs-string">'toastr'</span>, Service]</pre></div></div>
+        [<span class="hljs-string">'$rootScope'</span>, <span class="hljs-string">'$location'</span>, <span class="hljs-string">'$route'</span>, <span class="hljs-string">'$http'</span>, <span class="hljs-string">'$q'</span>, <span class="hljs-string">'toastr'</span>, Service]</pre></div></div>
             
         </li>
         

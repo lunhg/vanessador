@@ -25,23 +25,37 @@ nav.navbar.navbar-default.navbar-fixed-top(role="navigation")
             span.caret
           ul.dropdown-menu(aria-labelledby="docs-menu")
             li
-              a(href="/docs/index") Novo formulário 
+              a(href="/docs/server/index") Servidor/Exppress
+            li.divider
             li
-              a(href="/docs/app") App
+              a(href="/docs/server/config/app") App Config
             li
-              a(href="/docs/config") Config
+              a(href="/docs/server/config/server") Server Config
             li
-              a(href="/docs/auth-service") Auth Service
+              a(href="/docs/server/config/paypal") Paypal Config 
             li
-              a(href="/docs/formulario-service") Formulario Service
+              a(href="/docs/server/config/pagseguro") Pagseguro Config
+           
+            li.divider
             li
-              a(href="/docs/main-service") Main Service
+              a(href="/docs/client/index") Cliente/Angular
+            li.divider
             li
-              a(href="/docs/boleto-service") Boleto Service
+              a(href="/docs/client/app") App
             li
-              a(href="/docs/main-ctrl") Main Control
+              a(href="/docs/client/config") Config
             li
-              a(href="/docs/directives") Directives
+              a(href="/docs/client/auth-service") Auth Service
+            li
+              a(href="/docs/client/formulario-service") Formulario Service
+            li
+              a(href="/docs/client/main-service") Main Service
+            li
+              a(href="/docs/client/boleto-service") Boleto Service
+            li
+              a(href="/docs/client/main-ctrl") Main Control
+            li
+              a(href="/docs/client/directives") Directives
 
         // https://stackoverflow.com/questions/27837220/ie10-ng-repeat-mousedown-mouseenter#27841532
         li#boletos-menu(ng-show="user !== null" ng-,mouseenter="onDropdownmenu('boletos-menu', $event)" ng-mouseleave="onDropupmenu('boletos-menu', $event)")

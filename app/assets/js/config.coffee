@@ -17,8 +17,11 @@ fetchConfig = ->
                         for e in templates.data
                                 obj = {template:e.template, controller: 'MainCtrl'}
                                 $routeProvider.when(e.route,obj)
+
+                        
                         # Ponto inicial
                         $routeProvider.otherwise({redirectTo: '/'})
+
         
                         # Habilite HTML5 com hashbang
                         # https://stackoverflow.com/questions/16677528/location-switching-between-html5-and-hashbang-mode-link-rewriting#16678065

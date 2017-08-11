@@ -20,7 +20,7 @@ class AppManager
                         path.join __dirname, '..', 'app/assets/css'
                         path.join __dirname, '..', 'app/assets/js'
                         path.join __dirname, '..', 'app/assets/'
-                        #path.join __dirname, '..', 'app/assets/favicon.ico'
+                        path.join __dirname, '..', 'app/assets/favicon.ico'
                 ]
 
-                @app.set 'port', parseInt(process.env.PORT || '3000')
+                @app.set 'port', parseInt(process.env.PORT || '3001')

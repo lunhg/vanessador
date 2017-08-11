@@ -31,6 +31,7 @@ fetchBoletoService = ->
                                                                 token: token
                                                                 invoice: invoiceid.data
                                                                 status: status
+                                                                email: data['billing_info_email']
                                                         })
                                                         db.ref("boletos/#{uuid}")
                                                                 .set(bol)

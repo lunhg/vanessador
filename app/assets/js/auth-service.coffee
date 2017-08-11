@@ -37,7 +37,6 @@ fetchAuthService = ->
                         # Apresente ao usuário uma mensagem de sucesso
                         user = firebase.auth().currentUser
                         toastr.success('Bem vindo', "#{user.displayName or user.email}")
-                        # Isso é necessário para reatualizar os dados
                         $location.path('/formularios')
                         $route.reload()
                 
@@ -121,6 +120,7 @@ fetchAuthService = ->
                         if not firebase.auth().currentUser
                                 email = document.getElementById(id_login).value
                                 if email.match(restricted)
+                                        AuthService.credentials = firebase.auth.EmailAuthProvider.credential(email, document.getElementById(id_password).value)
                                         firebase.auth().signInWithEmailAndPassword(email,(document.getElementById(id_password).value)).then(AuthService.onLogin).catch(onErr)
                                 else
                                         onErr(new Error("Conta de email não permitida"))

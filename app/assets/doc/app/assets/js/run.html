@@ -49,7 +49,12 @@ deve ser atualizada</p>
             <div class="content"><div class='highlight'><pre>        loader = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'masterLoader'</span>)
         p = loader.children[<span class="hljs-number">9</span>]
         p.innerHTML =  <span class="hljs-string">"Verificando autorizações prévias"</span>
-<span class="hljs-function">        <span class="hljs-title">Run</span> = <span class="hljs-params">($rootScope, $http, $location)</span> -&gt;</span></pre></div></div>
+<span class="hljs-function">        <span class="hljs-title">Run</span> = <span class="hljs-params">($rootScope, $http, $location, $timeout, mainService)</span> -&gt;</span>
+                <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> firebase.apps.length 
+                        $http.get(<span class="hljs-string">'/config'</span>).<span class="hljs-keyword">then</span> (config) -&gt;
+                                firebase.initializeApp config.data
+                                firebase.auth().onAuthStateChanged (user) -&gt;
+                                        $timeout -&gt;</pre></div></div>
             
         </li>
         
@@ -64,7 +69,7 @@ deve ser atualizada</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                $rootScope.user = <span class="hljs-literal">null</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>                                                $rootScope.user = user</pre></div></div>
             
         </li>
         
@@ -75,15 +80,14 @@ deve ser atualizada</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              <p>Dados de um ou vários formularios</p>
+              <p>Dados de um ou vários formularios
+$rootScope.registeredForms = null
+$rootScope.currentForm = null
+$rootScope.questions = {}
+$rootScope.responses = {}
+$rootScope.answers = []</p>
 
             </div>
-            
-            <div class="content"><div class='highlight'><pre>                $rootScope.registeredForms = <span class="hljs-literal">null</span>
-                $rootScope.currentForm = <span class="hljs-literal">null</span>
-                $rootScope.questions = {}
-                $rootScope.responses = {}
-                $rootScope.answers = []</pre></div></div>
             
         </li>
         
@@ -94,11 +98,10 @@ deve ser atualizada</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
-              <p>Variável para dizer se estamos carregando ou não</p>
+              <p>Variável para dizer se estamos carregando ou não
+$rootScope.onLoading = true</p>
 
             </div>
-            
-            <div class="content"><div class='highlight'><pre>                $rootScope.onLoading = <span class="hljs-literal">true</span></pre></div></div>
             
         </li>
         
@@ -113,7 +116,7 @@ deve ser atualizada</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                $rootScope.defaultPhotoURL = <span class="hljs-string">'/assets/images/vanessadora.png'</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>                                                $rootScope.defaultPhotoURL = <span class="hljs-string">'/assets/images/vanessadora.png'</span></pre></div></div>
             
         </li>
         
@@ -125,11 +128,10 @@ deve ser atualizada</p>
                 <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
               <p>Um token servirá para relacionar uma
-resposta de um formulário</p>
+resposta de um formulário
+$rootScope.token = null</p>
 
             </div>
-            
-            <div class="content"><div class='highlight'><pre>                $rootScope.token = <span class="hljs-literal">null</span></pre></div></div>
             
         </li>
         
@@ -142,13 +144,12 @@ resposta de um formulário</p>
               </div>
               <h1 id="apresenta-o-de-dados">Apresentação de dados</h1>
 <ul>
-<li>/contas</li>
+<li>/contas
+$rootScope.dadosPessoais = true
+$rootScope.configuracoes = false</li>
 </ul>
 
             </div>
-            
-            <div class="content"><div class='highlight'><pre>                $rootScope.dadosPessoais = <span class="hljs-literal">true</span>
-                $rootScope.configuracoes = <span class="hljs-literal">false</span></pre></div></div>
             
         </li>
         
@@ -161,15 +162,14 @@ resposta de um formulário</p>
               </div>
               <h1 id="resetar-senha-de-dados">Resetar senha de dados</h1>
 <ul>
-<li>/confirm</li>
+<li>/confirm
+$rootScope.whoisPhoneNumber = true
+$rootScope.confirmCode = false
+$rootScope.resetPassword = false
+$rootScope.verifyEmail = false</li>
 </ul>
 
             </div>
-            
-            <div class="content"><div class='highlight'><pre>                $rootScope.whoisPhoneNumber = <span class="hljs-literal">true</span>
-                $rootScope.confirmCode = <span class="hljs-literal">false</span>
-                $rootScope.resetPassword = <span class="hljs-literal">false</span>
-                $rootScope.verifyEmail = <span class="hljs-literal">false</span></pre></div></div>
             
         </li>
         
@@ -182,12 +182,11 @@ resposta de um formulário</p>
               </div>
               <h1 id="boletos">Boletos</h1>
 <ul>
-<li>/boletos</li>
+<li>/boletos
+$rootScope.boletos = []</li>
 </ul>
 
             </div>
-            
-            <div class="content"><div class='highlight'><pre>                $rootScope.boletos = []</pre></div></div>
             
         </li>
         
@@ -200,12 +199,11 @@ resposta de um formulário</p>
               </div>
               <h2 id="boleto">Boleto</h2>
 <ul>
-<li>/boleto/:invoiceid</li>
+<li>/boleto/:invoiceid
+$rootScope.boleto = null</li>
 </ul>
 
             </div>
-            
-            <div class="content"><div class='highlight'><pre>                $rootScope.boleto = <span class="hljs-literal">null</span></pre></div></div>
             
         </li>
         

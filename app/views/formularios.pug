@@ -7,7 +7,6 @@ section.centralize-area
     br
     br
     br
-    p {{ registeredForms }}
     table.table.table-striped.table-hover
       thead
         tr
@@ -27,8 +26,9 @@ section.centralize-area
           td 
             a(href="/#!/users/{{ v.owner }}/profile") {{ v.owner }}
           td
-            a.btn.btn-default(href="/#!/formularios/{{ k }}/stats") Estatisticas
-            a.btn.btn-default(href="/#!/formularios/{{ k }}/questions") Questões 
-            a.btn.btn-default(href="/#!/formularios/{{ k }}/responses") Respostas
-            a.btn.btn-default(ng-click="onUpdate(k)") Atualizar
-            a.btn.btn-default(href="/#!/formularios/{{ k }}/delete") Delete
+            div.nav.navbar-nav
+              a.btn.btn-default(href="/#!/formularios/{{ k }}/stats") Estatisticas
+              a.btn.btn-info(href="/#!/formularios/{{ k }}/questions") Questões 
+              a.btn.btn-primary(href="/#!/formularios/{{ k }}/responses") Respostas
+              a.btn.btn-success(ng-click="onUpdateFormulario(k)") Atualizar
+              a.btn.btn-warning(href="/#!/formularios/{{ k }}/delete") Delete

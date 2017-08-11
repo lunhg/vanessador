@@ -14,8 +14,9 @@ onMsg = (addr) ->"""
 p = require('../package.json').firebase.project.name
 Promise.all([keytar.findPassword("#{p}.paypal.apiKey"), keytar.findPassword("#{p}.paypal.secret")])
         .then AppManager.initPayPal
+        .then AppManager.initPagSeguro
+        .then ServerManager.routes
         .then ServerManager.start
-        .then ServerManager.bind
         .then (addr) -> console.log chalk.cyan onMsg addr
         .catch (e) -> console.log e 
                         

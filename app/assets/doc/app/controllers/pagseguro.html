@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>pagseguro.coffee</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>pagseguro.coffee</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>AppManager::pagseguro = <span class="hljs-function">-&gt;</span>
+<span class="hljs-function">
+        <span class="hljs-title">onParseXML</span> = <span class="hljs-params">(result)</span> -&gt;</span>
+                self = <span class="hljs-keyword">this</span>
+                <span class="hljs-keyword">new</span> Promise (resolve, reject) -&gt;
+                        xml2js.parseString result, <span class="hljs-function"><span class="hljs-params">(err, str)</span> -&gt;</span>
+                                <span class="hljs-keyword">if</span> err <span class="hljs-keyword">then</span> reject err
+                                <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> err <span class="hljs-keyword">then</span> self.res.json JSON.parse(str)</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>Permite consultar os dados de recorrências por intervalo de datas.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        @app.get <span class="hljs-string">'/pagseguro/planos'</span>, <span class="hljs-function"><span class="hljs-params">(req, res)</span> -&gt;</span>
+                 PagSeguroSDK.get(<span class="hljs-string">'/pre-approvals'</span>).<span class="hljs-keyword">then</span>(onParseXML.bind(res:res)).<span class="hljs-keyword">catch</span> (e) -&gt; res.send e</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>Permite aderir a um pagamento recorrente (assinar um plano criado).</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        @app.post <span class="hljs-string">'/pagseguro/planos'</span>, <span class="hljs-function"><span class="hljs-params">(req, res)</span> -&gt;</span>
+                PagSeguroSDK.post(<span class="hljs-string">'/pre-approvals/request'</span>, {
+                        <span class="hljs-string">"directPreApproval"</span>: {
+                                <span class="hljs-string">"plan"</span>: req.query[<span class="hljs-string">'plan'</span>]
+                                <span class="hljs-string">"reference"</span>: req.query[<span class="hljs-string">'ref'</span>]
+                                <span class="hljs-string">"sender"</span>:{
+                                        <span class="hljs-string">"name"</span>:req.query[<span class="hljs-string">'nome'</span>]
+                                        <span class="hljs-string">"email"</span>:req.query[<span class="hljs-string">'email'</span>]
+                                        <span class="hljs-string">"ip"</span>:req.ip
+                                        <span class="hljs-string">"hash"</span>:node_uuid.v4()
+                                        <span class="hljs-string">"phone"</span>:{
+                                                <span class="hljs-string">"areacode"</span>:req.query[<span class="hljs-string">'areacode'</span>]
+                                                <span class="hljs-string">"number"</span>:req.query[<span class="hljs-string">'number'</span>]
+                                        }
+                                        <span class="hljs-string">"documents"</span>:{
+                                                <span class="hljs-string">"document"</span>:{
+                                                        <span class="hljs-string">"type"</span>:req.query[<span class="hljs-string">'doc_type'</span>]
+                                                        <span class="hljs-string">"number"</span>:req.query[<span class="hljs-string">'doc_num'</span>]
+                                                }
+                                        }
+                                }
+                                <span class="hljs-string">"paymentMethod"</span>:{
+                                        <span class="hljs-string">"token"</span>: req.query[<span class="hljs-string">'payment_token'</span>]
+                                        <span class="hljs-string">"type"</span>: req.query[<span class="hljs-string">'payment_type'</span>]
+                                        <span class="hljs-string">"holder"</span>:{
+                                                <span class="hljs-string">"name"</span>:req.query[<span class="hljs-string">'nome'</span>]
+                                                <span class="hljs-string">"birthDate"</span>:req.query[<span class="hljs-string">'birthDate'</span>]
+                                                <span class="hljs-string">"document"</span>:{
+                                                        <span class="hljs-string">"type"</span>:req.query[<span class="hljs-string">'doc_type'</span>]
+                                                        <span class="hljs-string">"number"</span>:req.query[<span class="hljs-string">'doc_num'</span>]
+                                                }
+                                                <span class="hljs-string">"phone"</span>:{
+                                                        <span class="hljs-string">"areacode"</span>:req.query[<span class="hljs-string">'areacode'</span>]
+                                                        <span class="hljs-string">"number"</span>:req.query[<span class="hljs-string">'number'</span>]
+                                                }
+                                        }
+                                }
+                        }
+                }).<span class="hljs-keyword">then</span>(onParseXML.bind(res:res)).<span class="hljs-keyword">catch</span> (e) -&gt; res.send e</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>Permite consultar os dados de uma recorrência por intervalo de dias.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        @app.get <span class="hljs-string">'/pagseguro/planos/notificacoes'</span>, <span class="hljs-function"><span class="hljs-params">(req, res)</span> -&gt;</span>
+                 PagSeguroSDK.get(<span class="hljs-string">"/pre-approvals/notifications?page=<span class="hljs-subst">#{req.query[<span class="hljs-string">'page'</span>]}</span>&amp;maxPagesResults=50&amp;interval=<span class="hljs-subst">#{req.query[<span class="hljs-string">'dias'</span>]}</span>"</span>).<span class="hljs-keyword">then</span>(onParseXML.bind(res:res)).<span class="hljs-keyword">catch</span> (e) -&gt; res.send e</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>Permite consultar os dados de uma recorrência pelo código da notificação.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        @app.get <span class="hljs-string">'/pagseguro/planos/notificacoes/:id'</span>, <span class="hljs-function"><span class="hljs-params">(req, res)</span> -&gt;</span>
+                 PagSeguroSDK.get(<span class="hljs-string">"/pre-approvals/notifications/<span class="hljs-subst">#{req.params[<span class="hljs-string">'id'</span>]}</span>"</span>).<span class="hljs-keyword">then</span>(onParseXML.bind(res:res)).<span class="hljs-keyword">catch</span> (e) -&gt; res.send e</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>Permite efetuar uma cobrança manual.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        @app.post <span class="hljs-string">'/pagseguro/planos/pagamento/:id'</span>, <span class="hljs-function"><span class="hljs-params">(req, res)</span> -&gt;</span>
+                id = node_uuid.v4()
+                PagSeguroSDK.post(<span class="hljs-string">'/pre-approvals/payment'</span>, {
+                        <span class="hljs-string">"payment"</span>: {
+                                <span class="hljs-string">"preApprovalCode"</span>: req.query[<span class="hljs-string">'code'</span>]
+                                <span class="hljs-string">"reference"</span>: req.query[<span class="hljs-string">'ref'</span>]
+                                <span class="hljs-string">"senderHash"</span>: node_uuid.v4()
+                                <span class="hljs-string">"senderIp"</span>: req.ip
+                                <span class="hljs-string">"items"</span>: [{
+                                        <span class="hljs-string">"id"</span>: req.params[<span class="hljs-string">'id'</span>]
+                                        <span class="hljs-string">"description"</span>: <span class="hljs-string">"Boleto de pagamento"</span>,
+                                        <span class="hljs-string">"quantity"</span>: <span class="hljs-number">1</span>,
+                                        <span class="hljs-string">"amount"</span>: <span class="hljs-string">"10.00"</span>,
+                                        <span class="hljs-string">"weight"</span>: <span class="hljs-number">1</span>,
+                                        <span class="hljs-string">"shippingCost"</span>: <span class="hljs-number">0.00</span>
+                                }]
+                        }
+                }).<span class="hljs-keyword">then</span>(onParseXML.bind(res:res)).<span class="hljs-keyword">catch</span> (e) -&gt; res.send e</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>Permite consultar os dados de planos.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        @app.get <span class="hljs-string">'/pagseguro/planos/requerer'</span>, <span class="hljs-function"><span class="hljs-params">(req, res)</span> -&gt;</span>
+                 PagSeguroSDK.get(<span class="hljs-string">'/pre-approvals/request'</span>).<span class="hljs-keyword">then</span>(onParseXML.bind(res:res)).<span class="hljs-keyword">catch</span> (e) -&gt; res.send e</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p>Permite criar um plano de pagamento recorrente que concentra todas as configurações de pagamento.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        @app.post <span class="hljs-string">'/pagseguro/planos/requerer'</span>, <span class="hljs-function"><span class="hljs-params">(req, res)</span> -&gt;</span>
+                PagSeguroSDK.post(<span class="hljs-string">'/pre-approvals/request'</span>, {
+                        <span class="hljs-string">"preApprovalRequest"</span>: {
+                                <span class="hljs-string">"redirect_url"</span>:req.query[<span class="hljs-string">'redirect_url'</span>],
+                                <span class="hljs-string">"redirect_url"</span>:req.query[<span class="hljs-string">'review_url'</span>],
+                                <span class="hljs-string">"reference"</span>: req.query[<span class="hljs-string">'ref'</span>]
+                                <span class="hljs-string">"preApproval"</span>: {
+                                        <span class="hljs-string">"name"</span>: req.query[<span class="hljs-string">'name'</span>],
+                                        <span class="hljs-string">"charge"</span>: <span class="hljs-string">"AUTO"</span>,
+                                        <span class="hljs-string">"period"</span>: <span class="hljs-string">"MONTHLY"</span>,
+                                        <span class="hljs-string">"amountPerPayment"</span>: req.query[<span class="hljs-string">'amount'</span>],
+                                        <span class="hljs-string">"membershipFee"</span>: (parseFloat(req.query[<span class="hljs-string">'amount'</span>]) * <span class="hljs-number">0.05</span>).toFixed(<span class="hljs-number">2</span>),
+                                        <span class="hljs-string">"expiration"</span>: {
+                                                <span class="hljs-string">"value"</span>: <span class="hljs-number">1</span>,
+                                                <span class="hljs-string">"unit"</span>: <span class="hljs-string">"MONTHS"</span>
+                                        }
+                                        <span class="hljs-string">"details"</span>: <span class="hljs-string">'ITS_'</span>+node_uuid.v4()
+                                }
+                        }
+                }).<span class="hljs-keyword">then</span>(onParseXML.bind(res:res)).<span class="hljs-keyword">catch</span> (e) -&gt; res.send e</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p>Permite alterar o valor de cobrança do plano e das adesões vigentes do plano.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        @app.put <span class="hljs-string">'/pagseguro/planos/:id'</span>, <span class="hljs-function"><span class="hljs-params">(req, res)</span> -&gt;</span>
+                PagSeguroSDK.put(<span class="hljs-string">"/pre-approvals/<span class="hljs-subst">#{req.params[<span class="hljs-string">'id'</span>]}</span>/payment"</span>, {
+                        <span class="hljs-string">"amountPerPayment"</span>:req.query[<span class="hljs-string">'amount'</span>]
+                        <span class="hljs-string">"updateSubscriptions"</span>:req.query[<span class="hljs-string">'update'</span>]
+                }).<span class="hljs-keyword">then</span>(onParseXML.bind(res:res)).<span class="hljs-keyword">catch</span> (e) -&gt; res.send e</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <p>Permite criar um plano de pagamento
+recorrente que concentra todas as configurações de pagamento.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        @app.get <span class="hljs-string">'/pagseguro/planos/:id'</span>, <span class="hljs-function"><span class="hljs-params">(req, res)</span> -&gt;</span>
+                PagSeguroSDK.get(<span class="hljs-string">"/pre-approvals/<span class="hljs-subst">#{req.params[<span class="hljs-string">'id'</span>]}</span>"</span>).<span class="hljs-keyword">then</span>(onParseXML.bind(res:res)).<span class="hljs-keyword">catch</span> (e) -&gt; res.send e</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <p>Permite consultar os dados de uma recorrência.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        @app.put <span class="hljs-string">'/pagseguro/planos/:id/cancela'</span>, <span class="hljs-function"><span class="hljs-params">(req, res)</span> -&gt;</span>
+                PagSeguroSDK.put(<span class="hljs-string">"/pre-approvals/<span class="hljs-subst">#{req.params[<span class="hljs-string">'id'</span>]}</span>/payment"</span>, {
+                        <span class="hljs-string">"pre-approval-code"</span>:req.query[<span class="hljs-string">'code'</span>]
+                }).<span class="hljs-keyword">then</span>(onParseXML.bind(res:res)).<span class="hljs-keyword">catch</span> (e) -&gt; res.send e</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              <p>Permite conceder desconto à próxima cobrança.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        @app.put <span class="hljs-string">'/pagseguro/plano/:id/desconto'</span>, <span class="hljs-function"><span class="hljs-params">(req, res)</span> -&gt;</span>
+                PagSeguroSDK.put(<span class="hljs-string">"/pre-approvals/<span class="hljs-subst">#{req.params[<span class="hljs-string">'id'</span>]}</span>/payment"</span>, {
+                        <span class="hljs-string">"type"</span>:<span class="hljs-string">"DISCOUNT_PERCENT"</span>
+                        <span class="hljs-string">"value"</span>:req.params[<span class="hljs-string">'value'</span>]
+                }).<span class="hljs-keyword">then</span>(onParseXML.bind(res:res)).<span class="hljs-keyword">catch</span> (e) -&gt; res.send e</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-13">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-13">&#182;</a>
+              </div>
+              <p>Permite listar as ordens de pagamento de uma assinatura.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        @app.get <span class="hljs-string">'/pagseguro/plano/:id/ordens'</span>, <span class="hljs-function"><span class="hljs-params">(req, res)</span> -&gt;</span>
+                PagSeguroSDK.get(<span class="hljs-string">"/pre-approvals/<span class="hljs-subst">#{req.params[<span class="hljs-string">'id'</span>]}</span>/payment-orders"</span>).<span class="hljs-keyword">then</span>(onParseXML.bind(res:res)).<span class="hljs-keyword">catch</span> (e) -&gt; res.send e</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-14">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-14">&#182;</a>
+              </div>
+              <p>Permite efetuar a retentativa de cobrança de uma ordem de pagamento não paga ou não processada.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        @app.post <span class="hljs-string">'/pagseguro/plano/:id/ordens/:pid'</span>, <span class="hljs-function"><span class="hljs-params">(req, res)</span> -&gt;</span>
+                PagSeguroSDK.get(<span class="hljs-string">"/pre-approvals/<span class="hljs-subst">#{req.params[<span class="hljs-string">'id'</span>]}</span>/payment-orders/<span class="hljs-subst">#{req.params[<span class="hljs-string">'pid'</span>]}</span>/payment"</span>).<span class="hljs-keyword">then</span>(onParseXML.bind(res:res)).<span class="hljs-keyword">catch</span> (e) -&gt; res.send e</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              <p>Permite alterar o estado de uma recorrência.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        @app.put <span class="hljs-string">'/pagseguro/plano/:id/ordens/:pid'</span>, <span class="hljs-function"><span class="hljs-params">(req, res)</span> -&gt;</span>
+                PagSeguroSDK.get(<span class="hljs-string">"/pre-approvals/<span class="hljs-subst">#{req.params[<span class="hljs-string">'id'</span>]}</span>/status"</span>, {
+                        <span class="hljs-string">"status"</span>:req.query[<span class="hljs-string">'status'</span>]
+                }).<span class="hljs-keyword">then</span>(onParseXML.bind(res:res)).<span class="hljs-keyword">catch</span> (e) -&gt; res.send e</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-16">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-16">&#182;</a>
+              </div>
+              <p>Permite a alteração do cartão de crédito atrelado
+ao pagamento do plano para as próximas cobranças.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        @app.put <span class="hljs-string">'/pagseguro/plano/:id/ordens/:pid'</span>, <span class="hljs-function"><span class="hljs-params">(req, res)</span> -&gt;</span>
+                PagSeguroSDK.get(<span class="hljs-string">"/pre-approvals/<span class="hljs-subst">#{req.params[<span class="hljs-string">'id'</span>]}</span>/status"</span>, {
+                        <span class="hljs-string">"type"</span>: <span class="hljs-string">"CREDITCARD"</span>,
+                        <span class="hljs-string">"sender"</span>: {
+                                <span class="hljs-string">"ip"</span>: req.ip
+                                <span class="hljs-string">"hash"</span>: node_uuid.v4()
+                        },
+                        <span class="hljs-string">"creditCard"</span>: {
+                                <span class="hljs-string">"token"</span>: req.query[<span class="hljs-string">'token'</span>]
+                                <span class="hljs-string">"holder"</span>: {
+                                        <span class="hljs-string">"name"</span>:req.query[<span class="hljs-string">'nome'</span>]
+                                        <span class="hljs-string">"birthDate"</span>:req.query[<span class="hljs-string">'birthDate'</span>]
+                                        <span class="hljs-string">"document"</span>:{
+                                                <span class="hljs-string">"type"</span>:req.query[<span class="hljs-string">'doc_type'</span>]
+                                                <span class="hljs-string">"number"</span>:req.query[<span class="hljs-string">'doc_num'</span>]
+                                        }
+                                        <span class="hljs-string">"phone"</span>:{
+                                                <span class="hljs-string">"areacode"</span>:req.query[<span class="hljs-string">'areacode'</span>]
+                                                <span class="hljs-string">"number"</span>:req.query[<span class="hljs-string">'number'</span>]
+                                        }
+                                }
+                        }
+                }).<span class="hljs-keyword">then</span>(onParseXML.bind(res:res)).<span class="hljs-keyword">catch</span> (e) -&gt; res.send e</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

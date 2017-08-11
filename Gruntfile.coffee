@@ -86,7 +86,29 @@ module.exports = (grunt) ->
                 m = "#{pkg.firebase.project.name}.paypal.secret"
                 keytar.findPassword(m).then (r) ->
                         if r is undefined or r is null
-                                pwd = prompt("Type your #{pkg.firebase.project.name}.paypal.secret\n", secure:true)
+                                pwd = prompt("Type your #{m}\n", secure:true)
+                                onSet = (r)->
+                                        console.log "Paypal secret created"
+                                        done()
+                        keytar.setPassword(m,pkg.author,pwd).then onSet
+
+        grunt.registerTask 'build:pagseguro:email', 'Store pagseguro email on keychain', ->
+                done = @async()
+                m = "#{pkg.firebase.project.name}.pagseguro.email"
+                keytar.findPassword(m).then (r) ->
+                        if r is undefined or r is null
+                                pwd = prompt("Type your #{m}\n", secure:true)
+                                onSet = (r)->
+                                        console.log "Pageguro email created"
+                                        done()
+                        keytar.setPassword(m,pkg.author,pwd).then onSet
+
+        grunt.registerTask 'build:pagseguro:apiKey', 'Store pagseguro apiKey on keychain', ->
+                done = @async()
+                m = "#{pkg.firebase.project.name}.pagseguro.apiKey"
+                keytar.findPassword(m).then (r) ->
+                        if r is undefined or r is null
+                                pwd = prompt("Type your #{m}\n", secure:true)
                                 onSet = (r)->
                                         console.log "Paypal secret created"
                                         done()
@@ -94,25 +116,16 @@ module.exports = (grunt) ->
 
         grunt.registerTask 'build:doc:client', 'Build documentation with docco', ->
                 grunt.config('doc_dir', "app/assets/doc")
+                c = ""
+                # Document all
+                for p in [
+                        {orig: "#{path.join(__dirname)}/config", dest: "#{path.join(__dirname)}/app/assets/doc/config", files: ['environment', 'app', 'paypal', 'pagseguro', 'server']}
+                        {orig: "#{path.join(__dirname)}/app/controllers", dest: "#{path.join(__dirname)}/app/assets/doc/app/controllers", files: ['config', 'server', 'docs', 'index', 'pagseguro', 'paypal', 'services', 'templates', 'typeform']}
+                        {orig: "#{path.join(__dirname)}/app/assets/js", dest: "#{path.join(__dirname)}/app/assets/doc/app/assets/js", files: ['index', 'app', 'config', 'auth-service', 'main-service', 'formulario-service', 'boleto-service', 'main-ctrl', 'run', 'directives', 'boot']}
+                ]
+                        c += ("docco #{p.orig}/#{path}.coffee -o #{p.dest}" for path in p.files).join(" ; ")
 
-                # Document client
-                p = "#{path.join(__dirname)}/app/assets/js"
-                p2= "#{path.join(__dirname)}/app/assets/doc/app/assets/js"
-                client = ("docco #{p}/#{path}.coffee -o #{p2}" for path in [
-                        'index'
-                        'app'
-                        'config'
-                        'auth-service'
-                        'main-service'
-                        'formulario-service'
-                        'boleto-service'
-                        'main-ctrl'
-                        'run'
-                        'directives'
-                        'boot'
-                ]).join(" ; ")
-
-                grunt.config('shell', {'docco': client})
+                grunt.config('shell', {'docco': c})
                 
                 
         grunt.initConfig options

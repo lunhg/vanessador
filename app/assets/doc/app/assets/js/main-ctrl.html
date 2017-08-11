@@ -49,10 +49,8 @@ deve ser atualizada</p>
             <div class="content"><div class='highlight'><pre>        loader = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'masterLoader'</span>)
         p = loader.children[<span class="hljs-number">9</span>]
         p.innerHTML = <span class="hljs-string">"Trabalhando no controlador principal"</span>
-<span class="hljs-function">        <span class="hljs-title">MainCtrl</span> = <span class="hljs-params">($rootScope, $http, $location, $route, $<span class="hljs-built_in">window</span>, authService, formularioService, boletoService, mainService, toastr)</span>-&gt;</span>
-
-               
-                        
+<span class="hljs-function">        <span class="hljs-title">MainCtrl</span> = <span class="hljs-params">($rootScope, $http, $location, $route, $<span class="hljs-built_in">window</span>, $cookies, $q, authService, formularioService, boletoService, mainService, toastr)</span>-&gt;</span>
+    
                 $rootScope.onAccountDadosPessoais = <span class="hljs-function">-&gt;</span>
                         $rootScope.dadosPessoais = <span class="hljs-literal">true</span>
                         $rootScope.configuracoes = <span class="hljs-literal">false</span>
@@ -122,7 +120,7 @@ deve ser atualizada</p>
             <div class="content"><div class='highlight'><pre>                $rootScope.loginEmailAndPassword = <span class="hljs-function">-&gt;</span>
                         authService.loginEmailAndPassword(<span class="hljs-string">'input_login_email'</span>,
                                 <span class="hljs-string">'input_login_password'</span>,
-                                <span class="hljs-regexp">/\w+@itsrio.org|gcravista@gmail.com/</span>)                            
+                                <span class="hljs-regexp">/\w+@itsrio.org|gcravista@gmail.com/</span>)                        
 
 
                 $rootScope.logout = <span class="hljs-function">-&gt;</span> authService.logout()</pre></div></div>
@@ -548,9 +546,8 @@ uma demora</p>
                         id = $rootScope.boleto.invoice
 <span class="hljs-function">                        <span class="hljs-title">_onDelete</span> = -&gt;</span>
                                 toastr.success(<span class="hljs-string">"Formulário <span class="hljs-subst">#{form}</span>"</span>, <span class="hljs-string">"Boleto <span class="hljs-subst">#{id}</span> deletado"</span>)
-                                $rootScope.boleto = <span class="hljs-literal">null</span>
-                                $location.path(<span class="hljs-string">'/formularios'</span>)
-                        
+                                $location.path(<span class="hljs-string">'/boletos'</span>)
+                                $route.reload()
                         boletoService.<span class="hljs-keyword">delete</span>(form, id).<span class="hljs-keyword">then</span>(_onDelete)</pre></div></div>
             
         </li>
@@ -562,24 +559,6 @@ uma demora</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-22">&#182;</a>
               </div>
-              <h2 id="configura-o-de-aplicativo">Configuração de aplicativo</h2>
-<p>GET /config</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>                $http.get(<span class="hljs-string">'/config'</span>).<span class="hljs-keyword">then</span> (config) -&gt;
-                        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> firebase.apps.length
-                                firebase.initializeApp config.data</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-23">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-23">&#182;</a>
-              </div>
               <h1 id="reconhecimento">Reconhecimento</h1>
 <p>Somente após reconhecer o login,
 o usuário é carregado e a página muda
@@ -587,32 +566,14 @@ alguns elementos</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>
-                        firebase.auth().onAuthStateChanged (user) -&gt;
-                                <span class="hljs-keyword">if</span> user <span class="hljs-keyword">then</span> $rootScope.user = user
-
-                phase = $rootScope.$$phase
-                apply = @$apply
-                        
-                $rootScope.$watch <span class="hljs-string">'user'</span>, <span class="hljs-function"><span class="hljs-params">(newUser, oldUser)</span> -&gt;</span></pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-24">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-24">&#182;</a>
-              </div>
-              <p>if phase is ‘$apply’ or phase is ‘$digest’
-       fn()
-else
-       apply(fn)</p>
-
-            </div>
-            
             <div class="content"><div class='highlight'><pre>                        
+                $rootScope.$watch <span class="hljs-string">'user'</span>, <span class="hljs-function"><span class="hljs-params">(newUser, oldUser)</span> -&gt;</span>
+                        <span class="hljs-keyword">if</span> $rootScope.user <span class="hljs-keyword">is</span> <span class="hljs-literal">null</span> <span class="hljs-keyword">and</span> $location.url().match <span class="hljs-regexp">/^\/$/</span> 
+                                $location.path(<span class="hljs-string">'/login'</span>)
+                                
+                        mainService._on(<span class="hljs-regexp">/^\/confirm\?.*$/</span>)
+                                .<span class="hljs-keyword">then</span> mainService.onConfirm
+                        
                         mainService._on(<span class="hljs-regexp">/^\/confirm\?.*$/</span>)
                                 .<span class="hljs-keyword">then</span> mainService.onConfirm
                                 
@@ -627,6 +588,7 @@ else
                                         $rootScope[result.action] = result.val
                                         
                         mainService._on(<span class="hljs-regexp">/^\/formularios\/\w+\/\w+\/[a-zA-Z0-9]+$/</span>)
+
                                 .<span class="hljs-keyword">then</span> mainService.onFormulariosActionToken
                                 .<span class="hljs-keyword">then</span> (result) -&gt;
                                         <span class="hljs-keyword">for</span> k,v <span class="hljs-keyword">of</span> result

@@ -1,123 +1,133 @@
 {
-    "name": "vanessador",
-    "version": "0.0.1",
-    "description": "a firebase app with typeform requests",
-    "main": "bin/www",
-    "scripts": {
-	"build:firebase": "grunt build:firebase:apiKey build:firebase:messagingSenderId",
-	"build": "grunt --verbose",
-	"test": "mocha --timeout 5000 bin/test.js",
-	"serve": "./bin/www &",
-	"start": "killall node ; npm run build ; npm run serve ; sleep 10 ; npm test"
-    },
-    "repository": {
-	"type": "git",
-	"url": "https://www.github.com/lunhg/vanessador.git"
-    },
-    "author": [
-	"Guilherme Lunhani <lunhg@gmail.com>"
-    ],
-    "license": "SEE LICENSE IN LICENSE.md",
-    "dependencies": {
-	"atob": "^2.0.3",
-	"body-parser": "^1.17.2",
-	"chalk": "^2.0.1",
-	"compression": "^1.7.0",
-	"connect-assets": "^5.4.0",
-	"express": "^4.15.3",
-	"foreach": "^2.0.5",
-	"keytar": "^4.0.3",
-	"marked": "^0.3.6",
-	"morgan": "^1.8.2",
-	"node-uuid": "^1.4.8",
-	"paypal-rest-sdk": "^1.7.1",
-	"pug": "^2.0.0-rc.2",
-	"request-json": "^0.6.2"
-    },
-    "devDependencies": {
-	"chalk": "^2.0.1",
-	"check_node": "^1.0.0",
-	"grunt": "^1.0.1",
-	"grunt-banner": "^0.6.0",
-	"grunt-contrib-coffee": "^1.0.0",
-	"grunt-shell": "^2.1.0",
-	"mocha": "^3.4.2",
-	"mocha-testdata": "^1.2.0",
-	"require-from-package": "0.0.4",
-	"should": "^11.2.1",
-	"supertest": "^3.0.0",
-	"syncprompt": "^1.0.3"
-    },
-    "firebase": {
-	"project": {
-	    "name": "vanessador-46e68"
-	}
-    },
-    "angular-templates": [
-	"_index",
-	"login",
-	"signup",
-	"resetPassword",
-	"confirm",
-	"formularios",
-	"formularios_novo",
-	"formularios_uuid_stats",
-	"formularios_uuid_questions",
-	"formularios_uuid_delete",
-	"formularios_uuid_responses",
-	"formularios_uuid_responses_token",
-	"boletos",
-	"boletos_id",
-	"conta",
-	"conta_telefone_vincular"
-    ],
-    "angular-directives": [
-	"menu"
-    ],
-    "angular-services": [],
-    "options": {
-	"coffee": {
-	    "compileJoin": {
-		"options": {
-		    "join": true,
-		    "bare": true
-		},
-		"files": {
-		    "bin/www": [
-			"boot/dependencies.coffee",
-			"config/environment.coffee",
-			"config/app.coffee",
-			"config/paypal.coffee",
-			"config/server.coffee",
-			"boot/app.coffee",
-			"app/controllers/index.coffee",
-			"app/controllers/login.coffee",
-			"app/controllers/config.coffee",
-			"app/controllers/templates.coffee",
-			"app/controllers/services.coffee",
-			"app/controllers/typeform.coffee",
-			"app/controllers/paypal.coffee",
-			"app/controllers/docs.coffee",
-			"boot/server.coffee"
-		    ],
-		    "bin/test.js": [
-			"boot/devDependencies.coffee",
-			"test/server.coffee"
-		    ]
-		}
-	    }
-	},
-	"usebanner": {
-	    "www": {
-		"options": {
-		    "position": "top",
-		    "banner": "#!/usr/bin/env <%= pkg.node_version %>",
-		    "linebreak": true
-		},
-		"files": {
-		    "src": "bin/www"
-		}
-	    }
-	}
-    }
+			"name": "vanessador",
+			"version": "0.0.1",
+			"description": "a firebase app with typeform requests",
+			"main": "bin/www",
+			"scripts": {
+						"build:API:firebase": "grunt build:firebase:apiKey ; grunt build:firebase:messagingSenderId",
+						"build:API:typeform": "grunt build:typeform:apiKey",
+						"build:API:paypal": "grunt build:paypal:apiKey ; grunt build:paypal:secret",
+						"build:API:pagseguro": "grunt build:pagseguro:apiKey ; grunt build:pagseguro:email",
+						"build:API": "npm run build:API:firebase ; npm run build:API:typeform ; npm run build:API:paypal ; npm run build:API:pagseguro",
+						"build": "grunt --verbose",
+						"test": "mocha --timeout 15000 bin/test.js",
+						"serve": "./bin/www &",
+						"start": "killall node ; npm run build ; npm run serve"
+			},
+			"repository": {
+						"type": "git",
+						"url": "https://www.github.com/lunhg/vanessador.git"
+			},
+			"author": [
+						"Guilherme Lunhani <lunhg@gmail.com>"
+			],
+			"license": "SEE LICENSE IN LICENSE.md",
+			"dependencies": {
+						"atob": "^2.0.3",
+						"body-parser": "^1.17.2",
+						"chalk": "^2.0.1",
+						"compression": "^1.7.0",
+						"connect-assets": "^5.4.0",
+						"express": "^4.15.3",
+						"foreach": "^2.0.5",
+						"keytar": "^4.0.3",
+						"marked": "^0.3.6",
+						"morgan": "^1.8.2",
+						"node-uuid": "^1.4.8",
+						"paypal-rest-sdk": "^1.7.1",
+						"pug": "^2.0.0-rc.2",
+						"request": "^2.81.0",
+						"request-json": "^0.6.2",
+						"xml2js": "^0.4.17",
+						"xmlbuilder": "^9.0.1"
+			},
+			"devDependencies": {
+						"chalk": "^2.0.1",
+						"check_node": "^1.0.0",
+						"grunt": "^1.0.1",
+						"grunt-banner": "^0.6.0",
+						"grunt-contrib-coffee": "^1.0.0",
+						"grunt-shell": "^2.1.0",
+						"mocha": "^3.4.2",
+						"mocha-testdata": "^1.2.0",
+						"require-from-package": "0.0.4",
+						"should": "^11.2.1",
+						"supertest": "^3.0.0",
+						"syncprompt": "^1.0.3",
+						"uuid": "^3.1.0"
+			},
+			"firebase": {
+						"project": {
+									"name": "vanessador-46e68"
+						}
+			},
+			"angular-templates": [
+						"_index",
+						"login",
+						"signup",
+						"resetPassword",
+						"confirm",
+						"formularios",
+						"formularios_novo",
+						"formularios_uuid_stats",
+						"formularios_uuid_questions",
+						"formularios_uuid_delete",
+						"formularios_uuid_responses",
+						"formularios_uuid_responses_token",
+						"boletos",
+						"boletos_id",
+						"conta",
+						"conta_telefone_vincular"
+			],
+			"angular-directives": [
+						"menu"
+			],
+			"angular-services": [],
+			"options": {
+						"coffee": {
+									"compileJoin": {
+												"options": {
+															"join": true,
+															"bare": true
+												},
+												"files": {
+															"bin/www": [
+																		"boot/dependencies.coffee",
+																		"config/environment.coffee",
+																		"config/app.coffee",
+																		"config/paypal.coffee",
+																		"config/pagseguro.coffee",
+																		"config/server.coffee",
+																		"boot/app.coffee",
+																		"app/controllers/index.coffee",
+																		"app/controllers/login.coffee",
+																		"app/controllers/config.coffee",
+																		"app/controllers/templates.coffee",
+																		"app/controllers/services.coffee",
+																		"app/controllers/typeform.coffee",
+																		"app/controllers/paypal.coffee",
+																		"app/controllers/pagseguro.coffee",
+																		"app/controllers/docs.coffee",
+																		"boot/server.coffee"
+															],
+															"bin/test.js": [
+																		"boot/devDependencies.coffee",
+																		"test/server.coffee"
+															]
+												}
+									}
+						},
+						"usebanner": {
+									"www": {
+												"options": {
+															"position": "top",
+															"banner": "#!/usr/bin/env <%= pkg.node_version %>",
+															"linebreak": true
+												},
+												"files": {
+															"src": "bin/www"
+												}
+									}
+						}
+			}
 }

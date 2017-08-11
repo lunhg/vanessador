@@ -7,7 +7,7 @@ fetchFormularioService = ->
         loader = document.getElementById('masterLoader')
         p = loader.children[9]
         p.innerHTML = "Construindo serviços..."
-        Service =  ($http, $location, toastr) ->
+        Service =  ($http, $location, $q, toastr) ->
                                 
                 FormularioService = {}
         
@@ -49,15 +49,24 @@ fetchFormularioService = ->
                                 firebase.database().ref("#{e}/#{result.uuid}").set(result.form[e]) 
 
                 FormularioService.delete = (uuid) ->
-                        new Promise (resolve, reject) ->
-                                onDel = -> toastr.success('Formulario',"#{uuid} deletado com sucesso")
-                                p = firebase.database().ref("#{e}/#{uuid}").set(null) for e in ['formularios', 'questions', 'responses', 'stats']
+                        $q (resolve, reject) ->
+                                onDel = ->
+                                        toastr.success('Formulario\nQuestões\nRespostas\nEstatísticas',"#{uuid} deletados com sucesso")
+                                        $location.path('/formularios')
+                                        
+                                p = [
+                                        firebase.database().ref("formularios/#{uuid}").set(null)
+                                        firebase.database().ref("questions/#{uuid}").set(null)
+                                        firebase.database().ref("responses/#{uuid}").set(null)
+                                        firebase.database().ref("stats/#{uuid}").set(null)
+                                        firebase.database().ref("boletos/#{uuid}").set(null)
+                                ]
                                 Promise.all(p).then(onDel)
                                         
 
                 onSet = ->
                         self = this
-                        new Promise (resolve, reject) ->
+                        $q (resolve, reject) ->
                                 msg = "formulário #{self.uuid} #{self.type}"
                                 toastr.success('Formulário', msg)
                                 resolve()
@@ -69,7 +78,7 @@ fetchFormularioService = ->
                         fetch(uuid).then(onFetch).then(onSet.bind(uuid:uuid, type: 'atualizado'))
                                 
                 FormularioService.novo = (id_group, groups) ->
-                        new Promise (resolve, reject) ->
+                        $q (resolve, reject) ->
                                 # uuid do typeform
                                 uuid = document.getElementById("input_typeform_uuid").value
                                 FormularioService.isNovo = true
@@ -78,5 +87,5 @@ fetchFormularioService = ->
 
                 return FormularioService
                 
-        ['$http', '$location', 'toastr', Service]
+        ['$http', '$location', '$q', 'toastr', Service]
 

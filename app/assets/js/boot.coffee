@@ -20,6 +20,8 @@ document.addEventListener 'DOMContentLoaded', (event)->
                                 '$location'
                                 '$route'
                                 '$window'
+                                '$cookies'
+                                '$q'
                                 'authService'
                                 'formularioService'
                                 'boletoService'
@@ -33,6 +35,8 @@ document.addEventListener 'DOMContentLoaded', (event)->
                                 '$rootScope'
                                 '$http'
                                 '$location'
+                                '$timeout'
+                                'mainService'
                                  Run
                         ])
                 .then(fetchDirectives)

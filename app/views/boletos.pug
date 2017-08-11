@@ -14,7 +14,8 @@ section.centralize-area
           th N  
           th ID
           th Status
-          th Token
+          th Tipo
+          th Email de cobrança
       tbody
         tr(ng-repeat="(q,w) in v") 
           td {{ k }}
@@ -22,8 +23,9 @@ section.centralize-area
           td 
             a(href="/#!/boletos/{{ w.invoice }}") {{ w.invoice }}
           td {{ w.status }} 
+          td Paypal
           td 
-            a(href="/#!/formularios/{{ k }}/responses/{{ w.token }}") {{ w.token }} 
+            a(href="/#!/formularios/{{ k }}/responses/{{ w.token }}") {{ w.email }} 
       br
       br
       br

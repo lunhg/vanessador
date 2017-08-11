@@ -5,9 +5,9 @@ section.centralize-area
   h1 Resposta {{ token }} do formulário {{ currentForm }}
   br
   br
-  br 
+  br
   a.btn.btn-default(ng-show="boleto !== null && boleto.status !== 'CANCELLED'" href="/#!/boletos/{{ boleto.invoice }}") Verificar boleto de pagamento
-  a.btn.btn-success(ng-show="boleto === null || boleto.status !== 'CANCELLED'" ng-click="onNovoBoleto()") Criar um boleto de pagamento
+  a.btn.btn-success(ng-show="boleto === null || boleto.status === 'CANCELLED'" ng-click="onNovoBoleto()") Criar um boleto de pagamento
   table.table.table-striped.table-hover
     thead
       tr

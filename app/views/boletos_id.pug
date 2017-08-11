@@ -7,15 +7,18 @@ section.centralize-area
     br
     br
     br
+    a.btn.btn-success(href="/#!/boletos") Ver todos boletos
     table.table.table-striped.table-hover
       thead
         tr
           th Status
+          th Email de cobrança
           th Resposta de Formulário
           th Ações
       tbody
         tr
           td {{ boleto.status }}
+          td {{ boleto.email }}
           td
             a(href="/#!/formularios/{{ currentForm }}/responses/{{ boleto.token }}") {{ boleto.token }}
           td 

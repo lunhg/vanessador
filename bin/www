@@ -1,5 +1,5 @@
 #!/usr/bin/env /home/pi/.nvm/versions/node/v8.0.0/bin/node
-var AppManager, PayPalReq, ServerManager, atob, body_parser, chalk, compression, connect_assets, express, foreach, fs, http, keytar, marked, morgan, node_uuid, onMsg, p, path, paypal_rest_sdk, pug, request_json;
+var AppManager, PagSeguroSDK, PayPalReq, ServerManager, atob, body_parser, chalk, compression, connect_assets, express, foreach, fs, http, keytar, marked, morgan, node_uuid, onMsg, p, path, paypal_rest_sdk, pug, request, request_json, xml2js, xmlbuilder;
 
 fs = require('fs');
 
@@ -33,7 +33,13 @@ paypal_rest_sdk = require('paypal-rest-sdk');
 
 pug = require('pug');
 
+request = require('request');
+
 request_json = require('request-json');
+
+xml2js = require('xml2js');
+
+xmlbuilder = require('xmlbuilder');
 
 
 /* SETUP NODE_ENV */
@@ -60,8 +66,8 @@ AppManager = (function() {
       });
     });
     this.app.set('view engine', 'pug');
-    this.app.set('assets path', [path.join(__dirname, '..', 'app/assets/fonts'), path.join(__dirname, '..', 'app/assets/doc'), path.join(__dirname, '..', 'app/assets/img'), path.join(__dirname, '..', 'app/assets/css'), path.join(__dirname, '..', 'app/assets/js'), path.join(__dirname, '..', 'app/assets/')]);
-    this.app.set('port', parseInt(process.env.PORT || '3000'));
+    this.app.set('assets path', [path.join(__dirname, '..', 'app/assets/fonts'), path.join(__dirname, '..', 'app/assets/doc'), path.join(__dirname, '..', 'app/assets/img'), path.join(__dirname, '..', 'app/assets/css'), path.join(__dirname, '..', 'app/assets/js'), path.join(__dirname, '..', 'app/assets/'), path.join(__dirname, '..', 'app/assets/favicon.ico')]);
+    this.app.set('port', parseInt(process.env.PORT || '3001'));
   }
 
   return AppManager;
@@ -70,17 +76,12 @@ AppManager = (function() {
 
 AppManager.initPayPal = function(results) {
   return new Promise(function(resolve, reject) {
-    var _c, c, e, error1;
+    var c, e, error1;
     try {
       c = {
         'mode': 'sandbox',
         'client_id': results[0],
         'client_secret': results[1]
-      };
-      _c = {
-        'mode': 'sandbox',
-        'client_id': 'ATRMLn-_R6kkGYPoHvuES42_dKGhT8LbV4TjBvN6ox6vh8t4cUmneSiRY-Ord1t16mhizMRVGp1Y2EaF',
-        'client_secret': 'ELL8WYaMXwz0tlJ7vHZNI2g7BfQPt76qjfmEzPR2RcOOBU7nEg5A8Uy7zD09D3VfAltGNw_n0BG_a_gY'
       };
       paypal_rest_sdk.configure(c);
       return resolve();
@@ -104,9 +105,144 @@ PayPalReq = (function() {
 
 })();
 
+PagSeguroSDK = {
+  config: function() {
+    return new Promise(function(resolve, reject) {
+      var p;
+      p = require('../package.json').firebase.project.name;
+      return Promise.all([keytar.findPassword(p + ".pagseguro.email"), keytar.findPassword(p + ".pagseguro.apiKey")]).then(function(results) {
+        return resolve({
+          email: results[0],
+          token: results[1]
+        });
+      })["catch"](reject);
+    });
+  },
+  toXML: function(json) {
+    return new Promise(function(resolve, reject) {
+      var _xml, build, hasParent, xml;
+      hasParent = {};
+      xml = xmlbuilder.create('root');
+      build = function(el, data) {
+        var _el, k, results1, v;
+        results1 = [];
+        for (k in data) {
+          v = data[k];
+          if (typeof v === 'object') {
+            _el = el.ele(k);
+            results1.push(build(_el, v));
+          } else {
+            results1.push(el.ele(k, v));
+          }
+        }
+        return results1;
+      };
+      build(xml, json);
+      _xml = xml.toString();
+      _xml = _xml.replace(/<root>/, "<?xml version='1.0' encoding='UTF-8'?>");
+      _xml = _xml.replace(/undefined/, "");
+      _xml = _xml.replace(/<\/root>/, "");
+      return resolve(_xml);
+    });
+  },
+  post: function(action, json) {
+    var self;
+    self = this;
+    return new Promise(function(resolve, reject) {
+      return PagSeguroSDK.config().then(function(results) {
+        json.receiver = {
+          email: results.email
+        };
+        return PagSeguroSDK.toXML(json).then(function(xml) {
+          var _request, baseurl, onPost, query;
+          console.log(xml);
+          baseurl = "https://ws.sandbox.pagseguro.uol.com.br/v2" + action;
+          query = "?email=" + results.email + "&token=" + results.token;
+          _request = {
+            method: 'POST',
+            url: baseurl + query,
+            body: xml,
+            headers: {
+              'Content-Type': 'application/xml'
+            }
+          };
+          onPost = function(err, response, body) {
+            if (err) {
+              resolve(err.message);
+            }
+            if (!err) {
+              return resolve(body);
+            }
+          };
+          return request(_request, onPost);
+        });
+      });
+    });
+  },
+  get: function(action, json) {
+    var self;
+    self = this;
+    return new Promise(function(resolve, reject) {
+      return PagSeguroSDK.config().then(function(result) {
+        var _request, baseurl, onGet, query;
+        baseurl = "https://ws.sandbox.pagseguro.uol.com.br/v2" + action;
+        query = "?email=" + result.email + "&token=" + result.token;
+        _request = {
+          method: 'GET',
+          url: baseurl + query,
+          headers: {
+            'Content-Type': 'application/xml'
+          }
+        };
+        onGet = function(err, response, body) {
+          if (err) {
+            resolve(err.message);
+          }
+          if (!err) {
+            return resolve(body);
+          }
+        };
+        return request(_request, onGet);
+      });
+    });
+  },
+  put: function(action, json) {
+    var self;
+    self = this;
+    return new Promise(function(resolve, reject) {
+      return PagSeguroSDK.config().then(function(result) {
+        var url;
+        url = "https://ws.sandbox.pagseguro.uol.com.br/v2" + action + "?email=" + result.email + "&token=" + result.token;
+        PagSeguro.toXML(json).then(function(xml) {
+          var _request, baseurl, onPut, query;
+          baseurl = "https://ws.sandbox.pagseguro.uol.com.br/v2" + action;
+          query = "?email=" + results.email + "&token=" + results.token;
+          _request = {
+            method: 'PUT',
+            url: baseurl + query,
+            body: xml,
+            headers: {
+              'Content-Type': 'application/xml'
+            }
+          };
+          return onPut = function(err, response, body) {
+            if (err) {
+              resolve(err.message);
+            }
+            if (!err) {
+              return resolve(body);
+            }
+          };
+        });
+        return request(_request, onPut);
+      });
+    });
+  }
+};
+
 ServerManager = {};
 
-ServerManager.bind = function(app) {
+ServerManager.start = function(app) {
   var self;
   self = this;
   return new Promise(function(resolve, reject) {
@@ -139,7 +275,7 @@ ServerManager.bind = function(app) {
   });
 };
 
-ServerManager.start = function() {
+ServerManager.routes = function() {
   return new Promise(function(resolve, reject) {
     var app, app_manager, e, error1;
     try {
@@ -147,12 +283,12 @@ ServerManager.start = function() {
       app_manager = new AppManager(app);
       app_manager.boot();
       app_manager.index();
-      app_manager.login();
       app_manager.config();
       app_manager.templates();
       app_manager.services();
       app_manager.typeform();
       app_manager.paypal();
+      app_manager.pagseguro();
       app_manager.docs();
       return resolve(app);
     } catch (error1) {
@@ -177,21 +313,6 @@ AppManager.prototype.boot = function() {
 AppManager.prototype.index = function() {
   return this.app.get('/', function(req, res) {
     return res.render('index');
-  });
-};
-
-AppManager.prototype.login = function() {
-  return this.app.post('/auth/callback', function(req, res) {
-    return passport.authenticate('firebase-login', function(err, user, info) {
-      if (err) {
-        return res.json(err);
-      } else {
-        return res.json({
-          user: user,
-          info: info
-        });
-      }
-    })(req, res);
   });
 };
 
@@ -545,54 +666,366 @@ AppManager.prototype.paypal = function() {
   });
 };
 
+AppManager.prototype.pagseguro = function() {
+  var onParseXML;
+  onParseXML = function(result) {
+    var self;
+    self = this;
+    return new Promise(function(resolve, reject) {
+      return xml2js.parseString(result, function(err, str) {
+        if (err) {
+          reject(err);
+        }
+        if (!err) {
+          return self.res.json(JSON.parse(str));
+        }
+      });
+    });
+  };
+  this.app.get('/pagseguro/planos', function(req, res) {
+    return PagSeguroSDK.get('/pre-approvals').then(onParseXML.bind({
+      res: res
+    }))["catch"](function(e) {
+      return res.send(e);
+    });
+  });
+  this.app.post('/pagseguro/planos', function(req, res) {
+    return PagSeguroSDK.post('/pre-approvals/request', {
+      "directPreApproval": {
+        "plan": req.query['plan'],
+        "reference": req.query['ref'],
+        "sender": {
+          "name": req.query['nome'],
+          "email": req.query['email'],
+          "ip": req.ip,
+          "hash": node_uuid.v4(),
+          "phone": {
+            "areacode": req.query['areacode'],
+            "number": req.query['number']
+          },
+          "documents": {
+            "document": {
+              "type": req.query['doc_type'],
+              "number": req.query['doc_num']
+            }
+          }
+        },
+        "paymentMethod": {
+          "token": req.query['payment_token'],
+          "type": req.query['payment_type'],
+          "holder": {
+            "name": req.query['nome'],
+            "birthDate": req.query['birthDate'],
+            "document": {
+              "type": req.query['doc_type'],
+              "number": req.query['doc_num']
+            },
+            "phone": {
+              "areacode": req.query['areacode'],
+              "number": req.query['number']
+            }
+          }
+        }
+      }
+    }).then(onParseXML.bind({
+      res: res
+    }))["catch"](function(e) {
+      return res.send(e);
+    });
+  });
+  this.app.get('/pagseguro/planos/notificacoes', function(req, res) {
+    return PagSeguroSDK.get("/pre-approvals/notifications?page=" + req.query['page'] + "&maxPagesResults=50&interval=" + req.query['dias']).then(onParseXML.bind({
+      res: res
+    }))["catch"](function(e) {
+      return res.send(e);
+    });
+  });
+  this.app.get('/pagseguro/planos/notificacoes/:id', function(req, res) {
+    return PagSeguroSDK.get("/pre-approvals/notifications/" + req.params['id']).then(onParseXML.bind({
+      res: res
+    }))["catch"](function(e) {
+      return res.send(e);
+    });
+  });
+  this.app.post('/pagseguro/planos/pagamento/:id', function(req, res) {
+    var id;
+    id = node_uuid.v4();
+    return PagSeguroSDK.post('/pre-approvals/payment', {
+      "payment": {
+        "preApprovalCode": req.query['code'],
+        "reference": req.query['ref'],
+        "senderHash": node_uuid.v4(),
+        "senderIp": req.ip,
+        "items": [
+          {
+            "id": req.params['id'],
+            "description": "Boleto de pagamento",
+            "quantity": 1,
+            "amount": "10.00",
+            "weight": 1,
+            "shippingCost": 0.00
+          }
+        ]
+      }
+    }).then(onParseXML.bind({
+      res: res
+    }))["catch"](function(e) {
+      return res.send(e);
+    });
+  });
+  this.app.get('/pagseguro/planos/requerer', function(req, res) {
+    return PagSeguroSDK.get('/pre-approvals/request').then(onParseXML.bind({
+      res: res
+    }))["catch"](function(e) {
+      return res.send(e);
+    });
+  });
+  this.app.post('/pagseguro/planos/requerer', function(req, res) {
+    return PagSeguroSDK.post('/pre-approvals/request', {
+      "preApprovalRequest": {
+        "redirect_url": req.query['redirect_url'],
+        "redirect_url": req.query['review_url'],
+        "reference": req.query['ref'],
+        "preApproval": {
+          "name": req.query['name'],
+          "charge": "AUTO",
+          "period": "MONTHLY",
+          "amountPerPayment": req.query['amount'],
+          "membershipFee": (parseFloat(req.query['amount']) * 0.05).toFixed(2),
+          "expiration": {
+            "value": 1,
+            "unit": "MONTHS"
+          },
+          "details": 'ITS_' + node_uuid.v4()
+        }
+      }
+    }).then(onParseXML.bind({
+      res: res
+    }))["catch"](function(e) {
+      return res.send(e);
+    });
+  });
+  this.app.put('/pagseguro/planos/:id', function(req, res) {
+    return PagSeguroSDK.put("/pre-approvals/" + req.params['id'] + "/payment", {
+      "amountPerPayment": req.query['amount'],
+      "updateSubscriptions": req.query['update']
+    }).then(onParseXML.bind({
+      res: res
+    }))["catch"](function(e) {
+      return res.send(e);
+    });
+  });
+  this.app.get('/pagseguro/planos/:id', function(req, res) {
+    return PagSeguroSDK.get("/pre-approvals/" + req.params['id']).then(onParseXML.bind({
+      res: res
+    }))["catch"](function(e) {
+      return res.send(e);
+    });
+  });
+  this.app.put('/pagseguro/planos/:id/cancela', function(req, res) {
+    return PagSeguroSDK.put("/pre-approvals/" + req.params['id'] + "/payment", {
+      "pre-approval-code": req.query['code']
+    }).then(onParseXML.bind({
+      res: res
+    }))["catch"](function(e) {
+      return res.send(e);
+    });
+  });
+  this.app.put('/pagseguro/plano/:id/desconto', function(req, res) {
+    return PagSeguroSDK.put("/pre-approvals/" + req.params['id'] + "/payment", {
+      "type": "DISCOUNT_PERCENT",
+      "value": req.params['value']
+    }).then(onParseXML.bind({
+      res: res
+    }))["catch"](function(e) {
+      return res.send(e);
+    });
+  });
+  this.app.get('/pagseguro/plano/:id/ordens', function(req, res) {
+    return PagSeguroSDK.get("/pre-approvals/" + req.params['id'] + "/payment-orders").then(onParseXML.bind({
+      res: res
+    }))["catch"](function(e) {
+      return res.send(e);
+    });
+  });
+  this.app.post('/pagseguro/plano/:id/ordens/:pid', function(req, res) {
+    return PagSeguroSDK.get("/pre-approvals/" + req.params['id'] + "/payment-orders/" + req.params['pid'] + "/payment").then(onParseXML.bind({
+      res: res
+    }))["catch"](function(e) {
+      return res.send(e);
+    });
+  });
+  this.app.put('/pagseguro/plano/:id/ordens/:pid', function(req, res) {
+    return PagSeguroSDK.get("/pre-approvals/" + req.params['id'] + "/status", {
+      "status": req.query['status']
+    }).then(onParseXML.bind({
+      res: res
+    }))["catch"](function(e) {
+      return res.send(e);
+    });
+  });
+  return this.app.put('/pagseguro/plano/:id/ordens/:pid', function(req, res) {
+    return PagSeguroSDK.get("/pre-approvals/" + req.params['id'] + "/status", {
+      "type": "CREDITCARD",
+      "sender": {
+        "ip": req.ip,
+        "hash": node_uuid.v4()
+      },
+      "creditCard": {
+        "token": req.query['token'],
+        "holder": {
+          "name": req.query['nome'],
+          "birthDate": req.query['birthDate'],
+          "document": {
+            "type": req.query['doc_type'],
+            "number": req.query['doc_num']
+          },
+          "phone": {
+            "areacode": req.query['areacode'],
+            "number": req.query['number']
+          }
+        }
+      }
+    }).then(onParseXML.bind({
+      res: res
+    }))["catch"](function(e) {
+      return res.send(e);
+    });
+  });
+};
+
 AppManager.prototype.docs = function() {
   var root;
   root = path.resolve((path.join(__dirname)) + "/../app/assets");
-  this.app.get("/docs", function(req, res) {
+  this.app.get("/docs/client/index", function(req, res) {
     var _index;
     _index = "doc/app/assets/js/index.html";
     return res.sendFile(_index, {
       'root': root
     });
   });
-  this.app.get("/docs/app", function(req, res) {
+  this.app.get("/docs/client/app", function(req, res) {
     var _index;
     _index = "doc/app/assets/js/app.html";
     return res.sendFile(_index, {
       'root': root
     });
   });
-  this.app.get("/docs/config", function(req, res) {
+  this.app.get("/docs/client/config", function(req, res) {
     var _index;
     _index = "doc/app/assets/js/config.html";
     return res.sendFile(_index, {
       'root': root
     });
   });
-  this.app.get("/docs/auth-ctrl", function(req, res) {
+  this.app.get("/docs/client/auth-ctrl", function(req, res) {
     var _index;
     _index = "doc/app/assets/js/auth-ctrl.html";
     return res.sendFile(_index, {
       'root': root
     });
   });
-  this.app.get("/docs/run", function(req, res) {
+  this.app.get("/docs/client/run", function(req, res) {
     var _index;
     _index = "doc/app/assets/js/run.html";
     return res.sendFile(_index, {
       'root': root
     });
   });
-  this.app.get("/docs/services", function(req, res) {
+  this.app.get("/docs/client/services", function(req, res) {
     var _index;
     _index = "doc/app/assets/js/services.html";
     return res.sendFile(_index, {
       'root': root
     });
   });
-  return this.app.get("/docs/docco.css", function(req, res) {
+  this.app.get("/docs/client/docco.css", function(req, res) {
     var _index;
     _index = "doc/app/assets/js/docco.css";
+    return res.sendFile(_index, {
+      'root': root
+    });
+  });
+  this.app.get("/docs/client/index", function(req, res) {
+    var _index;
+    _index = "doc/app/assets/js/index.html";
+    return res.sendFile(_index, {
+      'root': root
+    });
+  });
+  this.app.get("/docs/client/app", function(req, res) {
+    var _index;
+    _index = "doc/app/assets/js/app.html";
+    return res.sendFile(_index, {
+      'root': root
+    });
+  });
+  this.app.get("/docs/client/config", function(req, res) {
+    var _index;
+    _index = "doc/app/assets/js/config.html";
+    return res.sendFile(_index, {
+      'root': root
+    });
+  });
+  this.app.get("/docs/client/auth-ctrl", function(req, res) {
+    var _index;
+    _index = "doc/app/assets/js/auth-ctrl.html";
+    return res.sendFile(_index, {
+      'root': root
+    });
+  });
+  this.app.get("/docs/client/run", function(req, res) {
+    var _index;
+    _index = "doc/app/assets/js/run.html";
+    return res.sendFile(_index, {
+      'root': root
+    });
+  });
+  this.app.get("/docs/client/services", function(req, res) {
+    var _index;
+    _index = "doc/app/assets/js/services.html";
+    return res.sendFile(_index, {
+      'root': root
+    });
+  });
+  this.app.get("/docs/client/docco.css", function(req, res) {
+    var _index;
+    _index = "doc/app/assets/js/docco.css";
+    return res.sendFile(_index, {
+      'root': root
+    });
+  });
+  this.app.get("/docs/server/config/app", function(req, res) {
+    var _index;
+    _index = "doc/config/app.html";
+    return res.sendFile(_index, {
+      'root': root
+    });
+  });
+  this.app.get("/docs/server/config/server", function(req, res) {
+    var _index;
+    _index = "doc/config/server.html";
+    return res.sendFile(_index, {
+      'root': root
+    });
+  });
+  this.app.get("/docs/server/config/paypal", function(req, res) {
+    var _index;
+    _index = "doc/config/paypal.html";
+    return res.sendFile(_index, {
+      'root': root
+    });
+  });
+  this.app.get("/docs/server/config/pagseguro", function(req, res) {
+    var _index;
+    _index = "doc/config/pagseguro.html";
+    return res.sendFile(_index, {
+      'root': root
+    });
+  });
+  return this.app.get("/docs/server/config/docco.css", function(req, res) {
+    var _index;
+    _index = "doc/config/docco.css";
     return res.sendFile(_index, {
       'root': root
     });
@@ -605,7 +1038,7 @@ onMsg = function(addr) {
 
 p = require('../package.json').firebase.project.name;
 
-Promise.all([keytar.findPassword(p + ".paypal.apiKey"), keytar.findPassword(p + ".paypal.secret")]).then(AppManager.initPayPal).then(ServerManager.start).then(ServerManager.bind).then(function(addr) {
+Promise.all([keytar.findPassword(p + ".paypal.apiKey"), keytar.findPassword(p + ".paypal.secret")]).then(AppManager.initPayPal).then(AppManager.initPagSeguro).then(ServerManager.routes).then(ServerManager.start).then(function(addr) {
   return console.log(chalk.cyan(onMsg(addr)));
 })["catch"](function(e) {
   return console.log(e);
