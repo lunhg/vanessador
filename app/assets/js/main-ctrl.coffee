@@ -161,11 +161,21 @@ fetchMainCtrl = ->
                 # - Dependencias:
                 #   - formularioService
                 $rootScope.onDeleteFormulario = (uuid)->
-                        _onDel = ->
+                        _onDel = ->                              
                                 $location.path('/formularios')
                         _uuid = document.getElementById('input_typeform_uuid').value
-                        if uuid is _uuid 
-                                formularioService.delete(uuid, _uuid).then(_onDel).catch(onErr)
+                        if uuid is _uuid
+                                db = firebase.database()
+                                db.ref("boletos/#{$rootScope.currentForm}").once 'value', (boletos) ->
+                                        p = []
+                                        if boletos.val() isnt null
+                                                for b in boletos.val()
+                                                        if b.status is 'DRAFT'
+                                                                p.push boletoService.delete(_uuid, b.invoice)
+                                                        if b.status is 'SENT'
+                                                                p.push boletoService.cancel(b.token, b.invoice)
+                                        $q.all(p).then ->
+                                                formularioService.delete(uuid, _uuid).then(_onDel).catch(onErr)
                         else
                                 onErr new Error("Formulario Error", "Invalid uuid")
                         
@@ -246,14 +256,14 @@ fetchMainCtrl = ->
                                 .catch(onErr)
                 
 
-                $rootScope.onDeleteBoleto = ->
+                $rootScope.onDeleteBoleto = (token) ->
                         form = $rootScope.currentForm
                         id = $rootScope.boleto.invoice
                         _onDelete = ->
                                 toastr.success("Formulário #{form}", "Boleto #{id} deletado")
                                 $location.path('/boletos')
                                 $route.reload()
-                        boletoService.delete(form, id).then(_onDelete)
+                        boletoService.delete(form, id, token).then(_onDelete)
 
                 # # Reconhecimento
                 # Somente após reconhecer o login,
@@ -284,6 +294,7 @@ fetchMainCtrl = ->
 
                                 .then mainService.onFormulariosActionToken
                                 .then (result) ->
+                                        
                                         for k,v of result
                                                 $rootScope[k] = v
 

@@ -193,9 +193,7 @@ checkout $rootScope.popup message and type</p>
             
             <div class="content"><div class='highlight'><pre>                MainService.onFormulariosActionToken = <span class="hljs-function"><span class="hljs-params">(pass)</span> -&gt;</span>
                         $q (resolve, reject) -&gt;
-                                <span class="hljs-keyword">if</span> pass
-                                        
-                                        action = pass[<span class="hljs-number">0</span>].split(<span class="hljs-string">'/formularios/'</span>)[<span class="hljs-number">1</span>].split(<span class="hljs-string">'/'</span>)[<span class="hljs-number">1</span>]
+                                <span class="hljs-keyword">if</span> pass 
                                         $rootScope.token = pass[<span class="hljs-number">0</span>].split(<span class="hljs-string">'/formularios/'</span>)[<span class="hljs-number">1</span>].split(<span class="hljs-string">'/'</span>)[<span class="hljs-number">2</span>]
                                         onQuestions  = MainService.onTypeformAction(<span class="hljs-string">'questions'</span>, $rootScope.currentForm)
                                         onBoletos = MainService.onTypeformAction(<span class="hljs-string">'boletos'</span>, $rootScope.currentForm)

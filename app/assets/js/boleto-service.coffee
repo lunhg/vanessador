@@ -109,14 +109,15 @@ fetchBoletoService = ->
                         @length = if from < 0 then @length + from else from;
                         @push.apply(this, rest)
                         
-                BoletoService.delete = (form, pid) ->
+                BoletoService.delete = (form, pid, token) ->
                         $q (resolve, reject) ->
                                 db = firebase.database()
                                 _onBoletos = (boletos) ->
                                         _boletos = boletos.val()
                                         for i,b of _boletos
-                                                _b = b.invoice.id is pid
-                                                _b = b.status is 'DRAFT'
+                                                _b = b.invoice is pid
+                                                _b = _b and b.status is 'DRAFT'
+                                                _b = _b and b.token is token
                                                 if _b
                                                         delete _boletos[i]
                                                         break

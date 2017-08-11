@@ -85,9 +85,7 @@ fetchMainService = ->
                 # - Verifica se existe um boleto para esta resposta
                 MainService.onFormulariosActionToken = (pass) ->
                         $q (resolve, reject) ->
-                                if pass
-                                        
-                                        action = pass[0].split('/formularios/')[1].split('/')[1]
+                                if pass 
                                         $rootScope.token = pass[0].split('/formularios/')[1].split('/')[2]
                                         onQuestions  = MainService.onTypeformAction('questions', $rootScope.currentForm)
                                         onBoletos = MainService.onTypeformAction('boletos', $rootScope.currentForm)

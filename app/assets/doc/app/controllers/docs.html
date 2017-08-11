@@ -38,10 +38,6 @@
                 _index = <span class="hljs-string">"doc/app/assets/js/index.html"</span>
                 res.sendFile _index, <span class="hljs-string">'root'</span>:root
 
-        @app.get <span class="hljs-string">"/docs/client/app"</span>, <span class="hljs-function"><span class="hljs-params">(req, res)</span> -&gt;</span>
-                _index = <span class="hljs-string">"doc/app/assets/js/app.html"</span>
-                res.sendFile _index, <span class="hljs-string">'root'</span>:root
-
         @app.get <span class="hljs-string">"/docs/client/config"</span>, <span class="hljs-function"><span class="hljs-params">(req, res)</span> -&gt;</span>
                 _index = <span class="hljs-string">"doc/app/assets/js/config.html"</span>
                 res.sendFile _index, <span class="hljs-string">'root'</span>:root
@@ -57,10 +53,11 @@
         @app.get <span class="hljs-string">"/docs/client/services"</span>, <span class="hljs-function"><span class="hljs-params">(req, res)</span> -&gt;</span>
                 _index = <span class="hljs-string">"doc/app/assets/js/services.html"</span>
                 res.sendFile _index, <span class="hljs-string">'root'</span>:root
-
-        @app.get <span class="hljs-string">"/docs/client/docco.css"</span>, <span class="hljs-function"><span class="hljs-params">(req, res)</span> -&gt;</span>
-                _index = <span class="hljs-string">"doc/app/assets/js/docco.css"</span>
+                
+        @app.get <span class="hljs-string">"/docs/boot"</span>, <span class="hljs-function"><span class="hljs-params">(req, res)</span> -&gt;</span>
+                _index = <span class="hljs-string">"doc/app/assets/js/boot.html"</span>
                 res.sendFile _index, <span class="hljs-string">'root'</span>:root
+        
                 
         @app.get <span class="hljs-string">"/docs/client/index"</span>, <span class="hljs-function"><span class="hljs-params">(req, res)</span> -&gt;</span>
                 _index = <span class="hljs-string">"doc/app/assets/js/index.html"</span>

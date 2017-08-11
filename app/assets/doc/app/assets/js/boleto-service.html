@@ -209,8 +209,8 @@ e atualize os dados na base de dados</p>
 <span class="hljs-function">                                <span class="hljs-title">_onBoletos</span> = <span class="hljs-params">(boletos)</span> -&gt;</span>
                                         _boletos = boletos.val()
                                         <span class="hljs-keyword">for</span> i,b <span class="hljs-keyword">of</span> _boletos
-                                                _b = b.invoice.id <span class="hljs-keyword">is</span> pid
-                                                _b = b.status <span class="hljs-keyword">is</span> <span class="hljs-string">'DRAFT'</span>
+                                                _b = b.invoice <span class="hljs-keyword">is</span> pid
+                                                _b = _b <span class="hljs-keyword">and</span> b.status <span class="hljs-keyword">is</span> <span class="hljs-string">'DRAFT'</span>
                                                 <span class="hljs-keyword">if</span> _b
                                                         <span class="hljs-keyword">delete</span> _boletos[i]
                                                         <span class="hljs-keyword">break</span>

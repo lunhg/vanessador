@@ -306,7 +306,18 @@ deve ser atualizada</p>
             <div class="content"><div class='highlight'><pre>                $rootScope.onDropupmenu = <span class="hljs-function"><span class="hljs-params">(what, event)</span>-&gt;</span>
                         event.preventDefault()
                         <span class="hljs-built_in">document</span>.getElementById(what).classList.remove(<span class="hljs-string">'open'</span>)
-                        <span class="hljs-built_in">document</span>.getElementById(what).setAttribute(<span class="hljs-string">'aria-expanded'</span>, <span class="hljs-string">'false'</span>)</pre></div></div>
+                        <span class="hljs-built_in">document</span>.getElementById(what).setAttribute(<span class="hljs-string">'aria-expanded'</span>, <span class="hljs-string">'false'</span>)
+                                
+
+                $rootScope.onDropdownmenuForm = <span class="hljs-function"><span class="hljs-params">(what,form, event)</span>-&gt;</span>
+                        event.preventDefault()                     
+                        <span class="hljs-built_in">document</span>.getElementById(what+<span class="hljs-string">'-'</span>+form).classList.add(<span class="hljs-string">'open'</span>)
+                        <span class="hljs-built_in">document</span>.getElementById(what+<span class="hljs-string">'-'</span>+form).setAttribute(<span class="hljs-string">'aria-expanded'</span>, <span class="hljs-string">'true'</span>)
+
+                $rootScope.onDropupmenuForm = <span class="hljs-function"><span class="hljs-params">(what, form,  event)</span>-&gt;</span>
+                        event.preventDefault()
+                        <span class="hljs-built_in">document</span>.getElementById(what+<span class="hljs-string">'-'</span>+form).classList.remove(<span class="hljs-string">'open'</span>)
+                        <span class="hljs-built_in">document</span>.getElementById(what+<span class="hljs-string">'-'</span>+form).setAttribute(<span class="hljs-string">'aria-expanded'</span>, <span class="hljs-string">'false'</span>)</pre></div></div>
             
         </li>
         
@@ -350,7 +361,7 @@ deve ser atualizada</p>
             <div class="content"><div class='highlight'><pre>                $rootScope.onNovoFormulario = <span class="hljs-function"><span class="hljs-params">(id, groups...)</span> -&gt;</span>
 <span class="hljs-function">                        <span class="hljs-title">_onNovo</span> = -&gt;</span>
                                 $location.path(<span class="hljs-string">'/formularios'</span>)
-                                $<span class="hljs-built_in">window</span>.reload()
+                                $route.reload()
                         formularioService.novo(id, groups).<span class="hljs-keyword">then</span>(_onNovo).<span class="hljs-keyword">catch</span>(onErr)</pre></div></div>
             
         </li>
@@ -400,11 +411,21 @@ deve ser atualizada</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>                $rootScope.onDeleteFormulario = <span class="hljs-function"><span class="hljs-params">(uuid)</span>-&gt;</span>
-<span class="hljs-function">                        <span class="hljs-title">_onDel</span> = -&gt;</span>
+<span class="hljs-function">                        <span class="hljs-title">_onDel</span> = -&gt;</span>                              
                                 $location.path(<span class="hljs-string">'/formularios'</span>)
                         _uuid = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'input_typeform_uuid'</span>).value
-                        <span class="hljs-keyword">if</span> uuid <span class="hljs-keyword">is</span> _uuid 
-                                formularioService.<span class="hljs-keyword">delete</span>(uuid, _uuid).<span class="hljs-keyword">then</span>(_onDel).<span class="hljs-keyword">catch</span>(onErr)
+                        <span class="hljs-keyword">if</span> uuid <span class="hljs-keyword">is</span> _uuid
+                                db = firebase.database()
+                                db.ref(<span class="hljs-string">"boletos/<span class="hljs-subst">#{$rootScope.currentForm}</span>"</span>).once <span class="hljs-string">'value'</span>, <span class="hljs-function"><span class="hljs-params">(boletos)</span> -&gt;</span>
+                                        p = []
+                                        <span class="hljs-keyword">if</span> boletos.val() <span class="hljs-keyword">isnt</span> <span class="hljs-literal">null</span>
+                                                <span class="hljs-keyword">for</span> b <span class="hljs-keyword">in</span> boletos.val()
+                                                        <span class="hljs-keyword">if</span> b.status <span class="hljs-keyword">is</span> <span class="hljs-string">'DRAFT'</span>
+                                                                p.push boletoService.<span class="hljs-keyword">delete</span>(_uuid, b.invoice)
+                                                        <span class="hljs-keyword">if</span> b.status <span class="hljs-keyword">is</span> <span class="hljs-string">'SENT'</span>
+                                                                p.push boletoService.cancel(b.token, b.invoice)
+                                        $q.all(p).<span class="hljs-keyword">then</span> -&gt;
+                                                formularioService.<span class="hljs-keyword">delete</span>(uuid, _uuid).<span class="hljs-keyword">then</span>(_onDel).<span class="hljs-keyword">catch</span>(onErr)
                         <span class="hljs-keyword">else</span>
                                 onErr <span class="hljs-keyword">new</span> Error(<span class="hljs-string">"Formulario Error"</span>, <span class="hljs-string">"Invalid uuid"</span>)</pre></div></div>
             
@@ -591,6 +612,7 @@ alguns elementos</p>
 
                                 .<span class="hljs-keyword">then</span> mainService.onFormulariosActionToken
                                 .<span class="hljs-keyword">then</span> (result) -&gt;
+                                        
                                         <span class="hljs-keyword">for</span> k,v <span class="hljs-keyword">of</span> result
                                                 $rootScope[k] = v
 

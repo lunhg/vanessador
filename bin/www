@@ -904,13 +904,6 @@ AppManager.prototype.docs = function() {
       'root': root
     });
   });
-  this.app.get("/docs/client/app", function(req, res) {
-    var _index;
-    _index = "doc/app/assets/js/app.html";
-    return res.sendFile(_index, {
-      'root': root
-    });
-  });
   this.app.get("/docs/client/config", function(req, res) {
     var _index;
     _index = "doc/app/assets/js/config.html";
@@ -939,9 +932,9 @@ AppManager.prototype.docs = function() {
       'root': root
     });
   });
-  this.app.get("/docs/client/docco.css", function(req, res) {
+  this.app.get("/docs/boot", function(req, res) {
     var _index;
-    _index = "doc/app/assets/js/docco.css";
+    _index = "doc/app/assets/js/boot.html";
     return res.sendFile(_index, {
       'root': root
     });

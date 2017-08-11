@@ -6,10 +6,6 @@ AppManager::docs = ->
                 _index = "doc/app/assets/js/index.html"
                 res.sendFile _index, 'root':root
 
-        @app.get "/docs/client/app", (req, res) ->
-                _index = "doc/app/assets/js/app.html"
-                res.sendFile _index, 'root':root
-
         @app.get "/docs/client/config", (req, res) ->
                 _index = "doc/app/assets/js/config.html"
                 res.sendFile _index, 'root':root
@@ -25,10 +21,11 @@ AppManager::docs = ->
         @app.get "/docs/client/services", (req, res) ->
                 _index = "doc/app/assets/js/services.html"
                 res.sendFile _index, 'root':root
-
-        @app.get "/docs/client/docco.css", (req, res) ->
-                _index = "doc/app/assets/js/docco.css"
+                
+        @app.get "/docs/boot", (req, res) ->
+                _index = "doc/app/assets/js/boot.html"
                 res.sendFile _index, 'root':root
+        
                 
         @app.get "/docs/client/index", (req, res) ->
                 _index = "doc/app/assets/js/index.html"

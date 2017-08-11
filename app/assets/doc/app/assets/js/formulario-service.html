@@ -52,12 +52,12 @@ deve ser atualizada</p>
             <div class="content"><div class='highlight'><pre>        loader = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'masterLoader'</span>)
         p = loader.children[<span class="hljs-number">9</span>]
         p.innerHTML = <span class="hljs-string">"Construindo serviços..."</span>
-<span class="hljs-function">        <span class="hljs-title">Service</span> =  <span class="hljs-params">($http, $location, toastr)</span> -&gt;</span>
+<span class="hljs-function">        <span class="hljs-title">Service</span> =  <span class="hljs-params">($http, $location, $q, toastr)</span> -&gt;</span>
                                 
                 FormularioService = {}
 <span class="hljs-function">        
                 <span class="hljs-title">fetch</span> = <span class="hljs-params">(uuid)</span> -&gt;</span>
-                        <span class="hljs-keyword">new</span> Promise (resolve, reject) -&gt;
+                        $q (resolve, reject) -&gt;
                                 query = [<span class="hljs-string">"/typeform/data-api?completed=true"</span>]
                                 query.push <span class="hljs-string">"uuid=<span class="hljs-subst">#{uuid}</span>"</span>
                                 query = query.join(<span class="hljs-string">'&amp;'</span>)
@@ -167,15 +167,23 @@ para inserir no firebase</p>
                                 firebase.database().ref(<span class="hljs-string">"<span class="hljs-subst">#{e}</span>/<span class="hljs-subst">#{result.uuid}</span>"</span>).set(result.form[e]) 
 
                 FormularioService.<span class="hljs-keyword">delete</span> = <span class="hljs-function"><span class="hljs-params">(uuid)</span> -&gt;</span>
-                        <span class="hljs-keyword">new</span> Promise (resolve, reject) -&gt;
-<span class="hljs-function">                                <span class="hljs-title">onDel</span> = -&gt;</span> toastr.success(<span class="hljs-string">'Formulario'</span>,<span class="hljs-string">"<span class="hljs-subst">#{uuid}</span> deletado com sucesso"</span>)
-                                p = firebase.database().ref(<span class="hljs-string">"<span class="hljs-subst">#{e}</span>/<span class="hljs-subst">#{uuid}</span>"</span>).set(<span class="hljs-literal">null</span>) <span class="hljs-keyword">for</span> e <span class="hljs-keyword">in</span> [<span class="hljs-string">'formularios'</span>, <span class="hljs-string">'questions'</span>, <span class="hljs-string">'responses'</span>, <span class="hljs-string">'stats'</span>]
+                        $q (resolve, reject) -&gt;
+<span class="hljs-function">                                <span class="hljs-title">onDel</span> = -&gt;</span>
+                                        toastr.success(<span class="hljs-string">'Formulario\nQuestões\nRespostas\nEstatísticas'</span>,<span class="hljs-string">"<span class="hljs-subst">#{uuid}</span> deletados com sucesso"</span>)
+                                        $location.path(<span class="hljs-string">'/formularios'</span>)
+                                p = [
+                                        firebase.database().ref(<span class="hljs-string">"formularios/<span class="hljs-subst">#{uuid}</span>"</span>).set(<span class="hljs-literal">null</span>)
+                                        firebase.database().ref(<span class="hljs-string">"questions/<span class="hljs-subst">#{uuid}</span>"</span>).set(<span class="hljs-literal">null</span>)
+                                        firebase.database().ref(<span class="hljs-string">"responses/<span class="hljs-subst">#{uuid}</span>"</span>).set(<span class="hljs-literal">null</span>)
+                                        firebase.database().ref(<span class="hljs-string">"stats/<span class="hljs-subst">#{uuid}</span>"</span>).set(<span class="hljs-literal">null</span>)
+                                        firebase.database().ref(<span class="hljs-string">"boletos/<span class="hljs-subst">#{uuid}</span>"</span>).set(<span class="hljs-literal">null</span>)
+                                ]
                                 Promise.all(p).<span class="hljs-keyword">then</span>(onDel)
 <span class="hljs-function">                                        
 
                 <span class="hljs-title">onSet</span> = -&gt;</span>
                         self = <span class="hljs-keyword">this</span>
-                        <span class="hljs-keyword">new</span> Promise (resolve, reject) -&gt;
+                        $q (resolve, reject) -&gt;
                                 msg = <span class="hljs-string">"formulário <span class="hljs-subst">#{self.uuid}</span> <span class="hljs-subst">#{self.type}</span>"</span>
                                 toastr.success(<span class="hljs-string">'Formulário'</span>, msg)
                                 resolve()
@@ -199,7 +207,7 @@ para inserir no firebase</p>
                         fetch(uuid).<span class="hljs-keyword">then</span>(onFetch).<span class="hljs-keyword">then</span>(onSet.bind(uuid:uuid, type: <span class="hljs-string">'atualizado'</span>))
                                 
                 FormularioService.novo = <span class="hljs-function"><span class="hljs-params">(id_group, groups)</span> -&gt;</span>
-                        <span class="hljs-keyword">new</span> Promise (resolve, reject) -&gt;</pre></div></div>
+                        $q (resolve, reject) -&gt;</pre></div></div>
             
         </li>
         
@@ -221,7 +229,7 @@ para inserir no firebase</p>
 
                 <span class="hljs-keyword">return</span> FormularioService
                 
-        [<span class="hljs-string">'$http'</span>, <span class="hljs-string">'$location'</span>, <span class="hljs-string">'toastr'</span>, Service]</pre></div></div>
+        [<span class="hljs-string">'$http'</span>, <span class="hljs-string">'$location'</span>, <span class="hljs-string">'$q'</span>, <span class="hljs-string">'toastr'</span>, Service]</pre></div></div>
             
         </li>
         

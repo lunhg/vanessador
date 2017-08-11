@@ -12,7 +12,7 @@ fetchFormularioService = ->
                 FormularioService = {}
         
                 fetch = (uuid) ->
-                        new Promise (resolve, reject) ->
+                        $q (resolve, reject) ->
                                 query = ["/typeform/data-api?completed=true"]
                                 query.push "uuid=#{uuid}"
                                 query = query.join('&')
@@ -53,7 +53,6 @@ fetchFormularioService = ->
                                 onDel = ->
                                         toastr.success('Formulario\nQuestões\nRespostas\nEstatísticas',"#{uuid} deletados com sucesso")
                                         $location.path('/formularios')
-                                        
                                 p = [
                                         firebase.database().ref("formularios/#{uuid}").set(null)
                                         firebase.database().ref("questions/#{uuid}").set(null)
