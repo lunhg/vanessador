@@ -99,7 +99,7 @@ module.exports = (grunt) ->
                         if r is undefined or r is null
                                 pwd = prompt("Type your #{m}\n", secure:true)
                                 onSet = (r)->
-                                        console.log "Pageguro email created"
+                                        console.log "Pagseguro email created"
                                         done()
                         keytar.setPassword(m,pkg.author,pwd).then onSet
 
@@ -110,7 +110,7 @@ module.exports = (grunt) ->
                         if r is undefined or r is null
                                 pwd = prompt("Type your #{m}\n", secure:true)
                                 onSet = (r)->
-                                        console.log "Paypal secret created"
+                                        console.log "Pagseguro apiKey created"
                                         done()
                         keytar.setPassword(m,pkg.author,pwd).then onSet
 
@@ -119,16 +119,22 @@ module.exports = (grunt) ->
                 c = ""
                 # Document all
                 for p in [
-                        {orig: "#{path.join(__dirname)}/config", dest: "#{path.join(__dirname)}/app/assets/doc/config", files: ['environment', 'app', 'paypal', 'pagseguro', 'server']}
+                        {orig: "#{path.join(__dirname)}/boot", dest: "#{path.join(__dirname)}/app/assets/doc/boot", files: ['dependencies', 'devDependencies', 'app', 'server']}
+                        {orig: "#{path.join(__dirname)}/config", dest: "#{path.join(__dirname)}/app/assets/doc/config", files: ['environment', 'app', 'server', 'paypal', 'pagseguro']}
                         {orig: "#{path.join(__dirname)}/app/controllers", dest: "#{path.join(__dirname)}/app/assets/doc/app/controllers", files: ['config', 'docs', 'index', 'pagseguro', 'paypal', 'services', 'templates', 'typeform']}
                         {orig: "#{path.join(__dirname)}/app/assets/js", dest: "#{path.join(__dirname)}/app/assets/doc/app/assets/js", files: ['index', 'app', 'config', 'auth-service', 'main-service', 'formulario-service', 'boleto-service', 'main-ctrl', 'run', 'directives', 'boot']}
                 ]
-                        c += ("docco #{p.orig}/#{path}.coffee -o #{p.dest}" for path in p.files).join(" ; ")
-
+                        
+                        for path in p.files
+                                f = "#{p.orig}/#{path}.coffee"
+                                console.log "origin: #{f}"
+                                console.log "dest: #{p.dest}"
+                                c += ("docco #{f} -o #{p.dest} ; ")
+        
                 grunt.config('shell', {'docco': c})
                 
                 
         grunt.initConfig options
         
         # register tasks
-        grunt.registerTask 'default', ['build:init', 'build:libs', 'build:doc:client', 'coffee', 'usebanner', 'shell']
+        grunt.registerTask 'default', ['build:init', 'build:libs', 'coffee', 'usebanner']

@@ -55,7 +55,8 @@ deve ser atualizada</p>
         p = loader.children[<span class="hljs-number">9</span>]
         p.innerHTML =  <span class="hljs-string">"Configurando templates..."</span>
         angular.injector([<span class="hljs-string">"ng"</span>]).get(<span class="hljs-string">"$http"</span>).get(<span class="hljs-string">'/templates'</span>).<span class="hljs-keyword">then</span> (templates) -&gt;
-                app.config ($routeProvider, $locationProvider) -&gt;</pre></div></div>
+                angular.injector([<span class="hljs-string">"ng"</span>]).get(<span class="hljs-string">"$http"</span>).get(<span class="hljs-string">'/docs'</span>).<span class="hljs-keyword">then</span> (docs) -&gt;
+                        app.config ($routeProvider, $locationProvider) -&gt;</pre></div></div>
             
         </li>
         
@@ -71,9 +72,13 @@ deve ser atualizada</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>                        
-                        <span class="hljs-keyword">for</span> e <span class="hljs-keyword">in</span> templates.data
-                                obj = {template:e.template, controller: <span class="hljs-string">'MainCtrl'</span>}
-                                $routeProvider.<span class="hljs-keyword">when</span>(e.route,obj)</pre></div></div>
+                                <span class="hljs-keyword">for</span> e <span class="hljs-keyword">in</span> templates.data
+                                        obj = {template:e.template, controller: <span class="hljs-string">'MainCtrl'</span>}
+                                        $routeProvider.<span class="hljs-keyword">when</span>(e.route,obj)
+
+                                <span class="hljs-keyword">for</span> e <span class="hljs-keyword">in</span> docs.data
+                                        obj = {template:e.template}
+                                        $routeProvider.<span class="hljs-keyword">when</span>(e.route,obj)</pre></div></div>
             
         </li>
         
@@ -88,7 +93,7 @@ deve ser atualizada</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                        $routeProvider.otherwise({redirectTo: <span class="hljs-string">'/'</span>})</pre></div></div>
+            <div class="content"><div class='highlight'><pre>                                $routeProvider.otherwise({redirectTo: <span class="hljs-string">'/'</span>})</pre></div></div>
             
         </li>
         
@@ -104,7 +109,7 @@ deve ser atualizada</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                        $locationProvider.html5Mode(enabled:<span class="hljs-literal">false</span>).hashPrefix <span class="hljs-string">"!"</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>                                $locationProvider.html5Mode(enabled:<span class="hljs-literal">false</span>).hashPrefix <span class="hljs-string">"!"</span></pre></div></div>
             
         </li>
         

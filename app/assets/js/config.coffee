@@ -11,14 +11,13 @@ fetchConfig = ->
         p.innerHTML =  "Configurando templates..."
         angular.injector(["ng"]).get("$http").get('/templates').then (templates) ->
                 app.config ($routeProvider, $locationProvider) ->
-        
+                
                         # Primeiro inicialize as rotas angular
-                        
+                                
                         for e in templates.data
                                 obj = {template:e.template, controller: 'MainCtrl'}
                                 $routeProvider.when(e.route,obj)
-
-                        
+                                        
                         # Ponto inicial
                         $routeProvider.otherwise({redirectTo: '/'})
 

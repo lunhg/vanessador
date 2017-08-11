@@ -21,20 +21,53 @@ nav.navbar.navbar-default.navbar-fixed-top(role="navigation")
       ul.nav.navbar-nav(ng-show="user != null")
 
         li#docs-menu(ng-show="user !== null" ng-mouseenter="onDropdownmenu('docs-menu', $event)" ng-mouseleave="onDropupmenu('docs-menu', $event)")
-          a.btn-btn-default.dropdown-toogle(data-toogle="dropdown" aria-expanded="true") Angular Docs
+          a.btn-btn-default.dropdown-toogle(data-toogle="dropdown" aria-expanded="true") Docs
             span.caret
           ul.dropdown-menu(aria-labelledby="docs-menu")
             li
-              a(href="/docs/server/index") Servidor/Exppress
+              p Servidor/Express/Boot
             li.divider
             li
-              a(href="/docs/server/config/app") App Config
+              a(href="/docs/server/boot/dependencies") Dependencies
             li
-              a(href="/docs/server/config/server") Server Config
+              a(href="/docs/server/boot/devDependencies") devDependencies
             li
-              a(href="/docs/server/config/paypal") Paypal Config 
+              a(href="/docs/server/boot/app") App
             li
-              a(href="/docs/server/config/pagseguro") Pagseguro Config
+              a(href="/docs/server/boot/server") Server
+            li.divider            
+            li
+              p Servidor/Express/Configiração
+            li.divider
+            li
+              a(href="/docs/server/config/environment") Ambiente
+            li
+              a(href="/docs/server/config/app") App
+            li
+              a(href="/docs/server/config/server") Server
+            li
+              a(href="/docs/server/config/paypal") Paypal
+            li
+              a(href="bdocs/server/config/pagseguro") Pagseguro
+            
+            li.divider
+            li
+              p Servidor/Express/Rotas
+            li.divider
+            li
+              a(href="/docs/server/app/controllers/index") Index
+            li
+              a(href="/docs/server/app/controllers/config") Config
+            li
+              a(href="/docs/server/app/controllers/services") Serviços
+            li
+              a(href="/docs/server/app/controllers/templates") Modelos
+            li
+              a(href="/docs/server/app/controllers/typeform") Typeform
+            li
+              a(href="/docs/server/app/controllers/paypal") Paypal
+            li
+              a(href="/docs/server/app/controllers/pagseguro") Pagseguro
            
             li.divider
             li

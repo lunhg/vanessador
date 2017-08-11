@@ -2,7 +2,7 @@
 
 <html>
 <head>
-  <title>typeform.coffee</title>
+  <title>dependencies.coffee</title>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
   <link rel="stylesheet" media="all" href="docco.css" />
@@ -168,7 +168,7 @@
         
           <li id="title">
               <div class="annotation">
-                  <h1>typeform.coffee</h1>
+                  <h1>dependencies.coffee</h1>
               </div>
           </li>
         
@@ -183,25 +183,26 @@
               
             </div>
             
-            <div class="content"><div class='highlight'><pre>AppManager::typeform = <span class="hljs-function">-&gt;</span>
-        @app.get <span class="hljs-string">'/typeform/data-api'</span>, <span class="hljs-function"><span class="hljs-params">(req, res)</span> -&gt;</span>
-                projectName = <span class="hljs-built_in">require</span>(<span class="hljs-string">"<span class="hljs-subst">#{path.join(__dirname)}</span>/../package.json"</span>).firebase.project.name
-                pwd = <span class="hljs-string">"<span class="hljs-subst">#{projectName}</span>.typeform.apiKey"</span>
-                <span class="hljs-built_in">console</span>.log <span class="hljs-string">"Search for  <span class="hljs-subst">#{pwd}</span>"</span>
-                keytar.findPassword(pwd)
-                        .<span class="hljs-keyword">then</span> (apiKey) -&gt;
-                                _url = <span class="hljs-string">"form/<span class="hljs-subst">#{req.query.uuid}</span>?key=<span class="hljs-subst">#{apiKey}</span>"</span>
-                                _url += <span class="hljs-string">"&amp;completed=<span class="hljs-subst">#{req.query.completed}</span>"</span>
-                                _url += <span class="hljs-string">"&amp;limit=<span class="hljs-subst">#{req.query.limit}</span>"</span>
-<span class="hljs-function">                                <span class="hljs-title">onGet</span> = <span class="hljs-params">(err, _res, body)</span> -&gt;</span>
-                                        <span class="hljs-keyword">if</span>(err)
-                                                res.json err
-                                        <span class="hljs-keyword">else</span>
-                                                <span class="hljs-built_in">console</span>.log body
-                                                res.json body
-                                request_json.createClient(<span class="hljs-string">'https://api.typeform.com/v1/'</span>).get(_url,onGet) 
-                        .<span class="hljs-keyword">catch</span> (err) -&gt;
-                                res.json err</pre></div></div>
+            <div class="content"><div class='highlight'><pre>fs = <span class="hljs-built_in">require</span> <span class="hljs-string">'fs'</span>
+path = <span class="hljs-built_in">require</span> <span class="hljs-string">'path'</span>
+http = <span class="hljs-built_in">require</span> <span class="hljs-string">'http'</span>
+atob = <span class="hljs-built_in">require</span> <span class="hljs-string">'atob'</span>
+body_parser = <span class="hljs-built_in">require</span> <span class="hljs-string">'body-parser'</span>
+chalk = <span class="hljs-built_in">require</span> <span class="hljs-string">'chalk'</span>
+compression = <span class="hljs-built_in">require</span> <span class="hljs-string">'compression'</span>
+connect_assets = <span class="hljs-built_in">require</span> <span class="hljs-string">'connect-assets'</span>
+express = <span class="hljs-built_in">require</span> <span class="hljs-string">'express'</span>
+foreach = <span class="hljs-built_in">require</span> <span class="hljs-string">'foreach'</span>
+keytar = <span class="hljs-built_in">require</span> <span class="hljs-string">'keytar'</span>
+marked = <span class="hljs-built_in">require</span> <span class="hljs-string">'marked'</span>
+morgan = <span class="hljs-built_in">require</span> <span class="hljs-string">'morgan'</span>
+node_uuid = <span class="hljs-built_in">require</span> <span class="hljs-string">'node-uuid'</span>
+paypal_rest_sdk = <span class="hljs-built_in">require</span> <span class="hljs-string">'paypal-rest-sdk'</span>
+pug = <span class="hljs-built_in">require</span> <span class="hljs-string">'pug'</span>
+request = <span class="hljs-built_in">require</span> <span class="hljs-string">'request'</span>
+request_json = <span class="hljs-built_in">require</span> <span class="hljs-string">'request-json'</span>
+xml2js = <span class="hljs-built_in">require</span> <span class="hljs-string">'xml2js'</span>
+xmlbuilder = <span class="hljs-built_in">require</span> <span class="hljs-string">'xmlbuilder'</span></pre></div></div>
             
         </li>
         
