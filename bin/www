@@ -67,7 +67,7 @@ AppManager = (function() {
     });
     this.app.set('view engine', 'pug');
     this.app.set('assets path', [path.join(__dirname, '..', 'app/assets/fonts'), path.join(__dirname, '..', 'app/assets/doc'), path.join(__dirname, '..', 'app/assets/img'), path.join(__dirname, '..', 'app/assets/css'), path.join(__dirname, '..', 'app/assets/js'), path.join(__dirname, '..', 'app/assets/'), path.join(__dirname, '..', 'app/assets/favicon.ico')]);
-    this.app.set('port', parseInt(process.env.PORT || '3001'));
+    this.app.set('port', parseInt(process.env.PORT || '3000'));
   }
 
   return AppManager;
@@ -351,35 +351,35 @@ AppManager.prototype.templates = function() {
             };
             html = pug.compile(content, opt)();
             result = {
-              template: html,
-              controller: '',
-              route: ''
+              component: {
+                template: html
+              },
+              name: p
             };
             if (p.match(/_index/)) {
-              result.controller = 'AuthCtrl';
-              result.route = "/";
+              result.path = "/";
             } else if (p.match(/^formularios_uuid_[a-z]+$/)) {
-              result.controller = 'TypeformCtrl';
               r = p.split("_");
-              result.route = "/" + r[0] + "/:uuid/" + r[2];
+              result.path = "/" + r[0] + "/:uuid/" + r[2];
             } else if (p.match(/^formularios_uuid_\w+_[a-z]+$/)) {
               r = p.split("_");
-              result.route = "/" + r[0] + "/:uuid/" + r[2] + "/:token";
+              result.path = "/" + r[0] + "/:uuid/" + r[2] + "/:token";
             } else if (p.match(/formularios_novo/)) {
               r = p.split("_");
-              result.route = "/" + r[0] + "/novo";
+              result.path = "/" + r[0] + "/novo";
             } else if (p.match(/^boletos$/)) {
-              result.route = "/boletos";
+              result.path = "/boletos";
             } else if (p.match(/boletos_id/)) {
               r = p.split("_");
-              result.route = "/boletos/:invoiceid";
+              result.path = "/boletos/:invoiceid";
             } else if (p.match(/^conta_\w+_\w+$/)) {
               r = p.split("_");
-              result.route = "/" + r[0] + "/:option/:action";
+              result.path = "/" + r[0] + "/:option/:action";
+            } else if (p.match(/^estudantes$/)) {
+              result.path = "/estudantes";
             } else {
-              result.route = "/" + p;
+              result.path = "/" + p;
             }
-            console.log(result);
             return resolve(result);
           } catch (error1) {
             e = error1;
@@ -392,24 +392,15 @@ AppManager.prototype.templates = function() {
       });
     });
   };
-  return this.app.get('/templates', function(req, res) {
-    var onErr, onSuccess, template;
-    onSuccess = function(results) {
-      return res.json(results);
+  return this.app.get('/templates/:type', function(req, res) {
+    var onErr, onSuccess;
+    onSuccess = function(result) {
+      return res.json(result);
     };
     onErr = function(err) {
       return res.json(err.message);
     };
-    return Promise.all((function() {
-      var i, len, ref, results1;
-      ref = require("../package.json")['angular-templates'];
-      results1 = [];
-      for (i = 0, len = ref.length; i < len; i++) {
-        template = ref[i];
-        results1.push(getTemplate(template));
-      }
-      return results1;
-    })()).then(onSuccess)["catch"](onErr);
+    return getTemplate(req.params['type']).then(onSuccess)["catch"](onErr);
   });
 };
 

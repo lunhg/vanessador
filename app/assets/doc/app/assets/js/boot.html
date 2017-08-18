@@ -32,52 +32,7 @@
             
             <div class="content"><div class='highlight'><pre><span class="hljs-built_in">document</span>.addEventListener <span class="hljs-string">'DOMContentLoaded'</span>, <span class="hljs-function"><span class="hljs-params">(event)</span>-&gt;</span>
 
-        fetchConfig().<span class="hljs-keyword">then</span>(fetchAuthService)
-                .<span class="hljs-keyword">then</span> (service) -&gt;
-                        app.service(<span class="hljs-string">"authService"</span>, service)
-                .<span class="hljs-keyword">then</span>(fetchFormularioService)
-                .<span class="hljs-keyword">then</span> (service) -&gt;
-                        app.service(<span class="hljs-string">"formularioService"</span>, service)
-                .<span class="hljs-keyword">then</span>(fetchBoletoService)
-                .<span class="hljs-keyword">then</span> (service) -&gt;
-                        app.service(<span class="hljs-string">"boletoService"</span>, service)
-                .<span class="hljs-keyword">then</span>(fetchMainService)
-                .<span class="hljs-keyword">then</span> (service) -&gt;
-                        app.service(<span class="hljs-string">"mainService"</span>, service)
-                .<span class="hljs-keyword">then</span>(fetchMainCtrl)
-                .<span class="hljs-keyword">then</span> (MainCtrl) -&gt;
-                        app.controller(<span class="hljs-string">'MainCtrl'</span>, [
-                                <span class="hljs-string">'$rootScope'</span>
-                                <span class="hljs-string">'$http'</span>
-                                <span class="hljs-string">'$location'</span>
-                                <span class="hljs-string">'$route'</span>
-                                <span class="hljs-string">'$window'</span>
-                                <span class="hljs-string">'$cookies'</span>
-                                <span class="hljs-string">'$q'</span>
-                                <span class="hljs-string">'authService'</span>
-                                <span class="hljs-string">'formularioService'</span>
-                                <span class="hljs-string">'boletoService'</span>
-                                <span class="hljs-string">'mainService'</span>
-                                <span class="hljs-string">'toastr'</span>
-                                 MainCtrl
-                        ])
-                .<span class="hljs-keyword">then</span> (fetchRun)
-                .<span class="hljs-keyword">then</span> (Run) -&gt;
-                        app.run([
-                                <span class="hljs-string">'$rootScope'</span>
-                                <span class="hljs-string">'$http'</span>
-                                <span class="hljs-string">'$location'</span>
-                                <span class="hljs-string">'$timeout'</span>
-                                <span class="hljs-string">'mainService'</span>
-                                 Run
-                        ])
-                .<span class="hljs-keyword">then</span>(fetchDirectives)
-                .<span class="hljs-keyword">then</span> (directives) -&gt;
-                        <span class="hljs-keyword">for</span> directive <span class="hljs-keyword">in</span> directives.data
-                                name = <span class="hljs-string">'modal'</span>+directive.name.charAt(<span class="hljs-number">0</span>).toUpperCase()+directive.name.slice(<span class="hljs-number">1</span>)
-                                app.directive(name, <span class="hljs-function">-&gt;</span> directive.options) 
-                        [<span class="hljs-string">"vanessador"</span>]
-                .<span class="hljs-keyword">then</span> (apps) -&gt;</pre></div></div>
+        fetchConfig().<span class="hljs-keyword">then</span> (router) -&gt;</pre></div></div>
             
         </li>
         
@@ -93,12 +48,12 @@ deve ser atualizada</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                        loader = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'masterLoader'</span>)
-                        p = loader.children[<span class="hljs-number">9</span>]
-                        p.innerHTML = <span class="hljs-string">"Pronto!"</span>
-                        <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'masterLoader'</span>).classList.add(<span class="hljs-string">'hide'</span>)
-                        angular.bootstrap(<span class="hljs-built_in">document</span>, apps)
-                .<span class="hljs-keyword">catch</span> (e) -&gt;</pre></div></div>
+            <div class="content"><div class='highlight'><pre>                loader = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'masterLoader'</span>)
+                p = loader.children[<span class="hljs-number">9</span>]
+                p.innerHTML = <span class="hljs-string">"Pronto!"</span>
+                <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'masterLoader'</span>).classList.add(<span class="hljs-string">'hide'</span>)
+                app = <span class="hljs-keyword">new</span> Vue(router: router).$mount(<span class="hljs-string">"#app"</span>)
+        .<span class="hljs-keyword">catch</span> (e) -&gt;</pre></div></div>
             
         </li>
         
@@ -114,9 +69,9 @@ deve ser atualizada</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                        loader = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'masterLoader'</span>)
-                        p = loader.children[<span class="hljs-number">9</span>]
-                        p.innerHTML = e</pre></div></div>
+            <div class="content"><div class='highlight'><pre>                loader = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'masterLoader'</span>)
+                p = loader.children[<span class="hljs-number">9</span>]
+                p.innerHTML = e.message</pre></div></div>
             
         </li>
         

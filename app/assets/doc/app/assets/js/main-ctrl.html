@@ -562,14 +562,14 @@ uma demora</p>
                                 .<span class="hljs-keyword">catch</span>(onErr)
                 
 
-                $rootScope.onDeleteBoleto = <span class="hljs-function">-&gt;</span>
+                $rootScope.onDeleteBoleto = <span class="hljs-function"><span class="hljs-params">(token)</span> -&gt;</span>
                         form = $rootScope.currentForm
                         id = $rootScope.boleto.invoice
 <span class="hljs-function">                        <span class="hljs-title">_onDelete</span> = -&gt;</span>
                                 toastr.success(<span class="hljs-string">"Formulário <span class="hljs-subst">#{form}</span>"</span>, <span class="hljs-string">"Boleto <span class="hljs-subst">#{id}</span> deletado"</span>)
                                 $location.path(<span class="hljs-string">'/boletos'</span>)
                                 $route.reload()
-                        boletoService.<span class="hljs-keyword">delete</span>(form, id).<span class="hljs-keyword">then</span>(_onDelete)</pre></div></div>
+                        boletoService.<span class="hljs-keyword">delete</span>(form, id, token).<span class="hljs-keyword">then</span>(_onDelete)</pre></div></div>
             
         </li>
         

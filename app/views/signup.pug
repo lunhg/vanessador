@@ -1,4 +1,4 @@
-section.centralize-area(ng-show="user === null")
+section.centralize-area
   br
   br
   br
@@ -8,7 +8,8 @@ section.centralize-area(ng-show="user === null")
   br
   br
   br
-  form
+  p(v-if="autorizado") Você já está logado
+  form(v-if="!autorizado")
     fieldset
       - var form = {'input_signup_email':{'type':'text', 'placeholder':'email'}, 'input_signup_senha':{'type':'password', 'placeholder':'senha'}}
       - for(var key in form)

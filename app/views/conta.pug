@@ -1,30 +1,36 @@
-section.centralize-area
+section.centralize-area(v-if="autorizado")
   br
   br
   br
+  h1 Dados Pessoais
+  p Edite dados pessoais como nome, email, foto e telefone* 
   br
-  img.img-circle(ng-show="user.photoURL !== null" width="128" heigth="128" ng-src="{{ user.photoURL }}")
-  img.img-circle(ng-show="user.photoURL === null" width="128" heigth="128" ng-src="{{ defaultPhotoURL }}")
   br
   br
   table.table.table-striped.table-hover
     tbody
       tr
+        td Foto
+        td
+          img.img-circle(v-if="user.photoURL" width="64" heigth="64" :src="user.photoURL")
+          div(v-else)
+            img.img-circle(width="64" heigth="64" src="/assets/images/vanessadora.png")
+            <router-link to="{path:'/conta/editar?q=photoURL'}"> editar</router-link>
+      tr
         td Nome 
-        td {{ user.displayName || "Não disponível" }}
+        td 
+          p(v-if="user.displayName") {{ user.displayName }}
+          p(v-else) Não disponível, 
+            <router-link to="{path:'/conta/editar?q=displayName'}"> editar</router-link>
       tr
         td Email
         td {{ user.email }}
       tr
         td Número de telefone 
         td 
-          p {{ user.phoneNumber || "Vincule um número de telefone"}} 
-          a.btn.btn-default(href="/#!/conta/telefone/vincular") Vincular 
-      tr
-        td Google 
-        td
-          p(ng-show="user.linkedAccount") Conta Google vinculada 
-          a.btn.btn-default(ng-show="!user.linkedAccount" ng-click="linkAccount()") Vincular
-            img(style="width:2%;heigth:2%" src="https://cdn.worldvectorlogo.com/logos/google-icon.svg")
-
-
+          div
+            p(v-if="user.phoneNumber") {{ user.phoneNumber }}
+            p(v-else) Vincule um número de
+              <router-link to="{name:'/conta/telefone/vincular'}"> telefone</router-link> 
+              
+  p * o número de telefone será necessário para troca de senhas

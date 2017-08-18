@@ -27,11 +27,19 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
-              <p>Aplicativo client</p>
+              <p>Aplicativo client
+app = angular.module(“vanessador”, [“ngRoute”, “ngResource”, “ngCookies”, “toastr”])</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>app = angular.<span class="hljs-built_in">module</span>(<span class="hljs-string">"vanessador"</span>, [<span class="hljs-string">"ngRoute"</span>, <span class="hljs-string">"ngResource"</span>, <span class="hljs-string">"ngCookies"</span>, <span class="hljs-string">"toastr"</span>])</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-built_in">window</span>.app = app = <span class="hljs-literal">null</span>
+
+Vue.http.get(<span class="hljs-string">'/templates'</span>)
+        .<span class="hljs-keyword">then</span> (templates) -&gt;
+                routes = path: t.route, component: {template: t.template} <span class="hljs-keyword">for</span> t <span class="hljs-keyword">in</span> templates
+                router = <span class="hljs-keyword">new</span> VueRouter routes: routes
+                app = <span class="hljs-keyword">new</span> Vue(router: router).$mount(<span class="hljs-string">"#app"</span>)
+        .<span class="hljs-keyword">catch</span> (e) -&gt; <span class="hljs-built_in">console</span>.log e</pre></div></div>
             
         </li>
         

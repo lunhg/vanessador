@@ -1,10 +1,7 @@
 #= require app
+#= require menu
+#= require routes
 #= require config
-#= require auth-service
-#= require formulario-service
-#= require boleto-service
-#= require main-service
-#= require main-ctrl
-#= require directives
-#= require run
+#= require estudantes
+#= require firebase
 #= require boot

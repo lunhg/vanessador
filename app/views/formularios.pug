@@ -3,7 +3,7 @@ section.centralize-area
     br
     br
     br
-    h2 Inspecione um formulário
+    h2 Formulários Typeform
     br
     br
     br
@@ -16,7 +16,7 @@ section.centralize-area
           th Proprietários
           th Ações
       tbody
-        tr(ng-repeat="(k,v) in registeredForms") 
+        tr(v-for="(k,v) in registeredForms") 
           td 
             a(href="https://{{ v.base_url }}/{{ k }}") {{ k }}
           td {{ v.name }}

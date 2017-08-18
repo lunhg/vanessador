@@ -61,28 +61,6 @@
 	    "name": "vanessador-46e68"
 	}
     },
-    "angular-templates": [
-	"_index",
-	"login",
-	"signup",
-	"resetPassword",
-	"confirm",
-	"formularios",
-	"formularios_novo",
-	"formularios_uuid_stats",
-	"formularios_uuid_questions",
-	"formularios_uuid_delete",
-	"formularios_uuid_responses",
-	"formularios_uuid_responses_token",
-	"boletos",
-	"boletos_id",
-	"conta",
-	"conta_telefone_vincular"
-    ],
-    "angular-directives": [
-	"menu"
-    ],
-    "angular-services": [],
     "options": {
 	"coffee": {
 	    "compileJoin": {

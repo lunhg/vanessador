@@ -1,5 +1,3 @@
-
-                                        
 AppManager::templates = ->
 
         getTemplate = (p) ->
@@ -10,52 +8,45 @@ AppManager::templates = ->
                                         try
                                                 opt = {filename: _p, doctype:'html'}
                                                 html = pug.compile(content, opt)()
-                                                result = template: html, controller:'', route: ''
-                                                # No angular isso cria rotas através
-                                                # dos hashbangs (onde /#!/ é a página inicial)
-                                                #
-                                                # GET /#!/
+                                                result = component: {template: html}, name: p
                                                 if p.match /_index/
-                                                        result.controller = 'AuthCtrl'
-                                                        result.route = "/"
-
-                                                # GET /#!/formularios/:uuid/stats
-                                                # GET /#!/formularios/:uuid/questions
-                                                # GET /#!/formularios/:uuid/responses
+                                                        result.path = "/"
+                                                # GET /#/formularios/:uuid/stats
+                                                # GET /#/formularios/:uuid/questions
+                                                # GET /#/formularios/:uuid/responses
                                                 else if p.match /^formularios_uuid_[a-z]+$/
-                                                        result.controller = 'TypeformCtrl'
                                                         r = p.split("_")
-                                                        result.route = "/#{r[0]}/:uuid/#{r[2]}"
+                                                        result.path = "/#{r[0]}/:uuid/#{r[2]}"
 
-                                                # GET /#!/formularios/:uuid/responses/:token
+                                                # GET /#/formularios/:uuid/responses/:token
                                                 else if p.match /^formularios_uuid_\w+_[a-z]+$/
                                                         r = p.split("_")
-                                                        result.route = "/#{r[0]}/:uuid/#{r[2]}/:token"
+                                                        result.path = "/#{r[0]}/:uuid/#{r[2]}/:token"
 
-                                                # GET /#!/formularios/novo
+                                                # GET /#/formularios/novo
                                                 else if p.match /formularios_novo/
                                                         r = p.split("_")
-                                                        result.route = "/#{r[0]}/novo"
-
-                                                # GET /#!/boletos/:invoiceid
+                                                        result.path = "/#{r[0]}/novo"
+        
+                                                # GET /#/boletos/:invoiceid
                                                 else if p.match /^boletos$/
-                                                        result.route = "/boletos"
-
-
-                                                # GET /#!/boletos/:invoiceid
+                                                        result.path = "/boletos"
+                        
+                                                # GET /#/boletos/:invoiceid
                                                 else if p.match /boletos_id/
                                                         r = p.split("_")
-                                                        result.route = "/boletos/:invoiceid"
+                                                        result.path = "/boletos/:invoiceid"
 
-                                                # GET /#!/conta/telefone/vincular
+                                                # GET /#/conta/telefone/vincular
                                                 else if p.match /^conta_\w+_\w+$/
                                                         r = p.split("_")
-                                                        result.route = "/#{r[0]}/:option/:action"
-                                                # GET otherwise
-                                                else
-                                                        result.route = "/#{p}"
-                                                
-                                                console.log result
+                                                        result.path = "/#{r[0]}/:option/:action"
+
+                                                # GET /#/estudantes
+                                                else if p.match /^estudantes$/
+                                                        result.path = "/estudantes"
+                                                else 
+                                                        result.path = "/#{p}"
                                                 resolve result
                                         catch e
                                                 console.log e
@@ -63,8 +54,7 @@ AppManager::templates = ->
                                 else
                                         reject err
                    
-        @app.get '/templates', (req, res) ->
-                onSuccess = (results) -> res.json results
+        @app.get '/templates/:type', (req, res) ->
+                onSuccess = (result) -> res.json result
                 onErr = (err) -> res.json err.message
-                
-                Promise.all(getTemplate(template) for template in require("../package.json")['angular-templates']).then(onSuccess).catch(onErr) 
+                getTemplate(req.params['type']).then(onSuccess).catch(onErr)

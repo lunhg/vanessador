@@ -7,79 +7,46 @@ nav.navbar.navbar-default.navbar-fixed-top(role="navigation")
     div.collapse.navbar-collapse.navbar-left
       ul.nav.navbar-nav
         li
-          a.nav-link(href="/#!/") Vanessador
+          <router-link :to="{name:'_index'}">Vanessador</router-link>
 
     div#navCollapse.collapse.navbar-collapse.navbar-right
-      ul.nav.navbar-nav(ng-show="user === null")   
-        li
+      ul.nav.navbar-nav(v-if="!$parent.autorizado")
+        li#auth-menu
           a.nav-link.active(href="https://www.github.com/lunhg/vanessador") Contribua
         li
-          a.nav-link(href="/#!/login" ng-show="user == null") Login
-        li(ng-show="user === null")
-          a.nav-link(href="/#!/signup" ng-show="user == null") Cadastre-se
+          <router-link :to="{name:'login'}">Login</router-link>  
+        li
+          <router-link :to="{name:'signup'}">Cadastre-se</router-link>  
       
-      ul.nav.navbar-nav(ng-show="user != null")
-
-        li#docs-menu(ng-show="user !== null" ng-mouseenter="onDropdownmenu('docs-menu', $event)" ng-mouseleave="onDropupmenu('docs-menu', $event)")
-          a.btn-btn-default.dropdown-toogle(data-toogle="dropdown" aria-expanded="true") Angular Docs
-            span.caret
-          ul.dropdown-menu(aria-labelledby="docs-menu")
-            li
-              a(href="/docs/server/index") Servidor/Exppress
-            li.divider
-            li
-              a(href="/docs/server/config/app") App Config
-            li
-              a(href="/docs/server/config/server") Server Config
-            li
-              a(href="/docs/server/config/paypal") Paypal Config 
-            li
-              a(href="/docs/server/config/pagseguro") Pagseguro Config
-           
-            li.divider
-            li
-              a(href="/docs/client/index") Cliente/Angular
-            li.divider
-            li
-              a(href="/docs/client/app") App
-            li
-              a(href="/docs/client/config") Config
-            li
-              a(href="/docs/client/auth-service") Auth Service
-            li
-              a(href="/docs/client/formulario-service") Formulario Service
-            li
-              a(href="/docs/client/main-service") Main Service
-            li
-              a(href="/docs/client/boleto-service") Boleto Service
-            li
-              a(href="/docs/client/main-ctrl") Main Control
-            li
-              a(href="/docs/client/directives") Directives
-
-        // https://stackoverflow.com/questions/27837220/ie10-ng-repeat-mousedown-mouseenter#27841532
-        li#boletos-menu(ng-show="user !== null" ng-,mouseenter="onDropdownmenu('boletos-menu', $event)" ng-mouseleave="onDropupmenu('boletos-menu', $event)")
-          a(href="/#!/boletos") Boletos 
+      ul.nav.navbar-nav(v-else)
+        li#boletos-menu
+          <router-link to="{path:'/boletos'}">
+            img(src='https://chart.googleapis.com/chart?cht=qr&chl=https%3A%2F%2Fwww.github.com%2Flunhg%2Fvanessador&chs=180x180&choe=UTF-8&chld=L|2' width='28' height='28' rel='nofollow' alt='qr code')
+              
+          </router-link> 
           
-        li#formularios-menu(ng-show="user !== null" ng-mouseenter="onDropdownmenu('formularios-menu', $event)" ng-mouseleave="onDropupmenu('formularios-menu', $event)")
-          a.btn-btn-default.dropdown-toogle(data-toogle="dropdown" aria-expanded="true") Formulários
-            span.caret
-          ul.dropdown-menu(aria-labelledby="formularios-menu")
-            li
-              a(href="/#!/formularios/novo") Novo formulário 
-            li
-              a(href="/#!/formularios") Ver seus formulários
+        li#formularios-menu
+          <router-link :to="{path:'/formularios'}">
+            img(src="/assets/images/formularios.png" width="28" height="28")    
+          </router-link>
 
-        li#user-menu(ng-mouseenter="onDropdownmenu('user-menu', $event)" ng-mouseleave="onDropupmenu('user-menu', $event)")
-          a.btn-btn-default.dropdown-toogle(data-toogle="dropdown" href="#" aria-expanded="true") {{ user.displayName || user.email }}
-            img.img-responsive.img-circle.navbar-right(width="32" heigth="32" ng-show="user.photoUrl !== null" ng-src="{{ user.photoURL }}")
-            span.caret
-  
-          ul.dropdown-menu(aria-labelledby="user-menu")
-            li
-              a(href="/#!/conta") Conta
-            li
-              a(ng-click="logout()") Logout
+        li#formularios-novo-menu
+          <router-link to="/formularios/novo">
+            img(src="/assets/images/novo.png" width="28" height="28")
+          </router-link>
+
+        li#estudantes-menu
+          <router-link to="/estudantes">
+            img(src="/assets/images/estudante.png" width="28" height="28")
+          </router-link>
+
+        li#conta-menu
+          <router-link :to="{path:'/conta'}">
+            img(v-if="user.photoURL" :src="user.photoURL" width='28' height='28')
+            img(v-else src="/assets/images/vanessadora.png" width='28', height='28')
+          </router-link> 
+
+              
 
 
 

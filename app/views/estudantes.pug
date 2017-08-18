@@ -1,0 +1,31 @@
+section.centralize-area(v-if="!estudantes")
+  br
+  br
+  br
+  h1 Importe um arquivo XLS 
+  p Este arquivo deve conter dados formatados de acordo com a seguinte 
+    <router-link to ="/estudantes/especificacao"> especificação</router-link>
+  br
+  br
+  br
+  div
+    label(for="importarXLS")
+      img(src="/assets/images/excel.png")
+    input#importarXLS(style="display:none" type="file" name="xlsfile" v-on:change='importarXLS')
+section.centralize-area(v-else)
+  br
+  br
+  br
+  h1 Estudantes
+  br
+  br
+  br
+  table.table.table-striped.table-hover
+      thead
+        tr
+          th Nome
+          th Email  
+      tbody
+        tr(v-for="e in estudantes") 
+          td {{ e.Nome }}
+          td {{ e['e-mail'] }}

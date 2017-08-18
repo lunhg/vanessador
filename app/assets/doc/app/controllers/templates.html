@@ -42,7 +42,7 @@ AppManager::templates = <span class="hljs-function">-&gt;</span>
                                         <span class="hljs-keyword">try</span>
                                                 opt = {filename: _p, doctype:<span class="hljs-string">'html'</span>}
                                                 html = pug.compile(content, opt)()
-                                                result = template: html, controller:<span class="hljs-string">''</span>, route: <span class="hljs-string">''</span></pre></div></div>
+                                                result = name: p, template: html, route: <span class="hljs-string">''</span></pre></div></div>
             
         </li>
         
@@ -60,7 +60,6 @@ dos hashbangs (onde /#!/ é a página inicial)</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>                                                <span class="hljs-keyword">if</span> p.match <span class="hljs-regexp">/_index/</span>
-                                                        result.controller = <span class="hljs-string">'AuthCtrl'</span>
                                                         result.route = <span class="hljs-string">"/"</span></pre></div></div>
             
         </li>
@@ -79,7 +78,6 @@ GET /#!/formularios/:uuid/responses</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>                                                <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> p.match <span class="hljs-regexp">/^formularios_uuid_[a-z]+$/</span>
-                                                        result.controller = <span class="hljs-string">'TypeformCtrl'</span>
                                                         r = p.split(<span class="hljs-string">"_"</span>)
                                                         result.route = <span class="hljs-string">"/<span class="hljs-subst">#{r[<span class="hljs-number">0</span>]}</span>/:uuid/<span class="hljs-subst">#{r[<span class="hljs-number">2</span>]}</span>"</span></pre></div></div>
             

@@ -1,4 +1,4 @@
-section.centralize-area(ng-show="user === null")
+section.centralize-area
   br
   br
   br
@@ -8,7 +8,8 @@ section.centralize-area(ng-show="user === null")
   br
   br
   br
-  form
+  p(v-if="autorizado") Você já está logado
+  form(v-if="!autorizado")
     fieldset 
     - var form = {'input_login_email':{'type':'text', 'placeholder':'email@itsrio.org'}, 'input_login_password':{'type':'password', 'placeholder': 'senha'}}
     - for(var key in form)
@@ -17,24 +18,10 @@ section.centralize-area(ng-show="user === null")
         label.control-label(for=""+key)
           div 
             input.form-control(type=""+val.type id=""+key placeholder=""+val.placeholder)
-    button.btn.btn-default(type="submit" ng-click="loginEmailAndPassword()") Login 
+    button.btn.btn-default(v-on:click.prevent="$parent.login") Login 
     br
     br
     div.section-divider
-      a(href="#!/signup" ng-show="user == null") Cadastre-se
+      <router-link :to="{name:'signup'}">Cadastre-se</router-link>
       br
-      a(href="#!/resetPassword" ng-show="user == null") Esqueceu sua senha?
-    br
-    br
-    div.section-divider
-      hr.navbar-left
-      span Ou
-      hr.navbar-right
-
-    div.container  
-      a#input_login_google.btn.btn-default(ng-click="loginGoogle()") Entrar com sua conta google
-        img(style="width:2.5%; height: 2.5%" src="https://cdn.worldvectorlogo.com/logos/google-icon.svg")
-
-    
-
-    
+      <router-link :to="{name:'resetPassword'}">Esqueceu sua senha?</router-link>

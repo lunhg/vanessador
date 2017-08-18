@@ -203,7 +203,7 @@ e atualize os dados na base de dados</p>
                         @length = <span class="hljs-keyword">if</span> <span class="hljs-keyword">from</span> &lt; <span class="hljs-number">0</span> <span class="hljs-keyword">then</span> @length + <span class="hljs-keyword">from</span> <span class="hljs-keyword">else</span> <span class="hljs-keyword">from</span>;
                         @push.apply(<span class="hljs-keyword">this</span>, rest)
                         
-                BoletoService.<span class="hljs-keyword">delete</span> = <span class="hljs-function"><span class="hljs-params">(form, pid)</span> -&gt;</span>
+                BoletoService.<span class="hljs-keyword">delete</span> = <span class="hljs-function"><span class="hljs-params">(form, pid, token)</span> -&gt;</span>
                         $q (resolve, reject) -&gt;
                                 db = firebase.database()
 <span class="hljs-function">                                <span class="hljs-title">_onBoletos</span> = <span class="hljs-params">(boletos)</span> -&gt;</span>
@@ -211,6 +211,7 @@ e atualize os dados na base de dados</p>
                                         <span class="hljs-keyword">for</span> i,b <span class="hljs-keyword">of</span> _boletos
                                                 _b = b.invoice <span class="hljs-keyword">is</span> pid
                                                 _b = _b <span class="hljs-keyword">and</span> b.status <span class="hljs-keyword">is</span> <span class="hljs-string">'DRAFT'</span>
+                                                _b = _b <span class="hljs-keyword">and</span> b.token <span class="hljs-keyword">is</span> token
                                                 <span class="hljs-keyword">if</span> _b
                                                         <span class="hljs-keyword">delete</span> _boletos[i]
                                                         <span class="hljs-keyword">break</span>
