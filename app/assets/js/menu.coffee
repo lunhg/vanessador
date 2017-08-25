@@ -11,19 +11,19 @@ fetchMenu = (config) ->
                         template: result.data.component.template
                         data: ->
                                 {
-                                        active: conta: false, formularios: false
+                                        active: conta: false
                                 }
                         methods:
                                 login: -> this.$emit 'login'
                                 logout: -> this.$emit 'logout'
                                 toogle: (w) ->
-                                        if w is 'conta' or w is 'formularios'
+                                        if w is 'conta'
                                                 if this.active[w]
                                                         this.active[w] = false
                                                 else
                                                         this.active[w] = true
                                 close: ->
-                                        for d in ['conta', 'formularios']
+                                        for d in ['conta']
                                                 this.active[d] = false
                         ready: ->
                                 onClick = (e) ->

@@ -1,34 +1,46 @@
-section.centralize-area
-  div
-    br
-    br
-    br
-    h2 Formulários Typeform
-    br
-    br
-    br
-    table.table.table-striped.table-hover
-      thead
-        tr
-          th uuid
-          th Nome
-          th Tags
-          th Proprietários
-          th Ações
-      tbody
-        tr(v-for="(k,v) in registeredForms") 
-          td 
-            a(href="https://{{ v.base_url }}/{{ k }}") {{ k }}
-          td {{ v.name }}
-          td
-            p(ng-repeat="(i, e) in v.tags")
-              a(href="/#!/formularios/tags/{{ e }}") {{ v.tags.join(", ") }}
-          td 
-            a(href="/#!/users/{{ v.owner }}/profile") {{ v.owner }}
-          td
-            div.nav.navbar-nav
-              a.btn.btn-default(href="/#!/formularios/{{ k }}/stats") Estatisticas
-              a.btn.btn-info(href="/#!/formularios/{{ k }}/questions") Questões 
-              a.btn.btn-primary(href="/#!/formularios/{{ k }}/responses") Respostas
-              a.btn.btn-success(ng-click="onUpdateFormulario(k)") Atualizar
-              a.btn.btn-warning(href="/#!/formularios/{{ k }}/delete") Delete
+section
+  br
+  br
+  br
+  div.container
+    h1 Formularios Typeform
+    accordion(type="warning")
+      panel(header='Novo Formulario')
+        form
+          fieldset
+            div.form-group(v-for="(v,k) in modelos.formularios")
+              label.control-label(:for="k") {{ v.label }}
+              br
+              div
+                input.form-control(:type="v.type" :id="k" :placeholder="v.placeholder")
+        button.btn.btn-success(v-on:click="onFormularios") Adicionar formulário
+
+    accordion(type="success")
+      panel(header="Importart Excel") 
+        form
+          fieldset
+            div.form-group(v-for="(v,k) in modelos.xls.formularios")
+              label.control-label(:for="k") {{ v.label }}
+              br
+              div
+                input.form-control(:type="v.type" :id="k" :placeholder="v.placeholder")
+        input(type="file" :name='formularios' v-on:change='importarXLS')
+  div.container  
+    accordion(type="info" :one-at-time='true')  
+      panel(v-for="(v,k) in formularios" :data="v" :key="k" :header="k")
+        strong Http Status: {{ v.status }}
+        accordion(type="default" :one-at-time='true')
+          panel(header="Questões")
+            span(v-for='q in v.questions' :id="k+q.question") {{ q.question }}
+          panel(header="Respostas")
+            div(v-for='r in v.responses') 
+              strong Completado: {{ r.completed === '1' ? 'Sim' : 'Não' }} 
+              accordion(type="default" :one-at-time='true')
+                panel(header="Detalhes")
+                  accordion(type="default" :one-at-time='true')
+                    panel(header="Campos")
+                      div(v-for='(vv,kk) in r.answers') 
+                        strong {{ kk }}: {{ vv }}
+                    panel(header="Metadados")
+                      div(v-for='(vv,kk) in r.metadata') 
+                        strong {{ kk }}: {{ vv }}

@@ -12,41 +12,49 @@ fetchRoutes = ->
                 "signup",
                 "resetPassword",
                 "confirm",
-                "formularios",
-                "formularios_novo",
-                "formularios_uuid_stats",
-                "formularios_uuid_questions",
-                "formularios_uuid_delete",
-                "formularios_uuid_responses",
-                "formularios_uuid_responses_token",
-                "estudantes",
-                "boletos",
-                "boletos_id",
                 "conta",
-                "conta_telefone_vincular"
+                "formularios",
+                "importarXLS",
+                "estudantes"
+                "cursos"
+                "matriculas"
+                "boletos"
         ]
                 log "#{e}"
                 a.push Vue.http.get("/templates/#{e}") 
         Promise.all(a).then (results) ->
                 props = ['autorizado', 'user']
                 a = for r in results
-                        r.data.component.props=props
-                        r.data.props = true
-                        if r.data.name is 'conta'
-                                r.data.component.methods =
-                                        logout: -> this.$emit('logout')
-                        if r.data.name is 'estudantes'
-                                r.data.component.props.push 'estudantes'
-                                r.data.component.methods =
-                                        importarXLS: importarXLS
+                        if typeof r.data is 'object'
+                                r.data.component.props=props
+                                r.data.props = true
+                                
+                                if r.data.name is 'conta'
+                                        r.data.component.methods =
+                                                logout: -> this.$emit('logout')
+        
+                                for e in ['formularios', 'estudantes', 'cursos', 'matriculas', 'boletos']
+                                        if r.data.name is e
+                                                r.data.component.props.push r.data.name
+                                                r.data.component.props.push "modelos"
                                                 
-                                        
-                        r.data 
+                                                r.data.component.components = 
+                                                        accordion: VueStrap.accordion
+                                                        panel: VueStrap.panel
+                                                        
+                                                r.data.component.methods =
+                                                        importarXLS: importarXLS
+                                                        getDocumentValue: (id) -> document.getElementById(id).value
+                                        if r.data.name is 'formularios'
+                                                r.data.component.methods['onFormularios']= onFormularios
+                                r.data
+                        else
+                                log r.data
+                        
                 Vue.use(VueRouter)
                 new VueRouter
                         history: true,
                         linkActiveClass: 'active-class'
                         routes: a
-                        props
                
         

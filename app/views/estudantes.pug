@@ -1,31 +1,33 @@
-section.centralize-area(v-if="!estudantes")
+section
   br
   br
   br
-  h1 Importe um arquivo XLS 
-  p Este arquivo deve conter dados formatados de acordo com a seguinte 
-    <router-link to ="/estudantes/especificacao"> especificação</router-link>
-  br
-  br
-  br
-  div
-    label(for="importarXLS")
-      img(src="/assets/images/excel.png")
-    input#importarXLS(style="display:none" type="file" name="xlsfile" v-on:change='importarXLS')
-section.centralize-area(v-else)
-  br
-  br
-  br
-  h1 Estudantes
-  br
-  br
-  br
-  table.table.table-striped.table-hover
-      thead
-        tr
-          th Nome
-          th Email  
-      tbody
-        tr(v-for="e in estudantes") 
-          td {{ e.Nome }}
-          td {{ e['e-mail'] }}
+  div.container
+    h1 Alumni
+    accordion(type="warning")
+      panel(header='Novo alumni')
+        form
+          fieldset
+            div.form-group(v-for="(v,k) in modelos.estudantes")
+              label.control-label(:for="k") {{ v.label }}
+              br
+              div
+                input.form-control(:type="v.type" :id="k" :placeholder="v.placeholder")
+    accordion(type="success")
+      panel(header="Importart Excel") 
+        input(type="file" :name='estudantes' v-on:change='importarXLS')
+        form
+          fieldset
+            div.form-group(v-for="(v,k) in modelos.xls.estudantes")
+              label.control-label(:for="k") {{ v.label }}
+              br
+              div
+                input.form-control(:type="v.type" :id="k" :placeholder="v.placeholder")
+
+  div.container  
+    accordion(type="info" :one-at-time='true')  
+      panel(v-for="(v,k) in estudantes" :data="v" :key="k" :header="v['Nome ']+' '+v['Sobrenome ']")
+        strong(v-for="(val,key) in v")
+          u(:id="key") {{ key }}: {{ val }}
+          <router-link :to="{path: '/estudantes/'+k+'/editar?q='+key}"> Atualizar</router-link>
+          br

@@ -38,3 +38,16 @@ addUser = ->
                 @user.tel = ''
                 
 removeUser = (user) -> firebase.database().ref('users').child(user['.key']).remove()
+
+onFormularios = (event) ->
+        query = ["/typeform/data-api?completed=true"]
+        uuid = document.getElementById('input_typeform_code').value
+        query.push "uuid=#{uuid}"
+        query = query.join('&')
+        self = this
+        this.$http.get(query)
+                .then (result) ->
+                        firebase.database().ref("users/#{firebase.auth().currentUser.uid}/formularios").push(uuid)
+                        firebase.database().ref("formularios/#{uuid}").set(result.data)
+                .then self.$options.computed.formularios
+                        

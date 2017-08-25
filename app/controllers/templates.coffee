@@ -45,6 +45,19 @@ AppManager::templates = ->
                                                 # GET /#/estudantes
                                                 else if p.match /^estudantes$/
                                                         result.path = "/estudantes"
+                                                        
+                                                # GET /#/estudantes/:id
+                                                else if p.match /^estudantes_id$/
+                                                        result.path = "/estudantes/:id"
+
+                                                # GET /#/cursos
+                                                else if p.match /^cursos$/
+                                                        result.path = "/cursos"
+                                                        
+                                                # GET /#/estudantes/:id
+                                                else if p.match /^cursos_id$/
+                                                        result.path = "/cursos/:id"
+                                                        
                                                 else 
                                                         result.path = "/#{p}"
                                                 resolve result

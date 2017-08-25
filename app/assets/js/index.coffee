@@ -2,6 +2,6 @@
 #= require menu
 #= require routes
 #= require config
-#= require estudantes
+#= require excel
 #= require firebase
 #= require boot

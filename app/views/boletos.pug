@@ -1,34 +1,24 @@
-section.centralize-area
-  div
-    br
-    br
-    br
-    h2 Inspecione um boleto
-    br
-    br
-    br 
-    table.table.table-striped.table-hover(ng-repeat="(k,v) in boletos") 
-      thead 
-        tr
-          th Formulário
-          th N  
-          th ID
-          th Status
-          th Tipo
-          th Email de cobrança
-      tbody
-        tr(ng-repeat="(q,w) in v") 
-          td {{ k }}
-          td {{ q }}  
-          td 
-            a(href="/#!/boletos/{{ w.invoice }}") {{ w.invoice }}
-          td {{ w.status }} 
-          td Paypal
-          td 
-            a(href="/#!/formularios/{{ k }}/responses/{{ w.token }}") {{ w.email }} 
-      br
-      br
-      br
-          
+section
+  br
+  br
+  br
+  div.container
+    h1 Boletos
+    accordion(type="success")
+      panel(header="Importart Excel") 
+        form
+          fieldset
+            div.form-group(v-for="(v,k) in modelos.xls.boletos")
+              label.control-label(:for="k") {{ v.label }}
+              br
+              div
+                input.form-control(:type="v.type" :id="k" :placeholder="v.placeholder")
+        button.btn-btn-default(type="file" :name='boletos' v-on:change='importarXLS')
 
-
+  div.container  
+    accordion(type="info" :one-at-time='true')  
+      panel(v-for="(v,k) in boletos" :data="v" :key="k" :header="k")
+        strong(v-for="(val,key) in v")
+          u(:id="key") {{ key }}: {{ val }}
+          <router-link :to="{path: '/boletos/'+k+'/editar?q='+key}"> Atualizar</router-link>
+          br

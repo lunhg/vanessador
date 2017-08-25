@@ -67,7 +67,7 @@ AppManager = (function() {
     });
     this.app.set('view engine', 'pug');
     this.app.set('assets path', [path.join(__dirname, '..', 'app/assets/fonts'), path.join(__dirname, '..', 'app/assets/doc'), path.join(__dirname, '..', 'app/assets/img'), path.join(__dirname, '..', 'app/assets/css'), path.join(__dirname, '..', 'app/assets/js'), path.join(__dirname, '..', 'app/assets/'), path.join(__dirname, '..', 'app/assets/favicon.ico')]);
-    this.app.set('port', parseInt(process.env.PORT || '3000'));
+    this.app.set('port', parseInt(process.env.PORT || '3001'));
   }
 
   return AppManager;
@@ -377,6 +377,12 @@ AppManager.prototype.templates = function() {
               result.path = "/" + r[0] + "/:option/:action";
             } else if (p.match(/^estudantes$/)) {
               result.path = "/estudantes";
+            } else if (p.match(/^estudantes_id$/)) {
+              result.path = "/estudantes/:id";
+            } else if (p.match(/^cursos$/)) {
+              result.path = "/cursos";
+            } else if (p.match(/^cursos_id$/)) {
+              result.path = "/cursos/:id";
             } else {
               result.path = "/" + p;
             }
