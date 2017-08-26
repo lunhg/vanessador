@@ -46,6 +46,8 @@ fetchRoutes = ->
                                                         importarXLS: importarXLS
                                                         getDocumentValue: (id) -> document.getElementById(id).value
                                         if r.data.name is 'formularios'
+                                                r.data.component.props.push 'questions'
+                                                r.data.component.props.push 'responses'
                                                 r.data.component.methods['onFormularios']= onFormularios
                                 r.data
                         else

@@ -8,7 +8,7 @@ makeApp = (router) ->
 
                 # O componente `vanessador-menu` é definido no arquivo `app/assets/js/menu`
                 # enquanto o componente `router-view` é definido no arquivo precedente
-                template: "<div><vanessador-menu :autorizado='autorizado' :user='user'></vanessador-menu><router-view :autorizado='autorizado' :user='user' :estudantes='estudantes' :cursos='cursos' :formularios='formularios' :boletos='boletos' :modelos='modelos'></router-view></div>"
+                template: "<div><vanessador-menu :autorizado='autorizado' :user='user'></vanessador-menu><router-view :autorizado='autorizado' :user='user' :estudantes='estudantes' :cursos='cursos' :formularios='formularios' :boletos='boletos' :modelos='modelos' :questions='questions' :responses='responses'></router-view></div>"
 
                 # Função executada quando o aplicativo Vue.js for criado.
                 beforeCreate: ->
@@ -29,7 +29,6 @@ makeApp = (router) ->
                                 email:false
                                 photoURL:false
                                 telephone:false
-                        
                         # # Modelos de formularios
                         modelos:
                                 xls:
@@ -90,9 +89,8 @@ makeApp = (router) ->
                                         input_fim_matricula: {'type':'date', 'label': 'Data de término'}
 
                                 formularios:
-                                        input_typeform_code: {'type':'text', 'placeholder':'JZavQ', 'label': 'Código typeform'}
+                                        input_typeform_code: {'type':'text', 'placeholder':'JZavQC', 'label': 'Código typeform'}
                                         
-                                        input_url_user: {'type':'text', 'placeholder': 'lunhg', 'label': 'Usuário typeform'},
                 # # Watch (variaveis)
                 # Em caso de mudanças nas variáveis e rotas,
                 # aplique as transformações específicas
@@ -116,9 +114,17 @@ makeApp = (router) ->
 
                         formularios: ->
                                 new Promise (resolve, reject) ->
-                                        firebase.database().ref('formularios/').once 'value', (snapshot) ->
-                                                resolve snapshot.val()
-
+                                        db = firebase.database()
+                                        ref1 = "users/#{firebase.auth().currentUser.uid}/formularios"
+                                        db.ref(ref1).once 'value', (f) ->
+                                                resolve f.val()
+                                                        
+                        responses: ->
+                                new Promise (resolve, reject) ->
+                                        Vue.nextTick ->
+                                                ref1 = "responses/"
+                                                firebase.database().ref(ref1).once 'value', (r) ->
+                                                        resolve r.val()
                         matriculas: ->
                                 new Promise (resolve, reject) ->
                                         firebase.database().ref('matriculas/').once 'value', (snapshot) ->
@@ -129,8 +135,12 @@ makeApp = (router) ->
                                         firebase.database().ref('boletos/').once 'value', (snapshot) ->
                                                 resolve snapshot.val()
 
-
-                        # Métodos gerais
+                        questions: ->
+                                new Promise (resolve, reject) ->
+                                        Vue.nextTick ->
+                                                ref1 = "questions/"
+                                                firebase.database().ref(ref1).once 'value', (q) ->
+                                                        resolve q.val()
                 methods:
                         login: login
                         logout: logout

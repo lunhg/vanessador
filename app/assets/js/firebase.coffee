@@ -48,6 +48,19 @@ onFormularios = (event) ->
         this.$http.get(query)
                 .then (result) ->
                         firebase.database().ref("users/#{firebase.auth().currentUser.uid}/formularios").push(uuid)
-                        firebase.database().ref("formularios/#{uuid}").set(result.data)
+                        for r in result.data.responses
+                                firebase.database().ref("responses/#{uuid}/#{r.token}").set(metdata:r.metadata,answers:r.answers,completed:if r.completed is '1' then true else false)
+
+                        for q in result.data.questions
+                                firebase.database().ref("questions/#{uuid}/#{q.id}").set(q.question)
                 .then self.$options.computed.formularios
-                        
+
+
+onMatriculas = (event) ->
+        o = {}
+        for e in ['typeform_code', 'data_inicio_valor1', 'data_inicio_valor2', 'data_inicio_valor3', 'link_valor1', 'link_valor2', 'link_valor3', 'data_inicio_matricula', 'data_fim_matricula']
+                o[e] = document.getElementById('input_'+e).value
+
+        id= document.getElementById('input_id_curso').value
+        firebase.database().ref("users/#{firebase.auth().currentUser.uid}/matriculas").push(id)
+        firebase.database().ref("matriculas/#{o['id_curso']}/").push o

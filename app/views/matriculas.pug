@@ -13,6 +13,8 @@ section
               br
               div
                 input.form-control(:type="v.type" :id="k" :placeholder="v.placeholder")
+        button.btn.btn-success(v-on:click="onMatriculas") Adicionar matrícula
+
     accordion(type="success")
       panel(header="Importart Excel") 
         input(type="file" :name='matriculas' v-on:change='importarXLS')

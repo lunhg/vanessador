@@ -25,22 +25,23 @@ section
               div
                 input.form-control(:type="v.type" :id="k" :placeholder="v.placeholder")
         input(type="file" :name='formularios' v-on:change='importarXLS')
-  div.container  
-    accordion(type="info" :one-at-time='true')  
-      panel(v-for="(v,k) in formularios" :data="v" :key="k" :header="k")
-        strong Http Status: {{ v.status }}
-        accordion(type="default" :one-at-time='true')
-          panel(header="Questões")
-            span(v-for='q in v.questions' :id="k+q.question") {{ q.question }}
-          panel(header="Respostas")
-            div(v-for='r in v.responses') 
-              strong Completado: {{ r.completed === '1' ? 'Sim' : 'Não' }} 
-              accordion(type="default" :one-at-time='true')
-                panel(header="Detalhes")
-                  accordion(type="default" :one-at-time='true')
-                    panel(header="Campos")
-                      div(v-for='(vv,kk) in r.answers') 
-                        strong {{ kk }}: {{ vv }}
-                    panel(header="Metadados")
-                      div(v-for='(vv,kk) in r.metadata') 
-                        strong {{ kk }}: {{ vv }}
+
+  div.container
+    div(v-for="(v,k) in formularios" :data="v" :key="k" :header="v")
+      accordion(type="info" :one-at-time='true')  
+        panel(:header="v")
+          accordion(type="warning" :one-at-time='true')
+            panel(header="Respostas enviadas")    
+              div(v-for='(r,q) in responses[v]')
+                accordion(type="success" :one-at-time='true')
+                  panel(:header="q")
+                    div(v-for='(a,c) in responses[v][q]') 
+                      accordion(type="info")
+                        panel(:header='c')
+                          div(v-for='(aa,cc) in a')
+                            p {{ cc }}: {{ aa }}
+
+          accordion(type="warning" :one-at-time='true')
+            panel(header="Questões") 
+              div(v-for='(r,q) in questions[v]')
+                p {{ q }}: {{ r }}
