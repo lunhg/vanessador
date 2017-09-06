@@ -3,20 +3,19 @@ describe chalk.green('Vanessador app'), ->
         agent = supertest.agent("http://localhost:3001")
         payment_id = ""
                                         
-        it "should POST /pagseguro/planos/requerer", ->
+        it "should POST /pagseguro/planos/requerer\n(Permite criar um plano de pagamento recorrente que concentra todas as configurações de pagamento).", ->
                 new Promise (resolve, reject) ->
                         setTimeout ->
                                 proxy = "https://ywsjzepx.p19.weaved.com/"
                                 agent.post("/pagseguro/planos/requerer")
-                                        .query(name: "Teste de cobrança automática")
+                                        .query(name: "Boleto Teste")
                                         .query(amount:'10.00')
-                                        .query(redirect_url:proxy+"#!/boleto/pagseguro/redirect")
-                                        .query(review_url:proxy+"#!/boleto/pagseguro/review")
+                                        .query(redirect_url:proxy+"/#/boleto/pagseguro/redirect")
+                                        .query(review_url:proxy+"#/boleto/pagseguro/review")
                                         .query(details:"Plano de cobrança teste")
                                         .expect 200
                                         .expect (res) ->
                                                 console.log res.body
-                                                
                                                 payment_id = res.body["preApprovalRequest"]["code"][0]
                                         .then(resolve)
                                         .catch(reject)

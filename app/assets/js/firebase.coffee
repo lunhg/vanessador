@@ -49,18 +49,39 @@ onFormularios = (event) ->
                 .then (result) ->
                         firebase.database().ref("users/#{firebase.auth().currentUser.uid}/formularios").push(uuid)
                         for r in result.data.responses
-                                firebase.database().ref("responses/#{uuid}/#{r.token}").set(metdata:r.metadata,answers:r.answers,completed:if r.completed is '1' then true else false)
+                                firebase.database()
+                                        .ref("responses/#{uuid}/#{r.token}")
+                                        .set(metdata:r.metadata,answers:r.answers,completed:if r.completed is '1' then true else false)
 
                         for q in result.data.questions
-                                firebase.database().ref("questions/#{uuid}/#{q.id}").set(q.question)
+                                firebase.database()
+                                        .ref("questions/#{uuid}/#{q.id}")
+                                        .set(q.question)
+
+                        db = firebase.database()
+                        ref1 = "users/#{}/formularios"
+                        firebase.database().ref(ref1).once 'value', (f) ->
+                                resolve f.val()
+                .then 
                 .then self.$options.computed.formularios
 
 
+onTurmas = (event) ->
+        o = {}
+        for e in ['input_id_curso', 'typeform_code', 'data_inicio_valor1', 'data_inicio_valor2', 'data_inicio_valor3', 'link_valor1', 'link_valor2', 'link_valor3', 'inicio_matricula', 'fim_matricula']
+                el = document.getElementById 'input_'+e
+                o[e] = el.value
+                
+
+        firebase.database().ref("users/#{firebase.auth().currentUser.uid}/turmas").push(o['input_id_curso'])
+        firebase.database().ref("turmas/#{id}/").push o
+
 onMatriculas = (event) ->
         o = {}
-        for e in ['typeform_code', 'data_inicio_valor1', 'data_inicio_valor2', 'data_inicio_valor3', 'link_valor1', 'link_valor2', 'link_valor3', 'data_inicio_matricula', 'data_fim_matricula']
-                o[e] = document.getElementById('input_'+e).value
+        for e in ['input_fk_turma', 'input_fk_estudante', 'input_matriculado', 'input_certificado' ]
+                el = document.getElementById 'input_'+e
+                o[e] = el.value
+                
 
-        id= document.getElementById('input_id_curso').value
-        firebase.database().ref("users/#{firebase.auth().currentUser.uid}/matriculas").push(id)
-        firebase.database().ref("matriculas/#{o['id_curso']}/").push o
+        firebase.database().ref("users/#{firebase.auth().currentUser.uid}/matriculas").push(o['input_fk_turma'])
+        firebase.database().ref("matriculas/#{id}/").push o

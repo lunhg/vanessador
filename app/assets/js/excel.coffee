@@ -8,7 +8,10 @@ onCells = (c, opt) ->
                                 if c[r+i] is undefined
                                         o[key] = "UNDEFINED"
                                 else
-                                        o[key] = c[r+i].v
+                                        if key is 'ID do Curso'
+                                                o[key] = uuid.v4()
+                                        else
+                                                o[key] = c[r+i].v
                         o
                 resolve a
                         

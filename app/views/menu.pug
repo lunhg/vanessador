@@ -1,57 +1,97 @@
-nav.navbar.navbar-default.navbar-fixed-top(role="navigation")
-  div.container
-    div.navbar-header
-      button.navbar-toggle(type="button" data-toggle="collapse" data-target="#navCollapse")
-        img(width="24" height="24" src="/assets/images/vanessadora.png")
+div.row
+  div.side-menu
+    nav.navbar.navbar-default(role='navigation')
+      div.navbar-header
+        div.brand-wrapper
+          button.navbar-toggle.collapsed(type='button', data-toggle='collapse', data-target='#navbar', aria-expanded='false', aria-controls='navbar')
+            span.sr-only Toggle navigation
+            span.icon-bar
+            span.icon-bar
+            span.icon-bar
+          div.brand-name-wrapper
+            <router-link class='' :to="{name:'_index'}">
+              span.navbar-brand Vanessador
+            </router-link> 
+          
+          // Main menu
+          div.side-menu-container
+            ul.nav.navbar-nav(v-if="!$parent.autorizado")
+              li#auth-menu
+                a.nav-link.active(href="https://www.github.com/lunhg/vanessador") Contribua
+              li
+                <router-link :to="{name:'login'}">Login</router-link>
     
-    div.collapse.navbar-collapse.navbar-left
-      ul.nav.navbar-nav
-        li
-          <router-link :to="{name:'_index'}">Vanessador</router-link>
+            ul.nav.navbar-nav(v-else)
+              li#conta-menu
+                div
+                  br
+                  <router-link :to="{path:'/conta'}">
+                    img(v-if="user.photoURL" :src="user.photoURL" width='28' height='28')
+                    img(v-else src="/assets/images/vanessadora.png" width='28' height='28')
+                  </router-link> 
+                  span Conta
+                  br
 
-    div#navCollapse.collapse.navbar-collapse.navbar-right
-      ul.nav.navbar-nav(v-if="!$parent.autorizado")
-        li#auth-menu
-          a.nav-link.active(href="https://www.github.com/lunhg/vanessador") Contribua
-        li
-          <router-link :to="{name:'login'}">Login</router-link>  
-        li
-          <router-link :to="{name:'signup'}">Cadastre-se</router-link>  
-      
-      ul.nav.navbar-nav(v-else)
-        li#boletos-menu
-          <router-link to="/boletos">
-            img(src='/assets/images/boleto.png' width='28' height='28' rel='nofollow' alt='qr code')
+              li#estudantes-menu
+                div
+                  br
+                  <router-link to="/estudantes">
+                    img(src="/assets/images/estudante.png" width='32' height='32')
+                  </router-link>
+                  span Estudantes
+                  br
+
+              li#cursos-menu
+                div
+                  br
+                  <router-link to="/cursos">
+                    img(src="/assets/images/cursos.png" width='34' height='34')
+                  </router-link>
+                  span Cursos
+                  br
+
+              li#turmas-menu
+                div
+                  br
+                  <router-link to="/turmas">
+                    img(src="/assets/images/turmas.png" width='34' height='34')
+                  </router-link>
+                  span Turmas
+                  br
+
+              li#matriculas-menu
+                div
+                  br
+                  <router-link to="/matriculas">
+                    img(src="/assets/images/matriculas.png" width='28' height='28')
+                  </router-link>
+                  span Matrículas
+                  br
+
+              li#formularios-menu
+                div
+                  br
+                  <router-link :to="{path:'/formularios'}">
+                    img(src="/assets/images/formularios.png" width='28' height='28')    
+                  </router-link>
+                  span Formulários
+                  br
+
+              li#boletos-menu
+                div
+                  br
+                  <router-link to="/boletos">    
+                    img(src='/assets/images/boleto.png' width='28' height='28' rel='nofollow')      
+                  </router-link> 
+                  span Boletos
+                  br
+
               
-          </router-link> 
-          
-        li#formularios-menu
-          <router-link :to="{path:'/formularios'}">
-            img(src="/assets/images/formularios.png" width="28" height="28")    
-          </router-link>
-
-        li#estudantes-menu
-          <router-link to="/estudantes">
-            img(src="/assets/images/estudante.png" width="28" height="28")
-          </router-link>
-          
-        li#cursos-menu
-          <router-link to="/cursos">
-            img(src="/assets/images/cursos.png" width="28" height="28")
-          </router-link>
-
-        li#matriculas-menu
-          <router-link to="/matriculas">
-            img(src="/assets/images/porquinho.png" width="28" height="28")
-          </router-link>
-
-        li#conta-menu
-          <router-link :to="{path:'/conta'}">
-            img(v-if="user.photoURL" :src="user.photoURL" width='28' height='28')
-            img(v-else src="/assets/images/vanessadora.png" width='28' height='28')
-          </router-link> 
-
               
+
+             
+
+
 
 
 

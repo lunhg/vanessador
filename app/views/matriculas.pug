@@ -1,23 +1,24 @@
-section
+div.jumbotron(v-if='$parent.autorizado' style='background:transparent !important')
+  br 
   br
   br
+  h2 Matrículas
   br
-  div.container
-    h1 Matriculas
-    accordion(type="warning")
-      panel(header='Nova matricula')
+  br
+  div.container    
+    accordion(type="warning" )
+      panel(header='Novo Formulario')
         form
           fieldset
             div.form-group(v-for="(v,k) in modelos.matriculas")
-              label.control-label(:for="k") {{ v.label }}
+              label.control-label.input-sm(:for="k") {{ v.label }}
               br
               div
-                input.form-control(:type="v.type" :id="k" :placeholder="v.placeholder")
-        button.btn.btn-success(v-on:click="onMatriculas") Adicionar matrícula
+                input.form-control.input-sm(:type="v.type" :id="k" :placeholder="v.placeholder")
+        button.btn.btn-success(v-on:click="onMatriculas") Adicionar formulário
 
     accordion(type="success")
       panel(header="Importart Excel") 
-        input(type="file" :name='matriculas' v-on:change='importarXLS')
         form
           fieldset
             div.form-group(v-for="(v,k) in modelos.xls.matriculas")
@@ -25,11 +26,24 @@ section
               br
               div
                 input.form-control(:type="v.type" :id="k" :placeholder="v.placeholder")
+        input(type="file" :name='matriculas' v-on:change='importarXLS')
 
-  div.container  
-    accordion(type="info" :one-at-time='true')  
-      panel(v-for="(v,k) in matriculas" :data="v" :key="k" :header="k")
-        strong(v-for="(val,key) in v")
-          u(:id="key") {{ key }}: {{ val }}
-          <router-link :to="{path: '/matriculas/'+k+'/editar?q='+key}"> Atualizar</router-link>
-          br
+  div.container
+    br
+    br
+    h2 Lista de matrículas
+    br
+    br
+    div(v-for="(v,k) in matriculas" :data="v" :key="k" :header="v")
+      accordion(type="info" :one-at-time='true')  
+        panel(:header="v")
+          accordion(type="warning" :one-at-time='true')
+            panel(header="Matrículas")    
+              div(v-for='(r,q) in matriculas[v]')
+                accordion(type="success" :one-at-time='true')
+                  panel(:header="q")
+
+div(v-else)
+  h1 401
+  p Não Autorizado
+  img(src='https://i.pinimg.com/originals/82/62/90/826290d0a78a5d464815e9112abf788a.jpg') 

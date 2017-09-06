@@ -22,19 +22,19 @@ describe(chalk.green('Vanessador app'), function() {
   var agent, payment_id;
   agent = supertest.agent("http://localhost:3001");
   payment_id = "";
-  it("should POST /pagseguro/planos/requerer", function() {
+  it("should POST /pagseguro/planos/requerer\n(Permite criar um plano de pagamento recorrente que concentra todas as configurações de pagamento).", function() {
     return new Promise(function(resolve, reject) {
       return setTimeout(function() {
         var proxy;
         proxy = "https://ywsjzepx.p19.weaved.com/";
         return agent.post("/pagseguro/planos/requerer").query({
-          name: "Teste de cobrança automática"
+          name: "Boleto Teste"
         }).query({
           amount: '10.00'
         }).query({
-          redirect_url: proxy + "#!/boleto/pagseguro/redirect"
+          redirect_url: proxy + "/#/boleto/pagseguro/redirect"
         }).query({
-          review_url: proxy + "#!/boleto/pagseguro/review"
+          review_url: proxy + "#/boleto/pagseguro/review"
         }).query({
           details: "Plano de cobrança teste"
         }).expect(200).expect(function(res) {

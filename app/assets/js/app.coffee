@@ -8,7 +8,14 @@ makeApp = (router) ->
 
                 # O componente `vanessador-menu` é definido no arquivo `app/assets/js/menu`
                 # enquanto o componente `router-view` é definido no arquivo precedente
-                template: "<div><vanessador-menu :autorizado='autorizado' :user='user'></vanessador-menu><router-view :autorizado='autorizado' :user='user' :estudantes='estudantes' :cursos='cursos' :formularios='formularios' :boletos='boletos' :modelos='modelos' :questions='questions' :responses='responses'></router-view></div>"
+                template: """<div>
+  <vanessador-menu :autorizado='autorizado' :user='user'></vanessador-menu>
+  <div class='container-fluid'>
+    <div class='side-body'>
+      <router-view :autorizado='autorizado' :user='user' :estudantes='estudantes' :cursos='cursos' :formularios='formularios' :boletos='boletos' :modelos='modelos' :questions='questions' :responses='responses'></router-view>
+    </div>
+  </div>
+</div>"""
 
                 # Função executada quando o aplicativo Vue.js for criado.
                 beforeCreate: ->
@@ -29,7 +36,6 @@ makeApp = (router) ->
                                 email:false
                                 photoURL:false
                                 telephone:false
-                        # # Modelos de formularios
                         modelos:
                                 xls:
                                         cursos:
@@ -41,7 +47,7 @@ makeApp = (router) ->
                                                 input_min: {'type':'text', 'placeholder':'2', 'label': 'Linha inicial'},
                                                 input_max: {'type':'text', 'placeholder':'726', 'label': 'Linha final'}
 
-                                        matriculas:
+                                        turmas:
                                                 input_list: {'type':'text', 'placeholder':'ABCDE', 'label': 'Colunas'},
                                                 input_min: {'type':'text', 'placeholder':'2', 'label': 'Linha inicial'},
                                                 input_max: {'type':'text', 'placeholder':'749', 'label': 'Linha final'}
@@ -54,6 +60,11 @@ makeApp = (router) ->
                                                 input_list: {'type':'text', 'placeholder':'AB', 'label': 'Colunas'},
                                                 input_min: {'type':'text', 'placeholder':'2', 'label': 'Linha inicial'},
                                                 input_max: {'type':'text', 'placeholder':'3', 'label': 'Linha final'}
+                                        matriculas:
+                                                input_list: {'type':'text', 'placeholder':'AB', 'label': 'Colunas'},
+                                                input_min: {'type':'text', 'placeholder':'2', 'label': 'Linha inicial'},
+                                                input_max: {'type':'text', 'placeholder':'3', 'label': 'Linha final'}
+
 
                                 estudantes:
                                         input_nome: {'type':'text', 'placeholder':'nome', 'label': 'Nome'},
@@ -75,21 +86,29 @@ makeApp = (router) ->
                                         input_data_inicio: {'type':'date', 'label': 'Data de início'}
                                         input_data_termino: {'type':'date', 'label': 'Data de término'}
 
-                                matriculas:
+                                turmas:
                                         input_id_curso: {'type':'text', 'placeholder':'84fgba23...', 'label': 'ID do curso'}
-                                        input_typeform_code: {'type':'text', 'placeholder':'JZavQ', 'Código typeform': 'Código typeform'}
+                                        input_typeform_code: {'type':'text', 'placeholder':'JZavQ', 'label': 'Código typeform'}
                                         input_data_inicio_valor1: {'type':'date', 'label': 'Data de início 1'}
                                         input_data_inicio_valor2: {'type':'date', 'label': 'Data de início 2'}
+
                                         input_data_inicio_valor3: {'type':'date', 'label': 'Data de início 3'}
                                         input_link_valor1: {'type':'number', 'placeholder': '200', 'label': 'Valor 1'},
                                         input_link_valor2: {'type':'number', 'placeholder': '200', 'label': 'Valor 2'},
                                         input_link_valor3: {'type':'number', 'placeholder': '200', 'label': 'Valor 3'},
 
-                                        input_inicio_matricula: {'type':'date', 'label': 'Data de término'}
-                                        input_fim_matricula: {'type':'date', 'label': 'Data de término'}
+                                        input_inicio_matricula: {'type':'date', 'label': 'Data de início de matrícula'}
+                                        input_fim_matricula: {'type':'date', 'label': 'Data de término de matrícula'}
 
                                 formularios:
                                         input_typeform_code: {'type':'text', 'placeholder':'JZavQC', 'label': 'Código typeform'}
+
+                                matriculas:
+                                        input_fk_turma: {'type':'text', 'label':'ID turma'}
+                                        input_fk_estudante: {'type':'text', 'label':'ID estudante'}
+                                        input_matriculado: {'type':'checkbox', 'label':'Matriculado?'}
+                                        input_certificado: {'type':'checkbox', 'label':'Certificado?'}
+                                        
                                         
                 # # Watch (variaveis)
                 # Em caso de mudanças nas variáveis e rotas,
@@ -114,20 +133,24 @@ makeApp = (router) ->
 
                         formularios: ->
                                 new Promise (resolve, reject) ->
-                                        db = firebase.database()
-                                        ref1 = "users/#{firebase.auth().currentUser.uid}/formularios"
-                                        db.ref(ref1).once 'value', (f) ->
-                                                resolve f.val()
-                                                        
+                                        Vue.nextTick ->
+                                                if firebase.auth().currentUser.uid
+                                                        db = firebase.database()
+                                                        currentUser = firebase.auth().currentUser
+                                                        ref1 = "users/#{currentUser.uuid}/formularios"
+                                                        db.ref(ref1).on 'value', (f) ->
+                                                                resolve f.val()
+                                                else
+                                                        resolve false
                         responses: ->
                                 new Promise (resolve, reject) ->
                                         Vue.nextTick ->
                                                 ref1 = "responses/"
                                                 firebase.database().ref(ref1).once 'value', (r) ->
                                                         resolve r.val()
-                        matriculas: ->
+                        turmas: ->
                                 new Promise (resolve, reject) ->
-                                        firebase.database().ref('matriculas/').once 'value', (snapshot) ->
+                                        firebase.database().ref('turmas/').once 'value', (snapshot) ->
                                                 resolve snapshot.val()
 
                         boletos: ->
@@ -154,6 +177,5 @@ log = (msg) ->
         p = loader.children[9]
         console.log msg
         # Give to main page a percept of fluxus
-        setTimeout ->
-                p.innerHTML = msg
-        , 500
+        fluxus = -> p.innerHTML = msg
+        setTimeout fluxus, 750

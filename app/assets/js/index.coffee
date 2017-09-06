@@ -1,7 +1,7 @@
 #= require app
 #= require menu
+#= require firebase
 #= require routes
 #= require config
 #= require excel
-#= require firebase
 #= require boot

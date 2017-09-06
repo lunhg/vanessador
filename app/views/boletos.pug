@@ -1,9 +1,22 @@
-section
+div.jumbotron(v-if='$parent.autorizado' style='background:transparent !important')
   br
+  br
+  br
+  h2 Boletos
   br
   br
   div.container
-    h1 Boletos
+    accordion(type="warning")
+      panel(header='Novo Boleto')
+        form
+          fieldset
+            div.form-group(v-for="(v,k) in modelos.boletos")
+              label.control-label(:for="k") {{ v.label }}
+              br
+              div
+                input.form-control.input-sm(:type="v.type" :id="k" :placeholder="v.placeholder")
+        button.btn.btn-success.input.sm(v-on:click="onBoletos") Adicionar boleto
+  
     accordion(type="success")
       panel(header="Importart Excel") 
         form
@@ -13,12 +26,24 @@ section
               br
               div
                 input.form-control(:type="v.type" :id="k" :placeholder="v.placeholder")
-        button.btn-btn-default(type="file" :name='boletos' v-on:change='importarXLS')
+        input(type="file" :name='boletos' v-on:change='importarXLS')
 
-  div.container  
-    accordion(type="info" :one-at-time='true')  
-      panel(v-for="(v,k) in boletos" :data="v" :key="k" :header="k")
-        strong(v-for="(val,key) in v")
-          u(:id="key") {{ key }}: {{ val }}
-          <router-link :to="{path: '/boletos/'+k+'/editar?q='+key}"> Atualizar</router-link>
-          br
+  div.container
+    br
+    br
+    h2 Lista de Boletos
+    br
+    br
+    div(v-for="(v,k) in boletos" :data="v" :key="k" :header="v")
+      accordion(type="info" :one-at-time='true')  
+        panel(:header="v")
+          accordion(type="warning" :one-at-time='true')
+            panel(header="Boleto")    
+              div(v-for='(r,q) in boletos[v]')
+                accordion(type="success" :one-at-time='true')
+                  panel(:header="q")
+
+div(v-else)
+  h1 401
+  p Não Autorizado
+  img(src='https://i.pinimg.com/originals/82/62/90/826290d0a78a5d464815e9112abf788a.jpg') 

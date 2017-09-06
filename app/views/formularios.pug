@@ -1,18 +1,20 @@
-section
+div.jumbotron(v-if='$parent.autorizado' style='background:transparent !important')
+  br 
   br
   br
+  h2 Formulários
   br
-  div.container
-    h1 Formularios Typeform
-    accordion(type="warning")
+  br
+  div.container    
+    accordion(type="warning" )
       panel(header='Novo Formulario')
         form
           fieldset
             div.form-group(v-for="(v,k) in modelos.formularios")
-              label.control-label(:for="k") {{ v.label }}
+              label.control-label.input-sm(:for="k") {{ v.label }}
               br
               div
-                input.form-control(:type="v.type" :id="k" :placeholder="v.placeholder")
+                input.form-control.input-sm(:type="v.type" :id="k" :placeholder="v.placeholder")
         button.btn.btn-success(v-on:click="onFormularios") Adicionar formulário
 
     accordion(type="success")
@@ -27,6 +29,11 @@ section
         input(type="file" :name='formularios' v-on:change='importarXLS')
 
   div.container
+    br
+    br
+    h2 Lista de formulários
+    br
+    br
     div(v-for="(v,k) in formularios" :data="v" :key="k" :header="v")
       accordion(type="info" :one-at-time='true')  
         panel(:header="v")
@@ -45,3 +52,8 @@ section
             panel(header="Questões") 
               div(v-for='(r,q) in questions[v]')
                 p {{ q }}: {{ r }}
+
+div(v-else)
+  h1 401
+  p Não Autorizado
+  img(src='https://i.pinimg.com/originals/82/62/90/826290d0a78a5d464815e9112abf788a.jpg') 
