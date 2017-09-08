@@ -74,7 +74,8 @@ div.row
                   <router-link :to="{path:'/formularios'}">
                     img(src="/assets/images/formularios.png" width='28' height='28')    
                   </router-link>
-                  span Formulários
+                  span Formulários 
+                    small Pré-matrículas
                   br
 
               li#boletos-menu
@@ -86,10 +87,19 @@ div.row
                   span Boletos
                   br
 
-              
-              
+              li#signout-menu
+                div
+                  br
+                  <router-link to="/login">    
+                    img(v-on:click.prevent="$parent.logout" src='/assets/images/logout.png' width='28' height='28' rel='nofollow')      
+                  </router-link> 
+                  span Logout
+                  br
 
-             
+
+
+
+ 
 
 
 

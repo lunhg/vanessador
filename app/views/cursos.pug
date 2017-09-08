@@ -17,7 +17,7 @@ div.jumbotron(v-if='$parent.autorizado' style='background:transparent !important
                 input.form-control(:type="v.type" :id="k" :placeholder="v.placeholder")
     accordion(type="success")
       panel(header="Importart Excel") 
-        input(type="file" :name='cursos' v-on:change='importarXLS')
+        
         form
           fieldset
             div.form-group(v-for="(v,k) in modelos.xls.cursos")
@@ -25,16 +25,33 @@ div.jumbotron(v-if='$parent.autorizado' style='background:transparent !important
               br
               div
                 input.form-control(:type="v.type" :id="k" :placeholder="v.placeholder")
+
+        input(type="file" v-on:change='importarXLS')
+
   div.container
     br
     br
-    h2 Lista de cursos
-    accordion(type="info" :one-at-time='true')  
-      panel(v-for="(v,k) in cursos" :data="v" :key="k" :header="v['Nome do curso']")
-        strong(v-for="(val,key) in v")
-          u(:id="key") {{ key }}: {{ val }}
-          <router-link :to="{path: '/cursos/'+k+'/editar?q='+key}"> Atualizar</router-link>
-          br
+    div(v-show='cursos === null')
+      img(src="/assets/images/loading.gif" width="64" height="64")
+    div(v-show='cursos !== null')
+      h2 Lista de cursos
+      accordion(type="info" :one-at-time='true')  
+        panel(v-for="(v,k) in cursos" :data="v" :key="k" :header="v['Nome do curso']")
+          button.btn.btn-warning(v-show='!atualizar[k]' :name='k' v-on:click.prevent='edit') Atualizar
+          button.btn.btn-success(v-show='atualizar[k]' :name='k' v-on:click.prevent='update') Enviar
+          form
+            fieldset
+              div.form-group(v-for="(val,key) in v")
+                label.control-label(:for='k+"_"+key' :id='k+"@"+key+"@label"') {{ key }} 
+                br
+                div(v-if='!atualizar[k]') 
+                  small 
+                    span {{ val }}
+                    br
+                      
+                div(v-else) 
+                  input.form-control(v-show='key === "Data de Término " || key === "Data de início"' type='date' :id='k+"@"+key' :value='val')
+                  input.form-control(v-show='key !== "Data de Término " && key !== "Data de início"' type='text' :id='k+"@"+key' :value='val')
 div(v-else)
   h1 401
   p Não Autorizado

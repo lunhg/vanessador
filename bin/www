@@ -287,7 +287,6 @@ ServerManager.routes = function() {
       app_manager.templates();
       app_manager.services();
       app_manager.typeform();
-      app_manager.paypal();
       app_manager.pagseguro();
       app_manager.docs();
       return resolve(app);
@@ -479,8 +478,6 @@ AppManager.prototype.typeform = function() {
     return keytar.findPassword(pwd).then(function(apiKey) {
       var _url, onGet;
       _url = "form/" + req.query.uuid + "?key=" + apiKey;
-      _url += "&completed=" + req.query.completed;
-      _url += "&limit=" + req.query.limit;
       onGet = function(err, _res, body) {
         if (err) {
           return res.json(err);
@@ -496,173 +493,6 @@ AppManager.prototype.typeform = function() {
   });
 };
 
-AppManager.prototype.paypal = function() {
-  var create_invoice;
-  create_invoice = function(req) {
-    var ppr;
-    ppr = new PayPalReq();
-    ppr.add('merchant_info', {
-      "email": "gcravista-facilitator@gmail.com",
-      "first_name": "Vanessador",
-      "last_name": "Bot",
-      "business_name": "ITS",
-      "phone": {
-        "country_code": "51",
-        "national_number": "15998006760"
-      },
-      "address": {
-        "line1": "Abolição 403 - Vila Jardini",
-        "city": "Sorocaba",
-        "state": "SP",
-        "postal_code": "18044070",
-        "country_code": "BR"
-      }
-    });
-    ppr.add("billing_info", [
-      {
-        "email": req.query.billing_info_email
-      }
-    ]);
-    ppr.add({
-      "items": [
-        {
-          "name": "Boleto de pagamento - ITS - formulário " + req.query.form,
-          "quantity": 1.0,
-          "unit_price": {
-            "currency": "BRL",
-            "value": req.query.value
-          }
-        }
-      ]
-    });
-    ppr.add("note", "Boleto de pagamento " + (node_uuid.v4()), ppr.add("payment_term", {
-      "term_type": "NET_45"
-    }));
-    ppr.add("shipping_info", {
-      "first_name": req.query.first_name,
-      "last_name": req.query.last_name,
-      "business_name": "Not applicable",
-      "phone": {
-        "country_code": req.query.phone_country_code,
-        "national_number": req.query.phone_national_number
-      },
-      "address": {
-        "line1": req.query.line,
-        "city": req.query.city,
-        "state": req.query.state,
-        "postal_code": req.query.postal_code,
-        "country_code": req.query.country_code
-      }
-    });
-    ppr.add("tax_inclusive", false);
-    ppr.add("total_amount", {
-      "currency": "BRL",
-      "value": req.query.value
-    });
-    return ppr.data;
-  };
-  this.app.post('/paypal/invoices/novo', function(req, res) {
-    return paypal_rest_sdk.invoice.create(create_invoice(req), function(err, invoice) {
-      if (err) {
-        res.json(err);
-      }
-      return res.json(invoice.id);
-    });
-  });
-  this.app.get('/paypal/invoices/:id/number', function(req, res) {
-    return paypal_rest_sdk.invoice.get(req.params.id, function(err, invoice) {
-      if (err) {
-        res.json(err);
-      }
-      return res.json(invoice.number);
-    });
-  });
-  this.app.get('/paypal/invoices/:id/status', function(req, res) {
-    return paypal_rest_sdk.invoice.get(req.params.id, function(err, invoice) {
-      if (err) {
-        res.json(err);
-      }
-      return res.json(invoice.status);
-    });
-  });
-  this.app.get('/paypal/invoices/:id/billing_info', function(req, res) {
-    return paypal_rest_sdk.invoice.get(req.params.id, function(err, invoice) {
-      if (err) {
-        res.json(err);
-      }
-      return res.json(invoice.billing_info);
-    });
-  });
-  this.app.get('/paypal/invoices/:id/invoice_date', function(req, res) {
-    return paypal_rest_sdk.invoice.get(req.params.id, function(err, invoice) {
-      if (err) {
-        res.json(err);
-      }
-      return res.json(invoice.invoice_date);
-    });
-  });
-  this.app.get('/paypal/invoices/:id/total_amount', function(req, res) {
-    return paypal_rest_sdk.invoice.get(req.params.id, function(err, invoice) {
-      if (err) {
-        res.json(err);
-      }
-      return res.json(invoice.total_amount);
-    });
-  });
-  this.app.post('/paypal/invoices/:id/send', function(req, res) {
-    return paypal_rest_sdk.invoice.send(req.params.id, function(err, rv) {
-      if (err) {
-        res.json(err);
-      }
-      return res.json("Um email de notificação está sendo processado pelo PayPal");
-    });
-  });
-  this.app.post('/paypal/invoices/:id/remind', function(req, res) {
-    var options;
-    options = {
-      "subject": "Lembrança de pagamento",
-      "note": "Enviamos este email para lhe lembrar do pagamento do boleto " + req.params.id,
-      "send_to_merchant": true,
-      "send_to_payer": true
-    };
-    return paypal_rest_sdk.invoice.remind(req.params.id, options, function(err, rv) {
-      if (err) {
-        res.json(err);
-      }
-      console.log(chalk.green(rv));
-      return res.json("Seu email de notificação está sendo processado pelo PayPal");
-    });
-  });
-  this.app.post('/paypal/invoices/:id/cancel', function(req, res) {
-    var error1, options;
-    options = {
-      "subject": "Cancelamento de pagamento",
-      "note": "Cancelamento do boleto " + req.params.id,
-      "send_to_merchant": true,
-      "send_to_payer": true
-    };
-    try {
-      return paypal_rest_sdk.invoice.cancel(req.params.id, options, function(err, rv) {
-        if (err) {
-          res.json(err);
-        }
-        console.log(chalk.green(rv));
-        return res.json("Seu email de notificação está sendo processado pelo PayPal");
-      });
-    } catch (error1) {
-      return res.json(err);
-    }
-  });
-  return this.app["delete"]('/paypal/invoices/:id', function(req, res) {
-    return paypal_rest_sdk.invoice.del(req.params.id, function(err, rv) {
-      if (err) {
-        res.json(err);
-      }
-      return res.json("Boleto " + req.params.id + " deletado");
-    });
-  });
-};
-
 AppManager.prototype.pagseguro = function() {
   var onParseXML;
   onParseXML = function(result) {
@@ -670,6 +500,7 @@ AppManager.prototype.pagseguro = function() {
     self = this;
     return new Promise(function(resolve, reject) {
       return xml2js.parseString(result, function(err, str) {
+        console.log(str);
         if (err) {
           reject(err);
         }
@@ -697,7 +528,7 @@ AppManager.prototype.pagseguro = function() {
           "ip": req.ip,
           "hash": node_uuid.v4(),
           "phone": {
-            "areacode": req.query['areacode'],
+            "areacode": req.query['areacode'] || '55',
             "number": req.query['number']
           },
           "documents": {
@@ -785,13 +616,14 @@ AppManager.prototype.pagseguro = function() {
         "reference": req.query['ref'],
         "preApproval": {
           "name": req.query['name'],
-          "charge": "AUTO",
-          "period": "MONTHLY",
+          "charge": "MANUAL",
+          "period": "WEEKLY",
           "amountPerPayment": req.query['amount'],
-          "membershipFee": (parseFloat(req.query['amount']) * 0.05).toFixed(2),
+          "trialPeriodDuration": 1,
+          "membershipFee": (parseFloat(req.query['amount']) * 0.01).toFixed(2),
           "expiration": {
-            "value": 1,
-            "unit": "MONTHS"
+            "value": 7,
+            "unit": "DAYS"
           },
           "details": 'ITS_' + node_uuid.v4()
         }
@@ -1028,7 +860,7 @@ onMsg = function(addr) {
 
 p = require('../package.json').firebase.project.name;
 
-Promise.all([keytar.findPassword(p + ".paypal.apiKey"), keytar.findPassword(p + ".paypal.secret")]).then(AppManager.initPayPal).then(AppManager.initPagSeguro).then(ServerManager.routes).then(ServerManager.start).then(function(addr) {
+Promise.all([keytar.findPassword(p + ".paypal.apiKey"), keytar.findPassword(p + ".paypal.secret")]).then(AppManager.initPagSeguro).then(ServerManager.routes).then(ServerManager.start).then(function(addr) {
   return console.log(chalk.cyan(onMsg(addr)));
 })["catch"](function(e) {
   return console.log(e);

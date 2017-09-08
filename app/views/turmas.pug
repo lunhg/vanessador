@@ -30,15 +30,18 @@ div.jumbotron(v-if='$parent.autorizado' style='background:transparent !important
   div.container
     br
     br
-    h2 Lista de Turmas
-    br
-    br
-    accordion(type="info" :one-at-time='true')  
-      panel(v-for="(v,k) in turmas" :data="v" :key="k" :header="k")
-        strong(v-for="(val,key) in v")
-          u(:id="key") {{ key }}: {{ val }}
-          <router-link :to="{path: '/turmas/'+k+'/editar?q='+key}"> Atualizar</router-link>
-          br
+    div(v-show='turmas === null')
+      img(src="/assets/images/loading.gif" width="64" height="64")
+    div(v-show='turmas !== null')
+      h2 Lista de Turmas
+      br
+      br
+      accordion(type="info" :one-at-time='true')  
+        panel(v-for="(v,k) in turmas" :data="v" :key="k" :header="k")
+          strong(v-for="(val,key) in v")
+            u(:id="key") {{ key }}: {{ val }}
+            <router-link :to="{path: '/turmas/'+k+'/editar?q='+key}"> Atualizar</router-link>
+            br
 
 div(v-else)
   h1 401

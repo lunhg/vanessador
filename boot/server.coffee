@@ -13,7 +13,7 @@ onMsg = (addr) ->"""
 # - bind the expresse app to a http server (handled by https proxy)
 p = require('../package.json').firebase.project.name
 Promise.all([keytar.findPassword("#{p}.paypal.apiKey"), keytar.findPassword("#{p}.paypal.secret")])
-        .then AppManager.initPayPal
+        #.then AppManager.initPayPal
         .then AppManager.initPagSeguro
         .then ServerManager.routes
         .then ServerManager.start

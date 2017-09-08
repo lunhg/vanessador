@@ -12,20 +12,23 @@ makeApp = (router) ->
   <vanessador-menu :autorizado='autorizado' :user='user'></vanessador-menu>
   <div class='container-fluid'>
     <div class='side-body'>
-      <router-view :autorizado='autorizado' :user='user' :estudantes='estudantes' :cursos='cursos' :formularios='formularios' :boletos='boletos' :modelos='modelos' :questions='questions' :responses='responses'></router-view>
+      <router-view :autorizado='autorizado' :user='user' :atualizar='atualizar' :estudantes='estudantes' :cursos='cursos' :formularios='formularios' :boletos='boletos' :modelos='modelos' :questions='questions' :responses='responses' :matriculas='matriculas'></router-view>
     </div>
   </div>
 </div>"""
 
-                # Função executada quando o aplicativo Vue.js for criado.
-                beforeCreate: ->
+                # Função executada quando o aplicativo Vue.js for criado
+                # Deve registrar que, quando o usuário estiver logado,
+                # as variáveis de data e computados deverão ser atualizadas
+                created: ->
                         self = this
                         firebase.auth().onAuthStateChanged (user) ->
                                 if user
-                                        
                                         self.autorizado = true
-                                        self.user[e] = user[e] for e in 'displayName email photoURL telephone'.split(' ')
-                        
+                                        for e in 'displayName email photoURL telephone'.split(' ')
+                                                Vue.set self.user, e, self.user[e]
+                                else
+                                        Vue.set self, 'autorizado', false
                 # Os dados apresentados pelo Vue de acordo com o firebase,
                 # typeform e pagseguro.
                 data:
@@ -36,6 +39,7 @@ makeApp = (router) ->
                                 email:false
                                 photoURL:false
                                 telephone:false
+                        atualizar: {}
                         modelos:
                                 xls:
                                         cursos:
@@ -114,59 +118,35 @@ makeApp = (router) ->
                 # Em caso de mudanças nas variáveis e rotas,
                 # aplique as transformações específicas
                 watch: 
-
-                        '$route': (to, from) -> if not this.autorizado then this.$router.push '/login'         
+                        '$route': (to, from) ->
+                                if not this.autorizado then this.$router.push '/login'
+                                                
                         user: ->
-                                this.$data.autorizado = true
-                                if from.path is '/login' and this.$data.autorizado is true then this.$router.push '/'
+                                self = this
+                                for k,v of this.$options.computed
+                                        onComputed(k)().then (value) ->
+                                                f = self.$route.path.split('/')[1]
+                                                Vue.set self[f], __k, __v for __k,__v of value
+                                                        
+                                                
 
-                computed:
-                        cursos: ->
-                                new Promise (resolve, reject) ->
-                                        firebase.database().ref('cursos/').once 'value', (snapshot) ->
-                                                resolve snapshot.val()
                                         
-                        estudantes: ->
-                                new Promise (resolve, reject) ->
-                                        firebase.database().ref('estudantes/').once 'value', (snapshot) ->
-                                                resolve snapshot.val()
+                        
+                computed:
+                        cursos: onComputed 'cursos'
+                        estudantes: onComputed 'estudantes'
+                        formularios: onComputedForm
+                        responses: onComputed 'responses'
+                        turmas: onComputed 'turmas'                       
+                        boletos: onComputed 'boletos'
+                        questions: onComputed 'questions'
+                        matriculas: onComputed 'matriculas'
 
-                        formularios: ->
-                                new Promise (resolve, reject) ->
-                                        Vue.nextTick ->
-                                                if firebase.auth().currentUser.uid
-                                                        db = firebase.database()
-                                                        currentUser = firebase.auth().currentUser
-                                                        ref1 = "users/#{currentUser.uuid}/formularios"
-                                                        db.ref(ref1).on 'value', (f) ->
-                                                                resolve f.val()
-                                                else
-                                                        resolve false
-                        responses: ->
-                                new Promise (resolve, reject) ->
-                                        Vue.nextTick ->
-                                                ref1 = "responses/"
-                                                firebase.database().ref(ref1).once 'value', (r) ->
-                                                        resolve r.val()
-                        turmas: ->
-                                new Promise (resolve, reject) ->
-                                        firebase.database().ref('turmas/').once 'value', (snapshot) ->
-                                                resolve snapshot.val()
-
-                        boletos: ->
-                                new Promise (resolve, reject) ->
-                                        firebase.database().ref('boletos/').once 'value', (snapshot) ->
-                                                resolve snapshot.val()
-
-                        questions: ->
-                                new Promise (resolve, reject) ->
-                                        Vue.nextTick ->
-                                                ref1 = "questions/"
-                                                firebase.database().ref(ref1).once 'value', (q) ->
-                                                        resolve q.val()
                 methods:
                         login: login
                         logout: logout
+                                
+                                        
                         
         }
 # A mensagem de carregamento inicial

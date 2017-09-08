@@ -6,10 +6,10 @@ AppManager::typeform = ->
                 keytar.findPassword(pwd)
                         .then (apiKey) ->
                                 _url = "form/#{req.query.uuid}?key=#{apiKey}"
-                                _url += "&completed=#{req.query.completed}"
-                                _url += "&limit=#{req.query.limit}"
+                                #_url += "&completed=#{req.query.completed}"
+                                #_url += "&limit=#{req.query.limit}"
                                 onGet = (err, _res, body) ->
-                                        if(err)
+                                        if err
                                                 res.json err
                                         else
                                                 console.log body

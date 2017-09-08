@@ -28,7 +28,7 @@ login = ->
 logout = ->
         self = this
         onSignout = -> self.$router.push '/login'
-        firebase.auth().signOut().then(onSignout).catch(AuthService.onErr)
+        firebase.auth().signOut().then(onSignout).catch (e) -> console.log e
         
 addUser = ->
         if @isValid
@@ -45,24 +45,32 @@ onFormularios = (event) ->
         query.push "uuid=#{uuid}"
         query = query.join('&')
         self = this
-        this.$http.get(query)
-                .then (result) ->
-                        firebase.database().ref("users/#{firebase.auth().currentUser.uid}/formularios").push(uuid)
+        onResponses = (result) ->
+                new Promise (resolve, reject) ->
                         for r in result.data.responses
                                 firebase.database()
                                         .ref("responses/#{uuid}/#{r.token}")
                                         .set(metdata:r.metadata,answers:r.answers,completed:if r.completed is '1' then true else false)
+                        resolve result
 
+        onAnswers = (result) ->
+                new Promise (resolve, reject) ->
                         for q in result.data.questions
                                 firebase.database()
                                         .ref("questions/#{uuid}/#{q.id}")
                                         .set(q.question)
-
-                        db = firebase.database()
-                        ref1 = "users/#{}/formularios"
-                        firebase.database().ref(ref1).once 'value', (f) ->
-                                resolve f.val()
-                .then 
+                        resolve result
+                
+        onRegisterForm = (result) ->
+                new Promise (resolve, reject) ->
+                        firebase.database().ref("users/#{firebase.auth().currentUser.uid}/formularios").push(uuid).then -> resolve result
+                        
+        
+        
+        this.$http.get(query)
+                .then onResponses
+                .then onAnswers
+                .then onRegisterForm
                 .then self.$options.computed.formularios
 
 
@@ -85,3 +93,62 @@ onMatriculas = (event) ->
 
         firebase.database().ref("users/#{firebase.auth().currentUser.uid}/matriculas").push(o['input_fk_turma'])
         firebase.database().ref("matriculas/#{id}/").push o
+
+
+onComputed = (type) ->
+        ->
+                self = this
+                _type = type
+                new Promise (resolve, reject) ->
+                        if firebase.auth().currentUser
+                                ref = _type+'/'
+                                firebase.database()
+                                        .ref(ref)
+                                        .once('value')
+                                        .then (snapshot) ->
+                                                resolve snapshot.val()
+                                        .catch (e) ->
+                                                reject e
+                        else
+                                resolve()
+
+onComputedForm = ->
+        new Promise (resolve, reject) ->
+                if firebase.auth().currentUser
+                        ref = "users/#{firebase.auth().currentUser.uid}/formularios"
+                        firebase.database()
+                                .ref(ref)
+                                .once('value')
+                                .then (snapshot) ->
+                                        resolve snapshot.val()
+                                .catch (e) ->
+                                        reject e
+                else
+                        resolve()
+
+edit = (event) ->
+        k = event.target.getAttribute('name')
+        Vue.set this.atualizar, k, true
+
+update = (event) ->
+        k = event.target.getAttribute('name')
+        f = this.$route.path.split('/')[1]
+        o = {}
+        i = 0
+
+                
+        for input in document.getElementsByClassName 'form-control'
+                keys = input.id.split('@')
+                if input.attributes.getNamedItem('type').value is 'date'
+                        o[keys[1]] = input.valueAsDate
+                else
+                        o[keys[1]] = input.value
+        self = this
+        for key, val of o
+                firebase.database()
+                        .ref(f+'/'+k+'/'+key)
+                        .set(val)
+
+                Vue.set self[f][k], key, val
+
+        Vue.set self.atualizar, k, false

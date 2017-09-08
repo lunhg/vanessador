@@ -4,6 +4,7 @@ AppManager::pagseguro = ->
                 self = this
                 new Promise (resolve, reject) ->
                         xml2js.parseString result, (err, str) ->
+                                console.log str
                                 if err then reject err
                                 if not err then self.res.json JSON.parse(str)
 
@@ -12,7 +13,7 @@ AppManager::pagseguro = ->
         @app.get '/pagseguro/planos', (req, res) ->
                  PagSeguroSDK.get('/pre-approvals').then(onParseXML.bind(res:res)).catch (e) -> res.send e
 
-        # Permite aderir a um pagamento recorrente (assinar um plano criado).
+        # Permite aderir a um pagamento recorrente (assinar um plano criado)
         @app.post '/pagseguro/planos', (req, res) ->
                 PagSeguroSDK.post('/pre-approvals/request', {
                         "directPreApproval": {
@@ -24,7 +25,7 @@ AppManager::pagseguro = ->
                                         "ip":req.ip
                                         "hash":node_uuid.v4()
                                         "phone":{
-                                                "areacode":req.query['areacode']
+                                                "areacode":req.query['areacode'] or '55'
                                                 "number":req.query['number']
                                         }
                                         "documents":{
@@ -95,13 +96,14 @@ AppManager::pagseguro = ->
                                 "reference": req.query['ref']
                                 "preApproval": {
                                         "name": req.query['name'],
-                                        "charge": "AUTO",
-                                        "period": "MONTHLY",
+                                        "charge": "MANUAL",
+                                        "period": "WEEKLY",
                                         "amountPerPayment": req.query['amount'],
-                                        "membershipFee": (parseFloat(req.query['amount']) * 0.05).toFixed(2),
+                                        "trialPeriodDuration":1,
+                                        "membershipFee": (parseFloat(req.query['amount']) * 0.01).toFixed(2),
                                         "expiration": {
-                                                "value": 1,
-                                                "unit": "MONTHS"
+                                                "value": 7,
+                                                "unit": "DAYS"
                                         }
                                         "details": 'ITS_'+node_uuid.v4()
                                 }

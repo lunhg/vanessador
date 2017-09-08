@@ -1,34 +1,32 @@
-section
+div.jumbotron(v-if='!autorizado' style='background:transparent !important')
   br
   br
   br
+  h2 Gerencie cursos
   br
   br
-  br
-  div(v-if="!autorizado")
-    h2 Gerencie cursos
-    br
-    br
-    p O vanessador auxilia administradores do ITS a gerenciar formulários, cursos, matrículas, estudantes e boletos gerados para o ITS/Rio.
+  p O vanessador auxilia administradores do ITS a gerenciar formulários, cursos, matrículas, estudantes e boletos gerados para o ITS/Rio.
 
-    div
-      img(width='256' height='340' src='http://3.bp.blogspot.com/-tlCpn9xB8ng/USwaEcK5AzI/AAAAAAAAAY8/-OHTZZdmYJM/s1600/Secret%C3%A1ria-no-telefone_cor.jpg')
-      img(src='https://networkofcenters.net/sites/networkofcenters.net/files/styles/center_logo/public/itsrio_logo_0.png?itok=Al7hOVyS' width='256' height='256')
+  div
+    img(width='256' height='340' src='http://3.bp.blogspot.com/-tlCpn9xB8ng/USwaEcK5AzI/AAAAAAAAAY8/-OHTZZdmYJM/s1600/Secret%C3%A1ria-no-telefone_cor.jpg')
+    img(src='https://networkofcenters.net/sites/networkofcenters.net/files/styles/center_logo/public/itsrio_logo_0.png?itok=Al7hOVyS' width='256' height='256')
 
-  div(v-else)
-    div.container
-      :marked
-        # O que sou?
-      
-        Sou um programa gerenciador de cadastros e pagamentos de cursos ministrados pelo ITS
+div.jumbotron(v-else)
+  br
+  br
+  br
+  :marked
+    # O que sou?
 
-        ## O que é um curso?
+    Sou um programa gerenciador de cadastros e pagamentos de cursos ministrados pelo ITS
+  
+    ## O que é um curso?
 
-        Um curso é um conjunto de aulas ministradas periodicamente até atingir uma determinada quantidade de horas. Cada curso tem um custo, uma data de início e uma data de fim.
- 
-        ## Como crio um ou mais cursos?
-      
-        Clique na aba [cursos](/#/cursos). Você verá dois botões. Um amarelo e um verde. O primeiro está escrito Novo curso. O segundo permite importar vários cursos de acordo com uma tabela excel.
+    Um curso é um conjunto de aulas ministradas periodicamente até atingir uma determinada quantidade de horas. Cada curso tem um custo, uma data de início e uma data de fim.
 
-        [!](/assets/images/cursosFAQ.png)
-      
+    ## Como crio um ou mais cursos?
+
+    Clique na aba [cursos](/#/cursos). Você verá dois botões. Um amarelo e um verde. O primeiro está escrito Novo curso. O segundo permite importar vários cursos de acordo com uma tabela excel.
+
+    ![cursos](/assets/images/cursosFAQ.png)
+

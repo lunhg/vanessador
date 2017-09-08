@@ -7,7 +7,7 @@ div.jumbotron(v-if='$parent.autorizado' style='background:transparent !important
   br
   div.container    
     accordion(type="warning" )
-      panel(header='Novo Formulario')
+      panel(header='Nova Matrícula')
         form
           fieldset
             div.form-group(v-for="(v,k) in modelos.matriculas")
@@ -18,7 +18,7 @@ div.jumbotron(v-if='$parent.autorizado' style='background:transparent !important
         button.btn.btn-success(v-on:click="onMatriculas") Adicionar formulário
 
     accordion(type="success")
-      panel(header="Importart Excel") 
+      panel(header="Importar Excel") 
         form
           fieldset
             div.form-group(v-for="(v,k) in modelos.xls.matriculas")
@@ -31,17 +31,31 @@ div.jumbotron(v-if='$parent.autorizado' style='background:transparent !important
   div.container
     br
     br
-    h2 Lista de matrículas
-    br
-    br
-    div(v-for="(v,k) in matriculas" :data="v" :key="k" :header="v")
-      accordion(type="info" :one-at-time='true')  
-        panel(:header="v")
-          accordion(type="warning" :one-at-time='true')
-            panel(header="Matrículas")    
-              div(v-for='(r,q) in matriculas[v]')
-                accordion(type="success" :one-at-time='true')
-                  panel(:header="q")
+    div(v-show='matriculas === null')
+      img(src="/assets/images/loading.gif" width="64" height="64")
+    div(v-show='matriculas !== null')
+      h2 Lista de matrículas
+      br
+      br
+      div(v-for="(v,k) in matriculas" :data="v" :key="k" :header="v")
+        accordion(type="info" :one-at-time='true')  
+          panel(:header="k")
+            button.btn.btn-warning(v-show='!atualizar[k]' :name='k' v-on:click.prevent='edit') Atualizar
+            button.btn.btn-success(v-show='atualizar[k]' :name='k' v-on:click.prevent='update') Enviar
+            form
+              fieldset
+                div.form-group(v-for="(val,key) in v")
+                  label.control-label(:for='key') {{ key }} 
+                  br
+                  div(v-if='!atualizar[k]') 
+                    small 
+                      span {{ val }}
+                      br
+                      
+                  div(v-else)
+                    input.form-control(type='text' :id='k' :placeholder='val')
+                    
+
 
 div(v-else)
   h1 401

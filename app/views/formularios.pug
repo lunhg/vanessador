@@ -2,7 +2,7 @@ div.jumbotron(v-if='$parent.autorizado' style='background:transparent !important
   br 
   br
   br
-  h2 Formulários
+  h2 Formulários Pré-matrícula
   br
   br
   div.container    
@@ -31,27 +31,30 @@ div.jumbotron(v-if='$parent.autorizado' style='background:transparent !important
   div.container
     br
     br
-    h2 Lista de formulários
-    br
-    br
-    div(v-for="(v,k) in formularios" :data="v" :key="k" :header="v")
-      accordion(type="info" :one-at-time='true')  
-        panel(:header="v")
-          accordion(type="warning" :one-at-time='true')
-            panel(header="Respostas enviadas")    
-              div(v-for='(r,q) in responses[v]')
-                accordion(type="success" :one-at-time='true')
-                  panel(:header="q")
-                    div(v-for='(a,c) in responses[v][q]') 
-                      accordion(type="info")
-                        panel(:header='c')
-                          div(v-for='(aa,cc) in a')
-                            p {{ cc }}: {{ aa }}
+    div(v-show='formularios === null')
+      img(src="/assets/images/loading.gif" width="64" height="64")
+    div(v-show='formularios !== null')
+      h2 Lista de formulários
+      br
+      br
+      div(v-for="(v,k) in formularios" :data="v" :key="k" :header="v")
+        accordion(type="info" :one-at-time='true')  
+          panel(:header="v")
+            accordion(type="warning" :one-at-time='true')
+              panel(header="Respostas enviadas")    
+                div(v-for='(r,q) in responses[v]')
+                  accordion(type="success" :one-at-time='true')
+                    panel(:header="q")
+                      div(v-for='(a,c) in responses[v][q]') 
+                        accordion(type="info")
+                          panel(:header='c')
+                            div(v-for='(aa,cc) in a')
+                              small {{ $parent.questions[v][cc] }}: {{ aa }}
 
-          accordion(type="warning" :one-at-time='true')
-            panel(header="Questões") 
-              div(v-for='(r,q) in questions[v]')
-                p {{ q }}: {{ r }}
+            accordion(type="warning" :one-at-time='true')
+              panel(header="Questões") 
+                div(v-for='(r,q) in questions[v]')
+                  p {{ q }}: {{ r }}
 
 div(v-else)
   h1 401

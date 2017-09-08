@@ -6,7 +6,7 @@
 fetchConfig = ->
         log "Loading firebase config..."
         Vue.http.get("/config").then (config) ->
-                firebase.initializeApp config.data
+                if firebase.apps.length is 0 then firebase.initializeApp(config.data)
                 config
         
                 

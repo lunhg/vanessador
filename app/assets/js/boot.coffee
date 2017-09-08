@@ -1,5 +1,4 @@
-fetchConfig().then (config) -> if firebase.apps.length is 0 then firebase.initializeApp(config.data)
-        .then fetchMenu
+fetchConfig().then fetchMenu
         .then fetchRoutes
         .then makeApp
         .then (_app) ->

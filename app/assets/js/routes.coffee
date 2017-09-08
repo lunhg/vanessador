@@ -37,6 +37,7 @@ fetchRoutes = ->
                                         if r.data.name is e
                                                 r.data.component.props.push r.data.name
                                                 r.data.component.props.push "modelos"
+                                                r.data.component.props.push "atualizar"
                                                 
                                                 r.data.component.components = 
                                                         accordion: VueStrap.accordion
@@ -45,12 +46,15 @@ fetchRoutes = ->
                                                 r.data.component.methods =
                                                         importarXLS: importarXLS
                                                         getDocumentValue: (id) -> document.getElementById(id).value
+                                                        edit:edit       
+                                                        update: update
+                                                                
                                 if r.data.name is 'turmas'
                                         r.data.component.methods['onTurmas']= onTurmas
 
                                 if r.data.name is 'matriculas'
                                         r.data.component.methods['onMatriculas']= onMatriculas
-                                                
+                                        
                                 if r.data.name is 'formularios'
                                         r.data.component.props.push 'questions'
                                         r.data.component.props.push 'responses'
