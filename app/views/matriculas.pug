@@ -10,12 +10,16 @@ div.jumbotron(v-if='$parent.autorizado' style='background:transparent !important
       panel(header='Nova Matrícula')
         form
           fieldset
-            div.form-group(v-for="(v,k) in modelos.matriculas")
-              label.control-label.input-sm(:for="k") {{ v.label }}
+            div.form-group(v-for='(v,k) in modelos.matriculas' role='search')
+              label.control-label.input-sm(:for='k') {{ v.label }}
               br
               div
-                input.form-control.input-sm(:type="v.type" :id="k" :placeholder="v.placeholder")
-        button.btn.btn-success(v-on:click="onMatriculas") Adicionar formulário
+                div
+                  input.form-control.input-sm(:type='v.type' :id='k' :placeholder='v.placeholder')
+                div
+                  span.btn.glyphicon.glyphicon-search
+
+        button.btn.btn-success(v-on:click='onMatriculas') Adicionar formulário
 
     accordion(type="success")
       panel(header="Importar Excel") 

@@ -1,5 +1,5 @@
 #!/usr/bin/env /home/pi/.nvm/versions/node/v8.0.0/bin/node
-var AppManager, PagSeguroSDK, PayPalReq, ServerManager, atob, body_parser, chalk, compression, connect_assets, express, foreach, fs, http, jstransformer_marked, keytar, morgan, node_uuid, onMsg, p, path, paypal_rest_sdk, pug, request, request_json, xml2js, xmlbuilder;
+var AppManager, PagSeguroSDK, ServerManager, atob, body_parser, chalk, compression, connect_assets, express, foreach, fs, http, jstransformer_marked, keytar, morgan, node_schedule, node_uuid, nodemailer, nodemailer_mailgun_transport, onMsg, p, path, paypal_rest_sdk, pug, request, request_json, request_promise, xml2js, xmlbuilder;
 
 fs = require('fs');
 
@@ -27,7 +27,13 @@ keytar = require('keytar');
 
 morgan = require('morgan');
 
+node_schedule = require('node-schedule');
+
 node_uuid = require('node-uuid');
+
+nodemailer = require('nodemailer');
+
+nodemailer_mailgun_transport = require('nodemailer-mailgun-transport');
 
 paypal_rest_sdk = require('paypal-rest-sdk');
 
@@ -36,6 +42,8 @@ pug = require('pug');
 request = require('request');
 
 request_json = require('request-json');
+
+request_promise = require('request-promise');
 
 xml2js = require('xml2js');
 
@@ -71,37 +79,6 @@ AppManager = (function() {
   }
 
   return AppManager;
-
-})();
-
-AppManager.initPayPal = function(results) {
-  return new Promise(function(resolve, reject) {
-    var c, e, error1;
-    try {
-      c = {
-        'mode': 'sandbox',
-        'client_id': results[0],
-        'client_secret': results[1]
-      };
-      paypal_rest_sdk.configure(c);
-      return resolve();
-    } catch (error1) {
-      e = error1;
-      return reject(e);
-    }
-  });
-};
-
-PayPalReq = (function() {
-  function PayPalReq() {
-    this.data = {};
-  }
-
-  PayPalReq.prototype.add = function(k, v) {
-    return this.data[k] = v;
-  };
-
-  return PayPalReq;
 
 })();
 
@@ -288,6 +265,7 @@ ServerManager.routes = function() {
       app_manager.services();
       app_manager.typeform();
       app_manager.pagseguro();
+      app_manager.mailer();
       app_manager.docs();
       return resolve(app);
     } catch (error1) {
@@ -397,7 +375,7 @@ AppManager.prototype.templates = function() {
       });
     });
   };
-  return this.app.get('/templates/:type', function(req, res) {
+  this.app.get('/templates/routes/:type', function(req, res) {
     var onErr, onSuccess;
     onSuccess = function(result) {
       return res.json(result);
@@ -407,70 +385,274 @@ AppManager.prototype.templates = function() {
     };
     return getTemplate(req.params['type']).then(onSuccess)["catch"](onErr);
   });
+  this.app.get('/templates/index/routes', function(req, res) {
+    return res.json(["_index", "login", "signup", "resetPassword", "confirm", "conta", "formularios", "estudantes", "cursos", "matriculas"]);
+  });
+  this.app.get("/templates/index/page", function(req, res) {
+    return res.send("<div>\n<vanessador-menu :autorizado='autorizado' :user='user' :searchList='searchList'></vanessador-menu>\n<div class='container-fluid'>\n  <div class='side-body'>\n    <router-view :autorizado='autorizado' :user='user'  :atualizar='atualizar' :estudantes='estudantes' :cursos='cursos' :formularios='formularios' :modelos='modelos' :questions='questions' :responses='responses' :matriculas='matriculas' ></router-view>\n  </div>\n</div>\n</div>");
+  });
+  return this.app.get("/templates/index/data", function(req, res) {
+    var cursos, estudantes, formularios, matriculas, xlsCursos, xlsEstudantes, xlsFormularios, xlsMatriculas;
+    xlsCursos = {
+      input_list: {
+        'type': 'text',
+        'placeholder': 'ABCDEFG',
+        'label': 'Colunas'
+      },
+      input_min: {
+        'type': 'text',
+        'placeholder': '2',
+        'label': 'Linha inicial'
+      },
+      input_max: {
+        'type': 'text',
+        'placeholder': '26',
+        'label': 'Linha final'
+      }
+    };
+    xlsEstudantes = {
+      input_list: {
+        'type': 'text',
+        'placeholder': 'ABCDEFGHIJKLMNO',
+        'label': 'Colunas'
+      },
+      input_min: {
+        'type': 'text',
+        'placeholder': '2',
+        'label': 'Linha inicial'
+      },
+      input_max: {
+        'type': 'text',
+        'placeholder': '726',
+        'label': 'Linha final'
+      }
+    };
+    xlsFormularios = {
+      input_list: {
+        'type': 'text',
+        'placeholder': 'AB',
+        'label': 'Colunas'
+      },
+      input_min: {
+        'type': 'text',
+        'placeholder': '2',
+        'label': 'Linha inicial'
+      },
+      input_max: {
+        'type': 'text',
+        'placeholder': '3',
+        'label': 'Linha final'
+      }
+    };
+    xlsMatriculas = {
+      input_list: {
+        'type': 'text',
+        'placeholder': 'AB',
+        'label': 'Colunas'
+      },
+      input_min: {
+        'type': 'text',
+        'placeholder': '2',
+        'label': 'Linha inicial'
+      },
+      input_max: {
+        'type': 'text',
+        'placeholder': '3',
+        'label': 'Linha final'
+      }
+    };
+    formularios = {
+      input_typeform_code: {
+        'type': 'text',
+        'placeholder': 'E20qGg',
+        'label': 'Código typeform'
+      },
+      input_turma_code: {
+        'type': 'text',
+        'placeholder': '-Ktm1CBbiRXF7OEUellX',
+        'label': 'Código turma'
+      },
+      input_pagseguro_code: {
+        'type': 'text',
+        'placeholder': 'FD26E55B2D2D47D77457BFB0B6BCAA51',
+        'label': 'Código pagseguro (campanha 100%, 75% ou 10%)'
+      }
+    };
+    matriculas = {
+      input_fk_curso: {
+        'type': 'text',
+        'label': 'ID curso'
+      },
+      input_fk_estudante: {
+        'type': 'text',
+        'label': 'ID estudante'
+      },
+      input_matriculado: {
+        'type': 'checkbox',
+        'label': 'Matriculado?'
+      },
+      input_certificado: {
+        'type': 'checkbox',
+        'label': 'Certificado?'
+      }
+    };
+    estudantes = {
+      input_nome: {
+        'type': 'text',
+        'placeholder': 'nome',
+        'label': 'Nome'
+      },
+      input_email1: {
+        'type': 'text',
+        'placeholder': 'email1@dominio',
+        'label': 'Email 1'
+      },
+      input_email2: {
+        'type': 'text',
+        'placeholder': 'email2@dominio',
+        'label': 'Email 2'
+      },
+      input_email3: {
+        'type': 'text',
+        'placeholder': 'email3@dominio',
+        'label': 'Email 3'
+      },
+      input_profissao: {
+        'type': 'text',
+        'placeholder': 'trabalho',
+        'label': 'Profissão'
+      },
+      input_idade: {
+        'type': 'text',
+        'placeholder': '8-80',
+        'label': 'Idade'
+      },
+      input_genero: {
+        'type': 'text',
+        'placeholder': 'M/F/Outro',
+        'label': 'Gênero'
+      },
+      input_telefone: {
+        'type': 'text',
+        'placeholder': '12345678',
+        'label': 'Telefone'
+      },
+      input_estado: {
+        'type': 'text',
+        'placeholder': 'propriedade',
+        'label': 'Estado'
+      },
+      input_cidade: {
+        'type': 'text',
+        'placeholder': 'propriedade',
+        'label': 'Cidade'
+      },
+      input_isAlumni: {
+        'type': 'check',
+        'label': 'É Alumni?'
+      }
+    };
+    cursos = {
+      input_nome: {
+        'type': 'text',
+        'placeholder': 'nome',
+        'label': 'Nome'
+      },
+      input_typeform_code: {
+        'type': 'text',
+        'placeholder': 'E20qGg',
+        'label': 'Código typeform'
+      },
+      input_inicio_matricula: {
+        'type': 'date',
+        'label': 'Início das matrículas'
+      },
+      input_fim_matricula: {
+        'type': 'date',
+        'label': 'Fim das matrículas'
+      },
+      input_carga_horaria: {
+        'type': 'text',
+        'placeholder': '6 hs',
+        'label': 'Carga Horária'
+      },
+      input_quantidade_aulas: {
+        'type': 'number',
+        'placeholder': '3',
+        'label': 'Quantidade de Aulas'
+      },
+      input_data_inicio: {
+        'type': 'date',
+        'label': 'Data de início das aulas'
+      },
+      input_data_termino: {
+        'type': 'date',
+        'label': 'Data de término das aulas'
+      },
+      input_data_inicio_valor1: {
+        'type': 'number',
+        'label': 'Valor para data de início 1 (R$)'
+      },
+      input_data_inicio_valor2: {
+        'type': 'number',
+        'label': 'Valor para data de início 2 (R$)'
+      },
+      input_data_inicio_valor3: {
+        'type': 'number',
+        'label': 'Valor para data de início 3 (R$)'
+      },
+      input_valor_cheio: {
+        'type': 'number',
+        'placeholder': '200',
+        'label': 'Valor Cheio (R$)'
+      },
+      input_link_valor1: {
+        'type': 'text',
+        'placeholder': 'https://pag.ae/12345',
+        'label': 'Codigo Pagseguro 1'
+      },
+      input_link_valor2: {
+        'type': 'text',
+        'placeholder': 'https://pag.ae/45678',
+        'label': 'Codigo Pagseguro 2'
+      },
+      input_link_valor3: {
+        'type': 'text',
+        'placeholder': 'https://pag.ae/90123',
+        'label': 'Codigo Pagseguro 3'
+      }
+    };
+    return res.json({
+      search: '',
+      autorizado: false,
+      user: {
+        displayName: false,
+        email: false,
+        photoURL: false,
+        telephone: false
+      },
+      atualizar: {},
+      searchList: {},
+      modelos: {
+        xls: {
+          cursos: xlsCursos,
+          estudantes: xlsEstudantes,
+          formularios: xlsFormularios,
+          matriculas: xlsMatriculas
+        },
+        formularios: formularios,
+        matriculas: matriculas,
+        estudantes: estudantes,
+        cursos: cursos
+      }
+    });
+  });
 };
 
-AppManager.prototype.services = function() {
-  var _on, getTemplate;
-  getTemplate = function(p) {
-    return new Promise(function(resolve, reject) {
-      var _p;
-      _p = path.resolve((path.join(__dirname)) + "/../app/views/" + p + ".pug");
-      return fs.readFile(_p, 'utf8', function(err, content) {
-        var html;
-        if (!err) {
-          html = pug.compile(content, {
-            filename: _p,
-            doctype: 'html'
-          })();
-          return resolve({
-            name: p,
-            options: {
-              restrict: 'A',
-              template: html,
-              replace: true,
-              transclude: true
-            }
-          });
-        } else {
-          return reject(err);
-        }
-      });
-    });
-  };
-  _on = function(what) {
-    var a, i, len, ref, w;
-    a = [];
-    ref = require("../package.json")["angular-" + what];
-    for (i = 0, len = ref.length; i < len; i++) {
-      w = ref[i];
-      a.push(getTemplate(w));
-    }
-    return Promise.all(a);
-  };
-  this.app.get("/services", function(req, res) {
-    var onErr, onSuccess;
-    onSuccess = function(result) {
-      return res.json(result);
-    };
-    onErr = function(err) {
-      return res.json(err);
-    };
-    return _on('services').then(onSuccess)["catch"](onErr);
-  });
-  return this.app.get("/directives", function(req, res) {
-    var onErr, onSuccess;
-    onSuccess = function(result) {
-      return res.json(result);
-    };
-    onErr = function(err) {
-      return res.json(err);
-    };
-    return _on('directives').then(onSuccess)["catch"](onErr);
-  });
-};
+AppManager.prototype.services = function() {};
 
 AppManager.prototype.typeform = function() {
-  return this.app.get('/typeform/data-api', function(req, res) {
+  this.app.get('/typeform/data-api', function(req, res) {
     var projectName, pwd;
     projectName = require((path.join(__dirname)) + "/../package.json").firebase.project.name;
     pwd = projectName + ".typeform.apiKey";
@@ -478,6 +660,7 @@ AppManager.prototype.typeform = function() {
     return keytar.findPassword(pwd).then(function(apiKey) {
       var _url, onGet;
       _url = "form/" + req.query.uuid + "?key=" + apiKey;
+      _url += "&completed=true";
       onGet = function(err, _res, body) {
         if (err) {
           return res.json(err);
@@ -491,6 +674,21 @@ AppManager.prototype.typeform = function() {
       return res.json(err);
     });
   });
+  this.app.scheduler = {
+    count: 1,
+    rule: new node_schedule.RecurrenceRule()
+  };
+  this.app.get('/typeform/scheduller/activate', function(req, res) {
+    this.app.scheduler.rule.second = new node_schedule.Range(0, 59, parseFloat(req.query.time));
+    return this.app.scheduler.scheduleJob(rule, function() {
+      return request_json.createClient('https://localhost:3001').get("/typeform/data-api?uuid=" + req.query.uuid).then(function(result) {
+        return _app.scheduler.count += 1;
+      })["catch"](function(err) {
+        return console.log(err);
+      });
+    });
+  });
+  return this.app.get('/typeform/scheduller/deactivate', function(req, res) {});
 };
 
 AppManager.prototype.pagseguro = function() {
@@ -723,129 +921,107 @@ AppManager.prototype.pagseguro = function() {
   });
 };
 
+AppManager.prototype.mailer = function() {
+  var getTemplate;
+  getTemplate = function(p, opt) {
+    return new Promise(function(resolve, reject) {
+      var _p;
+      _p = path.resolve((path.join(__dirname)) + "/../app/views/" + p + ".pug");
+      return fs.readFile(_p, 'utf8', function(err, content) {
+        var e, error1, html;
+        if (!err) {
+          try {
+            html = pug.compile(content, {
+              filename: _p,
+              doctype: 'html'
+            })({
+              curso: opt.curso,
+              nome: opt.nome,
+              data: opt.data,
+              isAlumni: opt.isAlumni
+            });
+            return resolve(html);
+          } catch (error1) {
+            e = error1;
+            return reject(e);
+          }
+        } else {
+          return reject(err);
+        }
+      });
+    });
+  };
+  this.app.post('/mailer/mailgun', function(req, res) {
+    return res.send('SENT MAIL');
+  });
+  return this.app.post('/mailer/send/:type', function(req, res) {
+    var curso, i, j, nome, projectName, self, to;
+    self = this;
+    projectName = require((path.join(__dirname)) + "/../package.json").firebase.project.name;
+    to = req.query.to;
+    nome = to.split(" <")[0];
+    for (i = j = 0; j <= 1; i = ++j) {
+      nome = nome.replace('\"', '');
+    }
+    curso = req.query.subject.split(" - ")[1];
+    return Promise.all([
+      keytar.findPassword(projectName + ".mailgun.apiKey"), keytar.findPassword(projectName + ".mailgun.domain"), getTemplate('mailer-' + req.params.type, {
+        nome: nome,
+        curso: curso,
+        isAlumni: req.query.alumni
+      })
+    ]).then(function(results) {
+      return results = {
+        auth: {
+          api_key: results[0],
+          domain: results[1]
+        },
+        options: {
+          from: "\"Vanessador-not-reply\" <postmaster@" + results[1] + ">",
+          to: req.query.to,
+          subject: "[Vanessador]: " + req.query.subject,
+          html: results[2]
+        }
+      };
+    }).then(function(results) {
+      var mailer;
+      mailer = nodemailer.createTransport(nodemailer_mailgun_transport({
+        auth: results.auth
+      }));
+      return mailer.sendMail(results.options).then(function(r) {
+        res.status(201);
+        return res.json(r);
+      })["catch"](function(error) {
+        console.log(error);
+        res.status(500);
+        return res.send(error);
+      });
+    })["catch"](function(error) {
+      console.log(error);
+      res.status(500);
+      return res.send(error);
+    });
+  });
+};
+
 AppManager.prototype.docs = function() {
   var root;
   root = path.resolve((path.join(__dirname)) + "/../app/assets");
-  this.app.get("/docs/client/index", function(req, res) {
+  this.app.get("/docs/:folder/:file", function(req, res) {
     var _index;
-    _index = "doc/app/assets/js/index.html";
+    _index = "doc/" + req.params['folder'] + "/" + req.params['file'] + ".html";
     return res.sendFile(_index, {
       'root': root
     });
   });
-  this.app.get("/docs/client/config", function(req, res) {
+  this.app.get("/docs/:folder/:sub/:file", function(req, res) {
     var _index;
-    _index = "doc/app/assets/js/config.html";
+    _index = "doc/" + req.params['folder'] + "/" + req.params['sub'] + "/" + req.params['file'] + ".html";
     return res.sendFile(_index, {
       'root': root
     });
   });
-  this.app.get("/docs/client/auth-ctrl", function(req, res) {
-    var _index;
-    _index = "doc/app/assets/js/auth-ctrl.html";
-    return res.sendFile(_index, {
-      'root': root
-    });
-  });
-  this.app.get("/docs/client/run", function(req, res) {
-    var _index;
-    _index = "doc/app/assets/js/run.html";
-    return res.sendFile(_index, {
-      'root': root
-    });
-  });
-  this.app.get("/docs/client/services", function(req, res) {
-    var _index;
-    _index = "doc/app/assets/js/services.html";
-    return res.sendFile(_index, {
-      'root': root
-    });
-  });
-  this.app.get("/docs/boot", function(req, res) {
-    var _index;
-    _index = "doc/app/assets/js/boot.html";
-    return res.sendFile(_index, {
-      'root': root
-    });
-  });
-  this.app.get("/docs/client/index", function(req, res) {
-    var _index;
-    _index = "doc/app/assets/js/index.html";
-    return res.sendFile(_index, {
-      'root': root
-    });
-  });
-  this.app.get("/docs/client/app", function(req, res) {
-    var _index;
-    _index = "doc/app/assets/js/app.html";
-    return res.sendFile(_index, {
-      'root': root
-    });
-  });
-  this.app.get("/docs/client/config", function(req, res) {
-    var _index;
-    _index = "doc/app/assets/js/config.html";
-    return res.sendFile(_index, {
-      'root': root
-    });
-  });
-  this.app.get("/docs/client/auth-ctrl", function(req, res) {
-    var _index;
-    _index = "doc/app/assets/js/auth-ctrl.html";
-    return res.sendFile(_index, {
-      'root': root
-    });
-  });
-  this.app.get("/docs/client/run", function(req, res) {
-    var _index;
-    _index = "doc/app/assets/js/run.html";
-    return res.sendFile(_index, {
-      'root': root
-    });
-  });
-  this.app.get("/docs/client/services", function(req, res) {
-    var _index;
-    _index = "doc/app/assets/js/services.html";
-    return res.sendFile(_index, {
-      'root': root
-    });
-  });
-  this.app.get("/docs/client/docco.css", function(req, res) {
-    var _index;
-    _index = "doc/app/assets/js/docco.css";
-    return res.sendFile(_index, {
-      'root': root
-    });
-  });
-  this.app.get("/docs/server/config/app", function(req, res) {
-    var _index;
-    _index = "doc/config/app.html";
-    return res.sendFile(_index, {
-      'root': root
-    });
-  });
-  this.app.get("/docs/server/config/server", function(req, res) {
-    var _index;
-    _index = "doc/config/server.html";
-    return res.sendFile(_index, {
-      'root': root
-    });
-  });
-  this.app.get("/docs/server/config/paypal", function(req, res) {
-    var _index;
-    _index = "doc/config/paypal.html";
-    return res.sendFile(_index, {
-      'root': root
-    });
-  });
-  this.app.get("/docs/server/config/pagseguro", function(req, res) {
-    var _index;
-    _index = "doc/config/pagseguro.html";
-    return res.sendFile(_index, {
-      'root': root
-    });
-  });
-  return this.app.get("/docs/server/config/docco.css", function(req, res) {
+  return this.app.get("/docs/:app/docco.css", function(req, res) {
     var _index;
     _index = "doc/config/docco.css";
     return res.sendFile(_index, {

@@ -35,7 +35,7 @@ div.jumbotron(v-if='$parent.autorizado' style='background:transparent !important
     div(v-show='estudantes !== null')
       h2 Lista de estudantes
       accordion(type="info" :one-at-time='true')  
-        panel(v-for="(v,k) in estudantes" :data="v" :key="k" :header="v['Nome ']+' '+v['Sobrenome ']")
+        panel(v-for="(v,k) in estudantes" :data="v" :key="k" :header="v['Nome']+' '+v['Sobrenome']")
           button.btn.btn-warning(v-show='!atualizar[k]' :name='k' v-on:click.prevent='edit') Atualizar
           button.btn.btn-success(v-show='atualizar[k]' :name='k' v-on:click.prevent='update') Enviar
           form

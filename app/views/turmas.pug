@@ -15,7 +15,7 @@ div.jumbotron(v-if='$parent.autorizado' style='background:transparent !important
               br
               div
                 input.form-control(:type="v.type" :id="k" :placeholder="v.placeholder")
-        button.btn.btn-success(v-on:click="onTurmas") Adicionar matrícula
+        button.btn.btn-success(v-on:click="onTurmas") Adicionar turma
 
     accordion(type="success")
       panel(header="Importart Excel")
@@ -38,11 +38,18 @@ div.jumbotron(v-if='$parent.autorizado' style='background:transparent !important
       br
       accordion(type="info" :one-at-time='true')  
         panel(v-for="(v,k) in turmas" :data="v" :key="k" :header="k")
-          strong(v-for="(val,key) in v")
-            u(:id="key") {{ key }}: {{ val }}
-            <router-link :to="{path: '/turmas/'+k+'/editar?q='+key}"> Atualizar</router-link>
-            br
-
+          button.btn.btn-warning(v-show='!atualizar[k]' :name='k' v-on:click.prevent='edit') Atualizar
+          button.btn.btn-success(v-show='atualizar[k]' :name='k' v-on:click.prevent='update') Enviar
+          form
+            fieldset
+              div.form-group(v-for="(val,key) in v")
+                label.control-label(:for='key') {{ key }} 
+                br
+                div(v-if='!atualizar[k]') 
+                  small 
+                  span {{ val }}
+                div(v-else)
+                  input.form-control(type='text' :id='k' :placeholder='val')
 div(v-else)
   h1 401
   p Não Autorizado

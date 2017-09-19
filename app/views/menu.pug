@@ -9,23 +9,49 @@ div.row
             span.icon-bar
             span.icon-bar
           div.brand-name-wrapper
-            <router-link class='' :to="{name:'_index'}">
+            <router-link id='index-button' class='' :to="{name:'_index'}">
               span.navbar-brand Vanessador
             </router-link> 
           
+          // Search
+          a.btn.btn-default#search-trigger(data-toggle='collapse')
+            span.glyphicon.glyphicon-search
+          //Search Body
+          div#search.panel-collapse.collapse
+            div.panel-body
+              form.navbar-form(role="search")
+                div.form-group
+                  input#search-input.form-control(type="text" placeholder="Search" v-on:keyup.prevent='onSearch')
+                  
+    
+          //Search List
+          ul#search-list.list-group.scrollable-menu
+            li.list-group-item(v-for='(v,k) in searchList')
+              small
+                div(v-if='searchList[searchInput]')
+                  p {{ k }}
+                  
+                div(v-else)
+                  b(v-show='v["Nome"]') {{ v['Nome']+" "+v['Sobrenome'] }}
+                  b(v-show='v["Nome do curso"]') {{ v["Nome do curso"] }}
+                  b(v-show='!v["Nome"] && !v["Nome do curso"]') {{ k }}
+                  p(v-show='v["ID User"]') ID: {{ v['ID User'] }}
+                  p(v-show='v["ID do Curso"]') ID {{ v['ID do Curso'] }}
+                  p(v-show='v["Alumini(Sim_Não)"]') Alumni: {{ v['Alumini(Sim_Não)'] }}
+        
           // Main menu
           div.side-menu-container
             ul.nav.navbar-nav(v-if="!$parent.autorizado")
-              li#auth-menu
-                a.nav-link.active(href="https://www.github.com/lunhg/vanessador") Contribua
               li
-                <router-link :to="{name:'login'}">Login</router-link>
+                a#github-button.nav-link.active(href="https://www.github.com/lunhg/vanessador") Contribua
+              li
+                <router-link id='login-button' :to="{name:'login'}">Login</router-link>
     
             ul.nav.navbar-nav(v-else)
               li#conta-menu
                 div
                   br
-                  <router-link :to="{path:'/conta'}">
+                  <router-link id='conta-button' :to="{path:'/conta'}">
                     img(v-if="user.photoURL" :src="user.photoURL" width='28' height='28')
                     img(v-else src="/assets/images/vanessadora.png" width='28' height='28')
                   </router-link> 
@@ -35,7 +61,7 @@ div.row
               li#estudantes-menu
                 div
                   br
-                  <router-link to="/estudantes">
+                  <router-link id='estudantes-button' to="/estudantes">
                     img(src="/assets/images/estudante.png" width='32' height='32')
                   </router-link>
                   span Estudantes
@@ -44,25 +70,18 @@ div.row
               li#cursos-menu
                 div
                   br
-                  <router-link to="/cursos">
+                  <router-link id='cursos-button' to="/cursos">
                     img(src="/assets/images/cursos.png" width='34' height='34')
                   </router-link>
                   span Cursos
                   br
 
-              li#turmas-menu
-                div
-                  br
-                  <router-link to="/turmas">
-                    img(src="/assets/images/turmas.png" width='34' height='34')
-                  </router-link>
-                  span Turmas
-                  br
+             
 
               li#matriculas-menu
                 div
                   br
-                  <router-link to="/matriculas">
+                  <router-link id='matriculas-button' to="/matriculas">
                     img(src="/assets/images/matriculas.png" width='28' height='28')
                   </router-link>
                   span Matrículas
@@ -71,26 +90,17 @@ div.row
               li#formularios-menu
                 div
                   br
-                  <router-link :to="{path:'/formularios'}">
+                  <router-link id='formularios-button' :to="{path:'/formularios'}">
                     img(src="/assets/images/formularios.png" width='28' height='28')    
                   </router-link>
                   span Formulários 
                     small Pré-matrículas
                   br
 
-              li#boletos-menu
-                div
-                  br
-                  <router-link to="/boletos">    
-                    img(src='/assets/images/boleto.png' width='28' height='28' rel='nofollow')      
-                  </router-link> 
-                  span Boletos
-                  br
-
               li#signout-menu
                 div
                   br
-                  <router-link to="/login">    
+                  <router-link id='logout-button' to='/login'>    
                     img(v-on:click.prevent="$parent.logout" src='/assets/images/logout.png' width='28' height='28' rel='nofollow')      
                   </router-link> 
                   span Logout

@@ -114,21 +114,51 @@ module.exports = (grunt) ->
                                         done()
                         keytar.setPassword(m,pkg.author,pwd).then onSet
 
-        grunt.registerTask 'build:doc:client', 'Build documentation with docco', ->
-                grunt.config('doc_dir', "app/assets/doc")
-                c = ""
-                # Document all
-                for p in [
-                        {orig: "#{path.join(__dirname)}/config", dest: "#{path.join(__dirname)}/app/assets/doc/config", files: ['environment', 'app', 'paypal', 'pagseguro', 'server']}
-                        {orig: "#{path.join(__dirname)}/app/controllers", dest: "#{path.join(__dirname)}/app/assets/doc/app/controllers", files: ['config', 'docs', 'index', 'pagseguro', 'paypal', 'services', 'templates', 'typeform']}
-                        {orig: "#{path.join(__dirname)}/app/assets/js", dest: "#{path.join(__dirname)}/app/assets/doc/app/assets/js", files: ['index', 'app', 'menu', 'routes', 'config', 'firebase', 'boot']}
-                ]
-                        c += ("docco #{p.orig}/#{path}.coffee -o #{p.dest}" for path in p.files).join(" ; ")
+        grunt.registerTask 'build:mailgun:apiKey', 'Store mailgun apiKey on keychain', ->
+                done = @async()
+                m = "#{pkg.firebase.project.name}.mailgun.apiKey"
+                keytar.findPassword(m).then (r) ->
+                        if r is undefined or r is null
+                                pwd = prompt("Type your #{m}\n", secure:true)
+                                onSet = (r)->
+                                        console.log "Mailgun api key created"
+                                        done()
+                        keytar.setPassword(m,pkg.author,pwd).then onSet
 
-                grunt.config('shell', {'docco': c})
+        grunt.registerTask 'build:mailgun:domain', 'Store mailgun domain on keychain', ->
+                done = @async()
+                m = "#{pkg.firebase.project.name}.mailgun.domain"
+                keytar.findPassword(m).then (r) ->
+                        if r is undefined or r is null
+                                pwd = prompt("Type your #{m}\n", secure:true)
+                                onSet = (r)->
+                                        console.log "Mailgun domain created"
+                                        done()
+                        keytar.setPassword(m,pkg.author,pwd).then onSet
+
+        grunt.registerTask 'build:docs', 'Build documentation with docco', ->
                 
+                c = ""
+                # Document all node.js
+                # T
+                for opt in [
+                        options.coffee.compileJoin.files['bin/www']
+                        options.coffee.compileJoin.files['bin/test.js']
+                ]
+                        for e in opt
+                                dest = e.split('.coffee')[0]
+                                name = dest.split('/')
+                                name = name[name.length-1]
+                                dest = dest.split(name)[0]
+                                orig = path.join(__dirname, "#{e}")
+                                
+                                _dest = path.join(__dirname, 'app/assets/doc/', dest)
+                                c += " docco #{orig} -o #{_dest} ;"
+                        
+                grunt.config('doc_dir', "app/assets/doc")
+                grunt.config('shell', {docco:c})
                 
         grunt.initConfig options
         
         # register tasks
-        grunt.registerTask 'default', ['build:init', 'build:libs', 'build:doc:client', 'coffee', 'usebanner']
+        #grunt.registerTask 'default', ['build:init', 'build:libs', 'coffee', 'usebanner']

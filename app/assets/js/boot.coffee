@@ -1,27 +1,30 @@
+window.app = null
 fetchConfig().then fetchMenu
         .then fetchRoutes
         .then makeApp
         .then (_app) ->
-                app = _app
-                app.$mount("#app")                      
+                window.app = _app
+                window.app.$mount("#app")                      
         .then ->
                 document.getElementById('masterLoader').classList.add('hide')
-                $(document).ready ->
+                
+                $ ->
                         $('.navbar-toggle').click ->
                                 $('.navbar-nav').toggleClass('slide-in')
                                 $('.side-body').toggleClass('body-slide-in')
                                 $('#search').removeClass('in').addClass('collapse').slideUp(200)
 
-                                # uncomment code for absolute positioning tweek see top comment in css
-                                #$('.absolute-wrapper').toggleClass('slide-in');
-   
+                        search = false
                         # Remove menu for searching
                         $('#search-trigger').click ->
-                                $('.navbar-nav').removeClass('slide-in')
-                                $('.side-body').removeClass('body-slide-in')
-
-                                # uncomment code for absolute positioning tweek see top comment in css
-                                #$('.absolute-wrapper').removeClass('slide-in')
+                                if not search
+                                        $('#search').removeClass('collapse').addClass('in').slideDown(200)
+                                        $('.list-group-item').slideDown(200)
+                                        search = true
+                                else
+                                        $('#search').removeClass('in').addClass('collapse').slideUp(200)
+                                        $('.list-group-item').addClass('hide').slideUp(200)
+                                        search = false
         .catch (e) ->
                 log "Error: #{e.code}\n #{e.message}\n#{e.stack}"
 

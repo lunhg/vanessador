@@ -15,7 +15,7 @@ div.jumbotron(v-if='$parent.autorizado' style='background:transparent !important
               br
               div
                 input.form-control.input-sm(:type="v.type" :id="k" :placeholder="v.placeholder")
-        button.btn.btn-success(v-on:click="onFormularios") Adicionar formulário
+        button.btn.btn-success(v-on:click='onFormularios') Adicionar formulário
 
     accordion(type="success")
       panel(header="Importart Excel") 
@@ -48,7 +48,9 @@ div.jumbotron(v-if='$parent.autorizado' style='background:transparent !important
                       div(v-for='(a,c) in responses[v][q]') 
                         accordion(type="info")
                           panel(:header='c')
+                    
                             div(v-for='(aa,cc) in a')
+                              
                               small {{ $parent.questions[v][cc] }}: {{ aa }}
 
             accordion(type="warning" :one-at-time='true')

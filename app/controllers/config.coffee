@@ -1,4 +1,5 @@
 AppManager::config = ->
+        
         @app.get '/config', (req, res) ->
                 projectName = require("#{path.join(__dirname)}/../package.json").firebase.project.name
                 keytar.findPassword("#{projectName}.firebase.apiKey")
@@ -12,3 +13,5 @@ AppManager::config = ->
                                                         projectId: projectName,
                                                         storageBucket: "#{projectName}.appspot.com",
                                                         messagingSenderId: messagingSenderId
+
+                

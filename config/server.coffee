@@ -45,6 +45,7 @@ ServerManager.routes = ->
                         app_manager.typeform()
                         #app_manager.paypal()
                         app_manager.pagseguro()
+                        app_manager.mailer()
                         app_manager.docs()
                         
                         # Send the configured express app to server

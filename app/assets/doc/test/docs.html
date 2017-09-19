@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>docs.coffee</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>docs.coffee</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>describe chalk.green(<span class="hljs-string">'Vanessador Docs'</span>), <span class="hljs-function">-&gt;</span>
+
+        it <span class="hljs-string">"should GET /docs/boot/dependencies"</span>, <span class="hljs-function">-&gt;</span>
+                <span class="hljs-keyword">new</span> Promise (resolve, reject) -&gt;
+                        agent.get(<span class="hljs-string">"/docs/boot/dependencies"</span>)
+                                .expect <span class="hljs-number">200</span>
+                                .expect <span class="hljs-string">'Content-Type'</span>, <span class="hljs-regexp">/html/</span>
+                                .end (err, res) -&gt;
+                                        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> err
+                                                resolve()
+                                        <span class="hljs-keyword">else</span>
+                                                reject err
+
+        it <span class="hljs-string">"should GET /docs/config/environment"</span>, <span class="hljs-function">-&gt;</span>
+                <span class="hljs-keyword">new</span> Promise (resolve, reject) -&gt;
+                        agent.get(<span class="hljs-string">"/docs/config/environment"</span>)
+                                .expect <span class="hljs-number">200</span>
+                                .expect <span class="hljs-string">'Content-Type'</span>, <span class="hljs-regexp">/html/</span>
+                                .end (err, res) -&gt;
+                                        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> err
+                                                resolve()
+                                        <span class="hljs-keyword">else</span>
+                                                reject err
+
+        it <span class="hljs-string">"should GET /docs/config/app"</span>, <span class="hljs-function">-&gt;</span>
+                <span class="hljs-keyword">new</span> Promise (resolve, reject) -&gt;
+                        agent.get(<span class="hljs-string">"/docs/config/app"</span>)
+                                .expect <span class="hljs-number">200</span>
+                                .expect <span class="hljs-string">'Content-Type'</span>, <span class="hljs-regexp">/html/</span>
+                                .end (err, res) -&gt;
+                                        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> err
+                                                resolve()
+                                        <span class="hljs-keyword">else</span>
+                                                reject err
+
+        it <span class="hljs-string">"should GET /docs/config/pagseguro"</span>, <span class="hljs-function">-&gt;</span>
+                <span class="hljs-keyword">new</span> Promise (resolve, reject) -&gt;
+                        agent.get(<span class="hljs-string">"/docs/config/pagseguro"</span>)
+                                .expect <span class="hljs-number">200</span>
+                                .expect <span class="hljs-string">'Content-Type'</span>, <span class="hljs-regexp">/html/</span>
+                                .end (err, res) -&gt;
+                                        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> err
+                                                resolve()
+                                        <span class="hljs-keyword">else</span>
+                                                reject err
+
+        it <span class="hljs-string">"should GET /docs/config/server"</span>, <span class="hljs-function">-&gt;</span>
+                <span class="hljs-keyword">new</span> Promise (resolve, reject) -&gt;
+                        agent.get(<span class="hljs-string">"/docs/config/server"</span>)
+                                .expect <span class="hljs-number">200</span>
+                                .expect <span class="hljs-string">'Content-Type'</span>, <span class="hljs-regexp">/html/</span>
+                                .end (err, res) -&gt;
+                                        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> err
+                                                resolve()
+                                        <span class="hljs-keyword">else</span>
+                                                reject err
+
+        it <span class="hljs-string">"should GET /docs/boot/app"</span>, <span class="hljs-function">-&gt;</span>
+                <span class="hljs-keyword">new</span> Promise (resolve, reject) -&gt;
+                        agent.get(<span class="hljs-string">"/docs/boot/app"</span>)
+                                .expect <span class="hljs-number">200</span>
+                                .expect <span class="hljs-string">'Content-Type'</span>, <span class="hljs-regexp">/html/</span>
+                                .end (err, res) -&gt;
+                                        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> err
+                                                resolve()
+                                        <span class="hljs-keyword">else</span>
+                                                reject err
+
+        it <span class="hljs-string">"should GET /docs/app/controllers/index"</span>, <span class="hljs-function">-&gt;</span>
+                <span class="hljs-keyword">new</span> Promise (resolve, reject) -&gt;
+                        agent.get(<span class="hljs-string">"/docs/app/controllers/index"</span>)
+                                .expect <span class="hljs-number">200</span>
+                                .expect <span class="hljs-string">'Content-Type'</span>, <span class="hljs-regexp">/html/</span>
+                                .end (err, res) -&gt;
+                                        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> err
+                                                resolve()
+                                        <span class="hljs-keyword">else</span>
+                                                reject err
+
+        it <span class="hljs-string">"should GET /docs/app/controllers/config"</span>, <span class="hljs-function">-&gt;</span>
+                <span class="hljs-keyword">new</span> Promise (resolve, reject) -&gt;
+                        agent.get(<span class="hljs-string">"/docs/app/controllers/config"</span>)
+                                .expect <span class="hljs-number">200</span>
+                                .expect <span class="hljs-string">'Content-Type'</span>, <span class="hljs-regexp">/html/</span>
+                                .end (err, res) -&gt;
+                                        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> err
+                                                resolve()
+                                        <span class="hljs-keyword">else</span>
+                                                reject err
+
+        it <span class="hljs-string">"should GET /docs/app/controllers/templates"</span>, <span class="hljs-function">-&gt;</span>
+                <span class="hljs-keyword">new</span> Promise (resolve, reject) -&gt;
+                        agent.get(<span class="hljs-string">"/docs/app/controllers/templates"</span>)
+                                .expect <span class="hljs-number">200</span>
+                                .expect <span class="hljs-string">'Content-Type'</span>, <span class="hljs-regexp">/html/</span>
+                                .end (err, res) -&gt;
+                                        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> err
+                                                resolve()
+                                        <span class="hljs-keyword">else</span>
+                                                reject err
+
+        it <span class="hljs-string">"should GET /docs/app/controllers/services"</span>, <span class="hljs-function">-&gt;</span>
+                <span class="hljs-keyword">new</span> Promise (resolve, reject) -&gt;
+                        agent.get(<span class="hljs-string">"/docs/app/controllers/services"</span>)
+                                .expect <span class="hljs-number">200</span>
+                                .expect <span class="hljs-string">'Content-Type'</span>, <span class="hljs-regexp">/html/</span>
+                                .end (err, res) -&gt;
+                                        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> err
+                                                resolve()
+                                        <span class="hljs-keyword">else</span>
+                                                reject err
+
+        it <span class="hljs-string">"should GET /docs/app/controllers/typeform"</span>, <span class="hljs-function">-&gt;</span>
+                <span class="hljs-keyword">new</span> Promise (resolve, reject) -&gt;
+                        agent.get(<span class="hljs-string">"/docs/app/controllers/typeform"</span>)
+                                .expect <span class="hljs-number">200</span>
+                                .expect <span class="hljs-string">'Content-Type'</span>, <span class="hljs-regexp">/html/</span>
+                                .end (err, res) -&gt;
+                                        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> err
+                                                resolve()
+                                        <span class="hljs-keyword">else</span>
+                                                reject err
+
+        it <span class="hljs-string">"should GET /docs/app/controllers/pagseguro"</span>, <span class="hljs-function">-&gt;</span>
+                <span class="hljs-keyword">new</span> Promise (resolve, reject) -&gt;
+                        agent.get(<span class="hljs-string">"/docs/app/controllers/pagseguro"</span>)
+                                .expect <span class="hljs-number">200</span>
+                                .expect <span class="hljs-string">'Content-Type'</span>, <span class="hljs-regexp">/html/</span>
+                                .end (err, res) -&gt;
+                                        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> err
+                                                resolve()
+                                        <span class="hljs-keyword">else</span>
+                                                reject err
+
+        it <span class="hljs-string">"should GET /docs/app/controllers/mailer"</span>, <span class="hljs-function">-&gt;</span>
+                <span class="hljs-keyword">new</span> Promise (resolve, reject) -&gt;
+                        agent.get(<span class="hljs-string">"/docs/app/controllers/mailer"</span>)
+                                .expect <span class="hljs-number">200</span>
+                                .expect <span class="hljs-string">'Content-Type'</span>, <span class="hljs-regexp">/html/</span>
+                                .end (err, res) -&gt;
+                                        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> err
+                                                resolve()
+                                        <span class="hljs-keyword">else</span>
+                                                reject err
+
+        it <span class="hljs-string">"should GET /docs/app/controllers/docs"</span>, <span class="hljs-function">-&gt;</span>
+                <span class="hljs-keyword">new</span> Promise (resolve, reject) -&gt;
+                        agent.get(<span class="hljs-string">"/docs/app/controllers/docs"</span>)
+                                .expect <span class="hljs-number">200</span>
+                                .expect <span class="hljs-string">'Content-Type'</span>, <span class="hljs-regexp">/html/</span>
+                                .end (err, res) -&gt;
+                                        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> err
+                                                resolve()
+                                        <span class="hljs-keyword">else</span>
+                                                reject err</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

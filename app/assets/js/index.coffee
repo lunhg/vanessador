@@ -1,3 +1,4 @@
+#= require log
 #= require app
 #= require menu
 #= require firebase
