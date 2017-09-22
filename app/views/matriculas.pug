@@ -13,11 +13,8 @@ div.jumbotron(v-if='$parent.autorizado' style='background:transparent !important
             div.form-group(v-for='(v,k) in modelos.matriculas' role='search')
               label.control-label.input-sm(:for='k') {{ v.label }}
               br
-              div
-                div
-                  input.form-control.input-sm(:type='v.type' :id='k' :placeholder='v.placeholder')
-                div
-                  span.btn.glyphicon.glyphicon-search
+              input.form-control.input-sm(:type='v.type' :id='k' :placeholder='v.placeholder')
+              
 
         button.btn.btn-success(v-on:click='onMatriculas') Adicionar formulário
 
@@ -41,9 +38,9 @@ div.jumbotron(v-if='$parent.autorizado' style='background:transparent !important
       h2 Lista de matrículas
       br
       br
-      div(v-for="(v,k) in matriculas" :data="v" :key="k" :header="v")
+      div(v-for="(v,k) in matriculas" :data="v" :key="k")
         accordion(type="info" :one-at-time='true')  
-          panel(:header="k")
+          panel(:header='estudantes[v.estudante]["Nome"]+" "+estudantes[v.estudante]["Sobrenome"]+" - "+cursos[v.curso]["Nome do curso"]')
             button.btn.btn-warning(v-show='!atualizar[k]' :name='k' v-on:click.prevent='edit') Atualizar
             button.btn.btn-success(v-show='atualizar[k]' :name='k' v-on:click.prevent='update') Enviar
             form

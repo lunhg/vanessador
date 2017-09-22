@@ -1,7 +1,7 @@
 #= require log
 #= require app
 #= require menu
-#= require firebase
+#= require vue-firebase
 #= require routes
 #= require config
 #= require excel

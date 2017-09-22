@@ -1,18 +1,18 @@
-var _testcafe, onTestCafe, runner, testcafe;
+var _testcafe_, onRemoteConnection, onTestCafe, runner, testcafe;
+
+testcafe = require('testcafe');
 
 runner = null;
 
-testcafe = null;
+_testcafe_ = null;
 
-_testcafe = createTestCafe('localhost', 1337, 1338);
-
-onTestCafe = function(_testCafe) {
+onTestCafe = function(_testCafe_) {
   return new Promise(function(resolve, reject) {
     var err, error;
     try {
-      testcafe = _testCafe_;
-      runner = testcafe.createRunner();
-      return resolve(testcafe.createBrowserConnection());
+      _testcafe_ = _testCafe_;
+      runner = _testcafe_.createRunner();
+      return resolve(_testcafe_.createBrowserConnection());
     } catch (error) {
       err = error;
       return reject(err);
@@ -20,14 +20,16 @@ onTestCafe = function(_testCafe) {
   });
 };
 
-_testcafe.then(onTestCafe).then(function(remoteConnection) {
+onRemoteConnection = function(remoteConnection) {
   return new Promise(function(resolve, reject) {
     console.log(remoteConnection.url);
     return remoteConnection.once('ready', function() {
       return runner.src(path.join(__dirname, 'test_browser.js')).browsers(remoteConnection).run().then(function(failedCount) {
         console.log(failedCount);
-        return testcafe.close();
+        return _testcafe.close();
       }).then(resolve)["catch"](reject);
     });
   });
-});
+};
+
+testcafe('localhost', 1337, 1338).then(onTestCafe);

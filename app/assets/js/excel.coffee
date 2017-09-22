@@ -7,7 +7,6 @@ onCells = (sheet, opt) ->
                         _list = opt.list.split('')
                         for r in _list 
                                 key = sheet[r+''+opt.min].v.replace new RegExp("/", "g"), '_'
-                                console.log key
                                 if sheet[r+i] is undefined
                                         if key is 'ID User'
                                                 o[key] = id
@@ -31,6 +30,7 @@ onCells = (sheet, opt) ->
                         if a[id]['Sobrenome ']
                                 a[id]['Sobrenome'] = a[id]['Sobrenome ']
                                 delete a[id]['Sobrenome ']
+                        console.log o
                                 
                 resolve a
                         

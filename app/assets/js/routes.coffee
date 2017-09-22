@@ -32,6 +32,8 @@ makeRoutes = (results) ->
                                 update: update
                                                                 
                 if r.data.name is 'matriculas'
+                        r.data.component.props.push 'estudantes'
+                        r.data.component.props.push 'cursos'
                         r.data.component.methods['onMatriculas']= onMatriculas
                                         
                 if r.data.name is 'formularios'
@@ -47,8 +49,11 @@ makeRoutes = (results) ->
                 routes: a
 
 
-buildRoutes = (result) -> a = Vue.http.get("/templates/routes/#{e}") for e in result.data
-        
+buildRoutes = (result) ->
+        a = for e in result.data
+                log e
+                Vue.http.get("/templates/routes/#{e}")
+                
 fetchRoutes = ->
         log "Loading templates..."
         Vue.http.get('/templates/index/routes')

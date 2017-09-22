@@ -33,11 +33,9 @@ fetchMenu = (config) ->
                         watch:
                                 searchInput: (to, from) ->
                                         self = this
-                                        to = to.split(" ")
-                                        firebase.database().ref(to[0]+'/').once 'value',(snapshot)->
+                                        to = if to isnt "" then to.split(" ").join("/") else "/"
+                                        firebase.database().ref(to).once 'value',(snapshot)->
                                                 if snapshot.val() isnt null
-                                                        console.log to
-                                                        console.log snapshot.val()
                                                         Vue.set self, 'searchList', snapshot.val()
                                                         document.getElementById('search-list').classList.remove('hide')
                                                 

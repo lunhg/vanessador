@@ -1,5 +1,5 @@
 #!/usr/bin/env /home/pi/.nvm/versions/node/v8.0.0/bin/node
-var AppManager, PagSeguroSDK, ServerManager, atob, body_parser, chalk, compression, connect_assets, express, foreach, fs, http, jstransformer_marked, keytar, morgan, node_schedule, node_uuid, nodemailer, nodemailer_mailgun_transport, onMsg, p, path, paypal_rest_sdk, pug, request, request_json, request_promise, xml2js, xmlbuilder;
+var AppManager, PagSeguroSDK, ServerManager, atob, body_parser, chalk, compression, connect_assets, express, foreach, fs, http, jstransformer_marked, keytar, morgan, node_schedule, node_uuid, nodemailer, nodemailer_mailgun_transport, onMsg, p, path, paypal_rest_sdk, pug, request, request_json, request_promise, testcafe, testcafe_vue_selectors, xml2js, xmlbuilder;
 
 fs = require('fs');
 
@@ -45,6 +45,10 @@ request_json = require('request-json');
 
 request_promise = require('request-promise');
 
+testcafe = require('testcafe');
+
+testcafe_vue_selectors = require('testcafe-vue-selectors');
+
 xml2js = require('xml2js');
 
 xmlbuilder = require('xmlbuilder');
@@ -75,7 +79,7 @@ AppManager = (function() {
     });
     this.app.set('view engine', 'pug');
     this.app.set('assets path', [path.join(__dirname, '..', 'app/assets/fonts'), path.join(__dirname, '..', 'app/assets/doc'), path.join(__dirname, '..', 'app/assets/img'), path.join(__dirname, '..', 'app/assets/css'), path.join(__dirname, '..', 'app/assets/js'), path.join(__dirname, '..', 'app/assets/'), path.join(__dirname, '..', 'app/assets/favicon.ico')]);
-    this.app.set('port', parseInt(process.env.PORT || '3001'));
+    this.app.set('port', parseInt(process.env.PORT || '8000'));
   }
 
   return AppManager;
@@ -127,23 +131,25 @@ PagSeguroSDK = {
     self = this;
     return new Promise(function(resolve, reject) {
       return PagSeguroSDK.config().then(function(results) {
-        json.receiver = {
-          email: results.email
-        };
+        if (!json) {
+          json = {};
+        }
         return PagSeguroSDK.toXML(json).then(function(xml) {
-          var _request, baseurl, onPost, query;
+          var _request, baseurl, onPost;
+          baseurl = "https://ws.sandbox.pagseguro.uol.com.br/v2" + action + "/?";
+          baseurl += "&email=" + results.email;
+          baseurl += "&token=" + results.token;
           console.log(xml);
-          baseurl = "https://ws.sandbox.pagseguro.uol.com.br/v2" + action;
-          query = "?email=" + results.email + "&token=" + results.token;
           _request = {
             method: 'POST',
-            url: baseurl + query,
+            url: baseurl,
             body: xml,
             headers: {
               'Content-Type': 'application/xml'
             }
           };
           onPost = function(err, response, body) {
+            console.log(body);
             if (err) {
               resolve(err.message);
             }
@@ -161,48 +167,19 @@ PagSeguroSDK = {
     self = this;
     return new Promise(function(resolve, reject) {
       return PagSeguroSDK.config().then(function(result) {
-        var _request, baseurl, onGet, query;
-        baseurl = "https://ws.sandbox.pagseguro.uol.com.br/v2" + action;
-        query = "?email=" + result.email + "&token=" + result.token;
-        _request = {
-          method: 'GET',
-          url: baseurl + query,
-          headers: {
-            'Content-Type': 'application/xml'
-          }
-        };
-        onGet = function(err, response, body) {
-          if (err) {
-            resolve(err.message);
-          }
-          if (!err) {
-            return resolve(body);
-          }
-        };
-        return request(_request, onGet);
-      });
-    });
-  },
-  put: function(action, json) {
-    var self;
-    self = this;
-    return new Promise(function(resolve, reject) {
-      return PagSeguroSDK.config().then(function(result) {
-        var url;
-        url = "https://ws.sandbox.pagseguro.uol.com.br/v2" + action + "?email=" + result.email + "&token=" + result.token;
-        PagSeguro.toXML(json).then(function(xml) {
-          var _request, baseurl, onPut, query;
+        json.email = results.email;
+        json.token = results.token;
+        return PagSeguroSDK.toXML(json).then(function(xml) {
+          var _request, baseurl, onGet;
           baseurl = "https://ws.sandbox.pagseguro.uol.com.br/v2" + action;
-          query = "?email=" + results.email + "&token=" + results.token;
           _request = {
-            method: 'PUT',
-            url: baseurl + query,
-            body: xml,
+            method: 'GET',
+            url: baseurl,
             headers: {
               'Content-Type': 'application/xml'
             }
           };
-          return onPut = function(err, response, body) {
+          onGet = function(err, response, body) {
             if (err) {
               resolve(err.message);
             }
@@ -210,8 +187,8 @@ PagSeguroSDK = {
               return resolve(body);
             }
           };
+          return request(_request, onGet);
         });
-        return request(_request, onPut);
       });
     });
   }
@@ -283,7 +260,8 @@ AppManager.prototype.boot = function() {
     extended: false
   }));
   return this.app.use(connect_assets({
-    paths: this.app.get('assets path')
+    paths: this.app.get('assets path'),
+    bundle: true
   }));
 };
 
@@ -389,7 +367,7 @@ AppManager.prototype.templates = function() {
     return res.json(["_index", "login", "signup", "resetPassword", "confirm", "conta", "formularios", "estudantes", "cursos", "matriculas"]);
   });
   this.app.get("/templates/index/page", function(req, res) {
-    return res.send("<div>\n<vanessador-menu :autorizado='autorizado' :user='user' :searchList='searchList'></vanessador-menu>\n<div class='container-fluid'>\n  <div class='side-body'>\n    <router-view :autorizado='autorizado' :user='user'  :atualizar='atualizar' :estudantes='estudantes' :cursos='cursos' :formularios='formularios' :modelos='modelos' :questions='questions' :responses='responses' :matriculas='matriculas' ></router-view>\n  </div>\n</div>\n</div>");
+    return res.send("<div>\n<vanessador-menu :autorizado='autorizado' :user='user' :searchList='searchList'></vanessador-menu>\n<div class='container-fluid'>\n  <div class='side-body'>\n    <router-view :autorizado='autorizado' :user='user' :atualizar='atualizar' :estudantes='estudantes' :cursos='cursos' :formularios='formularios' :modelos='modelos' :questions='questions' :responses='responses' :matriculas='matriculas' ></router-view>\n  </div>\n</div>\n</div>");
   });
   return this.app.get("/templates/index/data", function(req, res) {
     var cursos, estudantes, formularios, matriculas, xlsCursos, xlsEstudantes, xlsFormularios, xlsMatriculas;
@@ -467,15 +445,10 @@ AppManager.prototype.templates = function() {
         'placeholder': 'E20qGg',
         'label': 'Código typeform'
       },
-      input_turma_code: {
+      input_curso_code: {
         'type': 'text',
         'placeholder': '-Ktm1CBbiRXF7OEUellX',
-        'label': 'Código turma'
-      },
-      input_pagseguro_code: {
-        'type': 'text',
-        'placeholder': 'FD26E55B2D2D47D77457BFB0B6BCAA51',
-        'label': 'Código pagseguro (campanha 100%, 75% ou 10%)'
+        'label': 'ID curso'
       }
     };
     matriculas = {
@@ -486,14 +459,6 @@ AppManager.prototype.templates = function() {
       input_fk_estudante: {
         'type': 'text',
         'label': 'ID estudante'
-      },
-      input_matriculado: {
-        'type': 'checkbox',
-        'label': 'Matriculado?'
-      },
-      input_certificado: {
-        'type': 'checkbox',
-        'label': 'Certificado?'
       }
     };
     estudantes = {
@@ -692,230 +657,41 @@ AppManager.prototype.typeform = function() {
 };
 
 AppManager.prototype.pagseguro = function() {
-  var onParseXML;
-  onParseXML = function(result) {
-    var self;
-    self = this;
-    return new Promise(function(resolve, reject) {
+  this.app.post('/pagseguro/boleto/gerar/id', function(req, res) {
+    return PagSeguroSDK.post('/sessions').then(function(result) {
       return xml2js.parseString(result, function(err, str) {
-        console.log(str);
         if (err) {
-          reject(err);
+          res.send(err);
         }
         if (!err) {
-          return self.res.json(JSON.parse(str));
+          return res.json(JSON.parse(str));
         }
       });
-    });
-  };
-  this.app.get('/pagseguro/planos', function(req, res) {
-    return PagSeguroSDK.get('/pre-approvals').then(onParseXML.bind({
-      res: res
-    }))["catch"](function(e) {
+    })["catch"](function(e) {
       return res.send(e);
     });
   });
-  this.app.post('/pagseguro/planos', function(req, res) {
-    return PagSeguroSDK.post('/pre-approvals/request', {
-      "directPreApproval": {
-        "plan": req.query['plan'],
-        "reference": req.query['ref'],
-        "sender": {
-          "name": req.query['nome'],
-          "email": req.query['email'],
-          "ip": req.ip,
-          "hash": node_uuid.v4(),
-          "phone": {
-            "areacode": req.query['areacode'] || '55',
-            "number": req.query['number']
-          },
-          "documents": {
-            "document": {
-              "type": req.query['doc_type'],
-              "number": req.query['doc_num']
-            }
-          }
-        },
-        "paymentMethod": {
-          "token": req.query['payment_token'],
-          "type": req.query['payment_type'],
-          "holder": {
-            "name": req.query['nome'],
-            "birthDate": req.query['birthDate'],
-            "document": {
-              "type": req.query['doc_type'],
-              "number": req.query['doc_num']
-            },
-            "phone": {
-              "areacode": req.query['areacode'],
-              "number": req.query['number']
-            }
-          }
+  return this.app.post('/pagseguro/boleto/gerar', function(req, res) {
+    return PagSeguroSDK.post('/transactions', {
+      paymentMode: 'default',
+      paymentMethod: 'boleto',
+      currency: 'BRL',
+      itemId1: node_uuid.v4(),
+      itemDescription1: req.query['description'],
+      itemAmount1: req.query['amount'],
+      itemQuantity: 1,
+      senderEmail: req.query['to']
+    }).then(function(result) {
+      console.log(result);
+      return xml2js.parseString(result, function(err, str) {
+        if (err) {
+          res.send(err);
         }
-      }
-    }).then(onParseXML.bind({
-      res: res
-    }))["catch"](function(e) {
-      return res.send(e);
-    });
-  });
-  this.app.get('/pagseguro/planos/notificacoes', function(req, res) {
-    return PagSeguroSDK.get("/pre-approvals/notifications?page=" + req.query['page'] + "&maxPagesResults=50&interval=" + req.query['dias']).then(onParseXML.bind({
-      res: res
-    }))["catch"](function(e) {
-      return res.send(e);
-    });
-  });
-  this.app.get('/pagseguro/planos/notificacoes/:id', function(req, res) {
-    return PagSeguroSDK.get("/pre-approvals/notifications/" + req.params['id']).then(onParseXML.bind({
-      res: res
-    }))["catch"](function(e) {
-      return res.send(e);
-    });
-  });
-  this.app.post('/pagseguro/planos/pagamento/:id', function(req, res) {
-    var id;
-    id = node_uuid.v4();
-    return PagSeguroSDK.post('/pre-approvals/payment', {
-      "payment": {
-        "preApprovalCode": req.query['code'],
-        "reference": req.query['ref'],
-        "senderHash": node_uuid.v4(),
-        "senderIp": req.ip,
-        "items": [
-          {
-            "id": req.params['id'],
-            "description": "Boleto de pagamento",
-            "quantity": 1,
-            "amount": "10.00",
-            "weight": 1,
-            "shippingCost": 0.00
-          }
-        ]
-      }
-    }).then(onParseXML.bind({
-      res: res
-    }))["catch"](function(e) {
-      return res.send(e);
-    });
-  });
-  this.app.get('/pagseguro/planos/requerer', function(req, res) {
-    return PagSeguroSDK.get('/pre-approvals/request').then(onParseXML.bind({
-      res: res
-    }))["catch"](function(e) {
-      return res.send(e);
-    });
-  });
-  this.app.post('/pagseguro/planos/requerer', function(req, res) {
-    return PagSeguroSDK.post('/pre-approvals/request', {
-      "preApprovalRequest": {
-        "redirect_url": req.query['redirect_url'],
-        "redirect_url": req.query['review_url'],
-        "reference": req.query['ref'],
-        "preApproval": {
-          "name": req.query['name'],
-          "charge": "MANUAL",
-          "period": "WEEKLY",
-          "amountPerPayment": req.query['amount'],
-          "trialPeriodDuration": 1,
-          "membershipFee": (parseFloat(req.query['amount']) * 0.01).toFixed(2),
-          "expiration": {
-            "value": 7,
-            "unit": "DAYS"
-          },
-          "details": 'ITS_' + node_uuid.v4()
+        if (!err) {
+          return res.json(JSON.parse(str));
         }
-      }
-    }).then(onParseXML.bind({
-      res: res
-    }))["catch"](function(e) {
-      return res.send(e);
-    });
-  });
-  this.app.put('/pagseguro/planos/:id', function(req, res) {
-    return PagSeguroSDK.put("/pre-approvals/" + req.params['id'] + "/payment", {
-      "amountPerPayment": req.query['amount'],
-      "updateSubscriptions": req.query['update']
-    }).then(onParseXML.bind({
-      res: res
-    }))["catch"](function(e) {
-      return res.send(e);
-    });
-  });
-  this.app.get('/pagseguro/planos/:id', function(req, res) {
-    return PagSeguroSDK.get("/pre-approvals/" + req.params['id']).then(onParseXML.bind({
-      res: res
-    }))["catch"](function(e) {
-      return res.send(e);
-    });
-  });
-  this.app.put('/pagseguro/planos/:id/cancela', function(req, res) {
-    return PagSeguroSDK.put("/pre-approvals/" + req.params['id'] + "/payment", {
-      "pre-approval-code": req.query['code']
-    }).then(onParseXML.bind({
-      res: res
-    }))["catch"](function(e) {
-      return res.send(e);
-    });
-  });
-  this.app.put('/pagseguro/plano/:id/desconto', function(req, res) {
-    return PagSeguroSDK.put("/pre-approvals/" + req.params['id'] + "/payment", {
-      "type": "DISCOUNT_PERCENT",
-      "value": req.params['value']
-    }).then(onParseXML.bind({
-      res: res
-    }))["catch"](function(e) {
-      return res.send(e);
-    });
-  });
-  this.app.get('/pagseguro/plano/:id/ordens', function(req, res) {
-    return PagSeguroSDK.get("/pre-approvals/" + req.params['id'] + "/payment-orders").then(onParseXML.bind({
-      res: res
-    }))["catch"](function(e) {
-      return res.send(e);
-    });
-  });
-  this.app.post('/pagseguro/plano/:id/ordens/:pid', function(req, res) {
-    return PagSeguroSDK.get("/pre-approvals/" + req.params['id'] + "/payment-orders/" + req.params['pid'] + "/payment").then(onParseXML.bind({
-      res: res
-    }))["catch"](function(e) {
-      return res.send(e);
-    });
-  });
-  this.app.put('/pagseguro/plano/:id/ordens/:pid', function(req, res) {
-    return PagSeguroSDK.get("/pre-approvals/" + req.params['id'] + "/status", {
-      "status": req.query['status']
-    }).then(onParseXML.bind({
-      res: res
-    }))["catch"](function(e) {
-      return res.send(e);
-    });
-  });
-  return this.app.put('/pagseguro/plano/:id/ordens/:pid', function(req, res) {
-    return PagSeguroSDK.get("/pre-approvals/" + req.params['id'] + "/status", {
-      "type": "CREDITCARD",
-      "sender": {
-        "ip": req.ip,
-        "hash": node_uuid.v4()
-      },
-      "creditCard": {
-        "token": req.query['token'],
-        "holder": {
-          "name": req.query['nome'],
-          "birthDate": req.query['birthDate'],
-          "document": {
-            "type": req.query['doc_type'],
-            "number": req.query['doc_num']
-          },
-          "phone": {
-            "areacode": req.query['areacode'],
-            "number": req.query['number']
-          }
-        }
-      }
-    }).then(onParseXML.bind({
-      res: res
-    }))["catch"](function(e) {
+      });
+    })["catch"](function(e) {
       return res.send(e);
     });
   });

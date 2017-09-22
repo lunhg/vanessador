@@ -18,7 +18,7 @@ section.centralize-area
         label.control-label(for=""+key)
           div 
             input.form-control(type=""+val.type id=""+key placeholder=""+val.placeholder)
-    button.btn.btn-default(v-on:click.prevent="$parent.login") Login 
+    button#login-button.btn.btn-default(v-on:click.prevent="$parent.login") Login 
     br
     br
     div.section-divider

@@ -35,17 +35,19 @@ PagSeguroSDK =
                 self = this
                 new Promise (resolve, reject) ->
                         PagSeguroSDK.config().then (results) ->
-                                json.receiver = email: results.email
+                                if not json
+                                        json = {}
                                 PagSeguroSDK.toXML(json).then (xml) ->
-                                        console.log xml
-                                        baseurl = "https://ws.sandbox.pagseguro.uol.com.br/v2#{action}"
-                                        query = "?email=#{results.email}&token=#{results.token}"
+                                        baseurl = "https://ws.sandbox.pagseguro.uol.com.br/v2#{action}/?"
+                                        baseurl += "&email=#{results.email}"
+                                        baseurl += "&token=#{results.token}"
                                         _request =
                                                 method: 'POST'
-                                                url: baseurl+query
+                                                url: baseurl
                                                 body: xml
                                                 headers: {'Content-Type':'application/xml'}
                                         onPost =  (err, response, body) ->
+                                                console.log body
                                                 if err then resolve err.message
                                                 if not err then resolve body
                                         request(_request, onPost)
@@ -55,32 +57,15 @@ PagSeguroSDK =
                 self = this
                 new Promise (resolve, reject) ->
                         PagSeguroSDK.config().then (result) ->
-                                baseurl = "https://ws.sandbox.pagseguro.uol.com.br/v2#{action}"
-                                query = "?email=#{result.email}&token=#{result.token}"
-                                _request =
-                                        method: 'GET'
-                                        url: baseurl+query
-                                        headers: {'Content-Type':'application/xml'}
-                                onGet =  (err, response, body) ->
-                                        if err then resolve err.message
-                                        if not err then resolve body
-                                request _request, onGet
-
-
-        put: (action, json) ->
-                self = this
-                new Promise (resolve, reject) ->
-                        PagSeguroSDK.config().then (result) ->
-                                url = "https://ws.sandbox.pagseguro.uol.com.br/v2#{action}?email=#{result.email}&token=#{result.token}"
-                                PagSeguro.toXML(json).then (xml) ->
+                                json.email = results.email
+                                json.token = results.token
+                                PagSeguroSDK.toXML(json).then (xml) ->
                                         baseurl = "https://ws.sandbox.pagseguro.uol.com.br/v2#{action}"
-                                        query = "?email=#{results.email}&token=#{results.token}"
                                         _request =
-                                                method: 'PUT'
-                                                url: baseurl+query
-                                                body: xml
+                                                method: 'GET'
+                                                url: baseurl
                                                 headers: {'Content-Type':'application/xml'}
-                                        onPut =  (err, response, body) ->
+                                        onGet =  (err, response, body) ->
                                                 if err then resolve err.message
                                                 if not err then resolve body
-                                request(_request, onPut)
+                                        request _request, onGet

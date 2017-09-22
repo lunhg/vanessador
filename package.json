@@ -6,17 +6,16 @@
   "scripts": {
     "build:API:firebase": "grunt build:firebase:apiKey ; grunt build:firebase:messagingSenderId",
     "build:API:typeform": "grunt build:typeform:apiKey",
-    "build:API:paypal": "grunt build:paypal:apiKey ; grunt build:paypal:secret",
     "build:API:pagseguro": "grunt build:pagseguro:apiKey ; grunt build:pagseguro:email",
     "build:API:mailgun": "grunt build:mailgun:apiKey ; grunt build:mailgun:domain",
-    "build:API": "npm run build:API:firebase ; npm run build:API:typeform ; npm run build:API:paypal ; npm run build:API:pagseguro",
+    "build:API": "npm run build:API:firebase ; npm run build:API:typeform ; npm run build:API:pagseguro ; npm run build:API:mailgun",
     "build:docs": "grunt build:docs shell:docco",
     "build:app": "grunt build:init build:libs coffee usebanner --verbose",
     "test:server": "mocha --timeout 15000 bin/test.js",
-    "test:client": "node bin/test_browser_connection.js",
-    "test":"npm run test:server",
+    "test:client": "testcafe remote bin/test/ --quarantine --ports 1337,1338 --proxy-host https://iqzmbsjy.p19.weaved.com/ --qr-code",
+    "test": "npm run test:server ; test:client",
     "serve": "./bin/www &",
-    "start": "npm run build:app && npm run serve ; sleep 15 ; npm run test"
+    "start": "killall node ; npm run build:app && npm run serve"
   },
   "repository": {
     "type": "git",
@@ -46,6 +45,8 @@
     "request": "^2.81.0",
     "request-json": "^0.6.2",
     "request-promise": "^4.2.1",
+    "testcafe": "^0.17.2",
+    "testcafe-vue-selectors": "^2.0.0",
     "xml2js": "^0.4.17",
     "xmlbuilder": "^9.0.1"
   },
@@ -97,17 +98,12 @@
           "bin/test.js": [
             "boot/devDependencies.coffee",
             "test/agent.coffee",
-            "test/server.coffee",
-            "test/internal.coffee",
-            "test/docs.coffee",
-            "test/typeform.coffee",
-	    "test/mailer.coffee"
+            "test/pagseguro.coffee"
           ],
-	  "bin/test_browser.js": [
-              "test/browser_model.coffee",
-	      "test/browser.coffee"
-          ],
-	  "bin/test_browser_connection.js":["test/browser_connection.coffee"]  
+          "bin/test/login.test.js": [
+            "test/browser_init.coffee",
+            "test/login.coffee"
+          ]
         }
       }
     },

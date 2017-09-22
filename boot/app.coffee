@@ -13,4 +13,4 @@ AppManager::boot = ->
         @app.use body_parser.urlencoded({ extended: false })
         
         # Assets
-        @app.use connect_assets(paths: @app.get('assets path'))
+        @app.use connect_assets(paths: @app.get('assets path'), bundle:true)

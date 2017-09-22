@@ -117,14 +117,11 @@ AppManager::templates = ->
 
                 formularios =
                         input_typeform_code: {'type':'text', 'placeholder':'E20qGg', 'label': 'Código typeform'}
-                        input_turma_code: {'type':'text', 'placeholder':'-Ktm1CBbiRXF7OEUellX', 'label': 'Código turma'}
-                        input_pagseguro_code: {'type':'text', 'placeholder':'FD26E55B2D2D47D77457BFB0B6BCAA51', 'label': 'Código pagseguro (campanha 100%, 75% ou 10%)'}
+                        input_curso_code: {'type':'text', 'placeholder':'-Ktm1CBbiRXF7OEUellX', 'label': 'ID curso'}
 
                 matriculas =
                         input_fk_curso: {'type':'text', 'label':'ID curso'}
                         input_fk_estudante: {'type':'text', 'label':'ID estudante'}
-                        input_matriculado: {'type':'checkbox', 'label':'Matriculado?'}
-                        input_certificado: {'type':'checkbox', 'label':'Certificado?'}
 
                 estudantes =
                         input_nome: {'type':'text', 'placeholder':'nome', 'label': 'Nome'}

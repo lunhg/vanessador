@@ -1,43 +1,28 @@
-var Feature, Page, Selector, clickLogin, label;
+var TestCafe, path;
 
-Selector = require('testcafe').Selector;
+TestCafe = path = require('path');
 
-label = Selector('label');
-
-Feature = (function() {
-  function Feature(text) {
-    this.label = label.withText(text);
-    this.checkbox = label.find('input[type=checkbox]');
+require('testcafe')({
+  controlPanelPort: 1337,
+  servicePort1: 1338,
+  hostname: '127.0.0.1',
+  testsDir: path.join(__dirname, '..', 'bin/test'),
+  reportsPath: path.join(__dirname, '..', 'test/reports'),
+  browsers: {
+    'Midori': {
+      path: '/usr/bin/midori'
+    },
+    'Chromium': {
+      path: '/usr/bin/chromium-browser'
+    }
   }
-
-  return Feature;
-
-})();
-
-Page = (function() {
-  function Page() {
-    this.nameInput = Selector('#developer-name');
-    this.triedTestCafeCheckbox = Selector('#tried-test-cafe');
-    this.populateButton = Selector('#populate');
-    this.submitButton = Selector('#submit-button');
-    this.results = Selector('.result-content');
-    this.macOSRadioButton = Selector('input[type=radio][value=MacOS]');
-    this.commentsTextArea = Selector('#comments');
-    this.featureList = [new Feature('Support for testing on remote devices'), new Feature('Re-using existing JavaScript code for testing'), new Feature('Easy embedding into a Continuous integration system')];
-    this.slider = {
-      handle: Selector('.ui-slider-handle'),
-      tick: Selector('.slider-value')
-    };
-    this.interfaceSelect = Selector('#preferred-interface');
-    this.interfaceSelectOption = this.interfaceSelect.find('option');
-  }
-
-  return Page;
-
-})();
-
-fixture("Using vanessador in browser").page("https://zzxgmagb.p6.weaved.com");
-
-clickLogin = function(t) {};
-
-test('Click login', clickLogin);
+}).then(function(testcafe) {
+  var runner;
+  runner = testcafe.createRunner();
+  return runner.src([path.join(__dirname, '..', 'bin/test', 'browser.test.js')]).browsers(['Chromium']).run();
+}).then(function(failedCount) {
+  console.log('Tests failed: ' + failedCount);
+  return testcafe.close();
+})["catch"](function(err) {
+  return console.log(err);
+});

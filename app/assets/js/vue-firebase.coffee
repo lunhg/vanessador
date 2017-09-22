@@ -46,10 +46,9 @@ removeUser = (user) -> firebase.database().ref('users').child(user['.key']).remo
 # Baixa formularios pre-matricula
 onFormularios = (event) ->
         query = ["/typeform/data-api?completed=true"]
-        uuid = document.getElementById('input_typeform_code').value
-        turma = document.getElementById('input_turma_code').value
-        pagseguro_code = document.getElementById('input_pagseguro_code').value
-        query.push "uuid=#{uuid}"
+        typeformcode = document.getElementById('input_typeform_code').value
+        curso = document.getElementById('input_curso_code').value
+        query.push "uuid=#{typeformcode}"
         query = query.join('&')
         self = this
 
@@ -58,8 +57,8 @@ onFormularios = (event) ->
                 new Promise (resolve, reject) ->
                         for r in result.data.responses
                                 firebase.database()
-                                        .ref("responses/#{uuid}/#{r.token}")
-                                        .set(metdata:r.metadata,answers:r.answers,completed:if r.completed is '1' then true else false).then onGeraBoleto(r)              
+                                        .ref("responses/#{typeformcode}/#{r.token}")
+                                        .set(metadata:r.metadata,answers:r.answers,completed:if r.completed is '1' then true else false)
               
                         resolve result
                                 
@@ -70,11 +69,11 @@ onFormularios = (event) ->
         #   - 0 (não foi aluno e não tem direito a desconto no boleto)
         #   - 1 (foi aluno e tem direito a desconto de 25% no boleto)
         #   - 2 (caso excepcional com direito a 10% de desconto no boleto)
-        onAnswers = (result) ->
+        onQuestions = (result) ->
                 new Promise (resolve, reject) ->
                         for q in result.data.questions
                                 firebase.database()
-                                        .ref("questions/#{uuid}/#{q.id}")
+                                        .ref("questions/#{typeformcode}/#{q.id}")
                                         .set(q.question)
                         resolve result
                 
@@ -82,47 +81,103 @@ onFormularios = (event) ->
                 new Promise (resolve, reject) ->
                         firebase.database()
                                 .ref("formularios/")
-                                .push(uuid)
-                                .then ->
-                                        resolve result
-        onCheckAnswers = (result) ->
-                new Promise (resolve, reject) ->
-                        db = firebase.database()
-                        estudantes = {}
-                        answers = {}
-                        questions = {}
-                        db.ref("estudantes/").once 'value', (snapshot) ->
-                                estudantes[k] = estudante for k,estudante of snapshot.val()
-                        db.ref("questions/#{uuid}").once 'value', (snapshot) ->
-                                questions[k] = question for k,question of snapshot.val()
+                                .push(typeformcode)
+                                .then -> resolve result
 
-                        db.ref("responses/#{uuid}").once 'value', (snapshot) ->
-                                for q,question of questions
-                                        for k,answer of snapshot.val()
-                                                if k is q
-                                                        answers[question] = answer
-                                        
-                        console.log answers
+        # Registra uma Matricula
+        # com o status de não matriculado, e não certificado
+        # com o nome correspondente à matrícula do curso referido
+        # no campo ID curso para cada resposta, que será relacionada
+        # à um novo estudante
+        onGetName = (result) ->
+                console.log result.data
+                o = {}
+                for r in result.data.responses
+                        for q, question of result.data.questions
+                                if o[question.question] is undefined
+                                        o[question.question] = r.answers[question.id]
+                o
 
+        onCheckEstudante = (result) ->
+                addNovoEstudante = ->
+                        console.log "Não existe estudante com esse nome"
+                        console.log "Criando um novo estudante"
+                        result['ID User'] = uuid.v4()
+                        result['Alumni(Sim_Não)'] = "Não"
+                        result['Cidade_Estado_País'] = "UNDEFINED"
+                        result['Email 1'] = result['Email']
+                        delete result['Email']
+                        result['Email 2'] = "UNDEFINED"
+                        result['Email 3'] = "UNDEFINED"
+                        result['Gênero'] = "UNDEFINED"
+                        result['Telefone'] = "UNDEFINED"
+                        result['Graduação'] = result['Escolaridade']
+                        delete result['Escolaridade']
+                        delete result['Já realizou algum curso ITS Anteriormente?']
+                        delete result['Se sim, qual?']
+                        console.log result
+                        firebase.database()
+                                .ref("estudantes/#{result['ID User']}")
+                                .set(result)
+                        
+                # Checar se existe o estudante
+                firebase.database().ref('estudantes/').once 'value', (snapshot) ->
+                        console.log result
+                        if snapshot.val() isnt null
+                                for e, est of snapshot.val()
+                                        __uid__ = uuid.v4()
+                                        # Estudante existe
+                                        if est['Nome'] is result['Nome'] 
+                                                console.log est
+                                                # É alumni?
+                                                if est['Alumni(Sim_Não)']
+                                                        console.log est
+                                                # Não é alumni
+                                                else
+                                                        console.log est
+                                        # Não existe estudante
+                                        else
+                                                addNovoEstudante()
+                        else
+                                addNovoEstudante()
+                result
+                
+                                              
+        onNovaMatricula = (result) ->
+                __uid__ = uuid.v4()
+                firebase.database().ref("cursos/#{curso}").once 'value', (snapshot) ->
+                        
+                firebase.database().ref("matriculas/#{__uid__}").set({
+                        curso: curso
+                        estudante: result['ID User']
+                        boleto:
+                                status: 'Pendente'
+                                desconto
+                        
+                })
         # * Capture o typeform
         # * popule as respostas (verificando a existência desse aluno no
         #   firebase, dando-lhe uma verificação `isAlumini={0 or 1 or 2}` para cada `answer` )
         # * e registre uma chave para cada formulario
         this.$http.get(query)
-                .then onResponses
-                .then onAnswers
                 .then onRegisterForm
-                .then self.$options.computed.formularios
+                .then onQuestions
+                .then onResponses
+                .then onGetName
+                .then onCheckEstudante
+                .then onNovaMatricula
 
 
 # Adiciona matriculas
 onMatriculas = (event) ->
         o = {}
-        for e in ['input_fk_turma', 'input_fk_estudante', 'input_matriculado', 'input_certificado' ]
+        for e in ['input_fk_curso', 'input_fk_estudante' ]
                 el = document.getElementById e
-                o[e] = el.value
-                
-        firebase.database().ref("matriculas/#{id}/").push o
+                k = e.split('input_fk_')[1]
+                o[k] = el.value
+        o.certificado = false
+        o.id = uuid.v4()
+        firebase.database().ref("matriculas/#{o.id}/").set o
 
 # Adiciona turmas
 onTurmas= (event) ->
