@@ -12,7 +12,7 @@ onMsg = (addr) ->"""
 # - build a express app
 # - bind the expresse app to a http server (handled by https proxy)
 p = require('../package.json').firebase.project.name
-ServerManager.routes
+ServerManager.routes()
         .then ServerManager.start
         .then (addr) -> console.log chalk.cyan onMsg addr
         .catch (e) -> console.log e 
