@@ -60,4 +60,4 @@ module.exports = (grunt) ->
         grunt.initConfig options
         
         # register tasks
-        grunt.registerTask 'default', ['build:init', 'build:libs', 'coffee', 'usebanner']
+        #grunt.registerTask 'default', ['build:init', 'build:libs', 'coffee', 'usebanner']

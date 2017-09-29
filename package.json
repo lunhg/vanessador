@@ -10,7 +10,7 @@
 	"build:API:pagseguro": "grunt build:pagseguro:apiKey ; grunt build:pagseguro:email",
 	"build:API": "npm run build:API:firebase ; npm run build:API:typeform ; npm run build:API:paypal ; npm run build:API:pagseguro",
 	"build:doc": "grunt build:doc:client shell",
-	"build": "grunt --verbose",
+	"build": "grunt build:init build:libs coffee usebanner --verbose",
 	"test": "mocha --timeout 15000 bin/test.js",
 	"serve": "./bin/www &",
 	"start": "killall node ; npm run build ; npm run serve"
