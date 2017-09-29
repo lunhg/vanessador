@@ -4,11 +4,10 @@ PagSeguroSDK =
         config: ->
                 new Promise (resolve, reject) ->
                         p = require('../package.json').firebase.project.name
-                        Promise.all([
-                                keytar.findPassword("#{p}.pagseguro.email")
-                                keytar.findPassword("#{p}.pagseguro.apiKey")
-                        ]).then (results) ->
-                                resolve {email:results[0], token: results[1]}
+                        resolve {
+                                email:process.env.APIS_EMAIL,
+                                token: process.env.PAGSEGURO
+                        }
                         .catch reject
 
         toXML: (json) ->

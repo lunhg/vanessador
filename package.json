@@ -104,7 +104,6 @@
 			"app/controllers/templates.coffee",
 			"app/controllers/services.coffee",
 			"app/controllers/typeform.coffee",
-			"app/controllers/pagseguro.coffee",
 			"app/controllers/docs.coffee",
 			"boot/server.coffee"
 		    ],
