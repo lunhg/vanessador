@@ -17,7 +17,7 @@
     },
     "repository": {
 	"type": "git",
-	"url": "https://www.github.com/lunhg/vanessador.git"
+	"url": "https://tatooine.deploy.umbler.com/mkxo9n5k/vanessador-com-br.git"
     },
     "author": [
 	"Guilherme Lunhani <lunhg@gmail.com>"
@@ -31,7 +31,6 @@
 	"connect-assets": "^5.4.0",
 	"express": "^4.15.3",
 	"foreach": "^2.0.5",
-	"keytar": "^4.0.3",
 	"marked": "^0.3.6",
 	"morgan": "^1.8.2",
 	"node-uuid": "^1.4.8",
