@@ -43,7 +43,6 @@ ServerManager.routes = ->
                         app_manager.templates()
                         app_manager.services()
                         app_manager.typeform()
-                        app_manager.paypal()
                         app_manager.pagseguro()
                         app_manager.docs()
                         
