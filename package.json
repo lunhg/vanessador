@@ -12,7 +12,7 @@
 	"build:doc": "grunt build:doc:client shell",
 	"build": "grunt build:init build:libs coffee usebanner --verbose",
 	"test": "mocha --timeout 15000 bin/test.js",
-	"serve": "bin/www &",
+	"serve": "bin/www",
 	"start": "killall node ; npm run build ; npm run serve"
     },
     "repository": {
