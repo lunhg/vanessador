@@ -4,7 +4,6 @@ each = require 'foreach'
 require_from_package = require 'require-from-package'
 check_node = require 'check_node'
 prompt = require 'syncprompt'
-keytar = require 'keytar'
         
 module.exports = (grunt) ->
         pkg = grunt.file.readJSON('package.json')
