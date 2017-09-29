@@ -8,15 +8,27 @@ div.jumbotron(v-if='$parent.autorizado' style='background:transparent !important
   div.container    
     accordion(type="warning" )
       panel(header='Nova Matrícula')
+        button.btn.btn-success(v-on:click='onMatriculas') Adicionar matrícula
         form
           fieldset
-            div.form-group(v-for='(v,k) in modelos.matriculas' role='search')
-              label.control-label.input-sm(:for='k') {{ v.label }}
+            div.form-group(v-for="(v,k) in modelos.matriculas")
+              label.control-label.input-sm(:for="k") {{ v.label }}
               br
-              input.form-control.input-sm(:type='v.type' :id='k' :placeholder='v.placeholder')
+              div(:id='k')        
+                select(:id='"list-"+k')
+                  option(v-for='(q,w) in filter("input_", k)' :data-value='w' :value='w') 
+                    div
+                      b(v-if='k === "input_estudante"') {{ q['Nome'] }}
+                      b(v-else) {{ q['Nome do curso'] }}
+        //form
+        //  fieldset
+        //    div.form-group(v-for='(v,k) in modelos.matriculas' role='search')
+        //      label.control-label.input-sm(:for='k') {{ v.label }}
+        //      br
+        //      input.form-control.input-sm(:type='v.type' :id='k' :placeholder='v.placeholder')
               
 
-        button.btn.btn-success(v-on:click='onMatriculas') Adicionar formulário
+        //button.btn.btn-success(v-on:click='onMatriculas') Adicionar formulário
 
     accordion(type="success")
       panel(header="Importar Excel") 
@@ -40,7 +52,7 @@ div.jumbotron(v-if='$parent.autorizado' style='background:transparent !important
       br
       div(v-for="(v,k) in matriculas" :data="v" :key="k")
         accordion(type="info" :one-at-time='true')  
-          panel(:header='estudantes[v.estudante]["Nome"]+" "+estudantes[v.estudante]["Sobrenome"]+" - "+cursos[v.curso]["Nome do curso"]')
+          panel(:header='cursos[v.curso]["Nome do curso"] + " - " + estudantes[v.estudante]["Nome"] + " " +estudantes[v.estudante]["Sobrenome"]')
             button.btn.btn-warning(v-show='!atualizar[k]' :name='k' v-on:click.prevent='edit') Atualizar
             button.btn.btn-success(v-show='atualizar[k]' :name='k' v-on:click.prevent='update') Enviar
             form

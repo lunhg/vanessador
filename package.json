@@ -15,7 +15,7 @@
     "test:client": "testcafe remote bin/test/ --quarantine --ports 1337,1338 --proxy-host https://iqzmbsjy.p19.weaved.com/ --qr-code",
     "test": "npm run test:server ; test:client",
     "serve": "./bin/www &",
-    "start": "killall node ; npm run build:app && npm run serve"
+    "start": "npm run build:app && npm run serve"
   },
   "repository": {
     "type": "git",
@@ -59,6 +59,7 @@
     "grunt-shell": "^2.1.0",
     "mocha": "^3.4.2",
     "mocha-testdata": "^1.2.0",
+    "node-uuid": "^1.4.8",  
     "require-from-package": "0.0.4",
     "should": "^11.2.1",
     "supertest": "^3.0.0",

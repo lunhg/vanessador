@@ -24,8 +24,11 @@ makeApp = (router) ->
                         
                                 # Os dados apresentados pelo Vue de acordo com o firebase,
                                 # typeform e pagseguro.
-                                data: results[1].data
-                                       
+                                data: ->
+                                        o = results[1].data
+                                        o[e] = {} for e in ['responses', 'questions', 'formularios', 'estudantes', 'cursos', 'matriculas']
+                                        o
+                                        
                                 # # Watch (variaveis)
                                 # Em caso de mudanças nas variáveis e rotas,
                                 # aplique as transformações específicas
@@ -34,19 +37,29 @@ makeApp = (router) ->
                                                 if not this.autorizado then this.$router.push '/login'
                                                 console.log to
                                                 f = to.path.split('/')[1]
+                                                self = this
+                                                if f is 'formularios'
+                                                        onComputed('responses')().then (r) ->
+                                                                console.log r
+                                                                Vue.set(self, 'responses', r)
+                                                        onComputed('questions')().then (q) ->
+                                                                Vue.set(self, 'questions', q)
+                                                onComputed(f)().then (data) ->
+                                                        console.log data
+                                                        Vue.set(self, f, data)
+                                        
                                                 
-                                                console.log f  
 
                                 # Dados computados são aqueles que serão recuperados
                                 # durante uma requisição à base de dados do firebase.
                                 # É importante lembrar que tais requisições são assíncronas
-                                computed:                     
-                                        cursos: onComputed('cursos')
-                                        estudantes: onComputed('estudantes')
-                                        formularios: onComputedForm
-                                        responses: onComputed('responses')
-                                        questions: onComputed('questions')
-                                        matriculas: onComputed('matriculas')
+                                #computed:                     
+                                #        cursos: onComputed('cursos')
+                                #        estudantes: onComputed('estudantes')
+                                #        formularios: onComputedForm
+                                #        responses: onComputed('responses')
+                                #        questions: onComputed('questions')
+                                #        matriculas: onComputed('matriculas')
                                         
                                 # Simples métodos de autorização
                                 # Ver também `app/assets/js/routes.coffee`

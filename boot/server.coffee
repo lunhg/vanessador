@@ -1,6 +1,6 @@
 onMsg = (addr) ->"""
 ===* Vanessador server ready *===
-* Express/Firebase Server
+* Express Server
 * started at #{Date.now()}
 * available in
   #{addr.address}:#{addr.port}

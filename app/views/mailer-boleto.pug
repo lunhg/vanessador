@@ -21,29 +21,24 @@ html(xmlns="http://www.w3.org/1999/xhtml")
                   table#templateBody(border='0' cellpadding='40' cellspacing='0' width='100%' style='background-color:#ffffff;border-radius:6px;font-size:20px;line-height:34px;border-collapse:collapse !important;')
                     tr
                       td(valign='top')
-                        p(style='margin:0;font-size:28px;padding-bottom:12px;') Olá
-                          strong #{nome} 
-                        p(style='margin:0;') Obrigado pelo seu interesse no 
-                          strong #{curso}.
+                        p(style='margin:0;font-size:28px;padding-bottom:12px;') Olá,  
+                          strong 
+                            span   #{nome} 
+                        p(style='margin:0;') Obrigado pelo seu interesse
+                          span   no curso
+                            b   #{curso}.
                         br
-                        p(style='margin:0;') Para finalizar sua inscrição, é necessário realizar o pagamento através do <strong>Pagseguro</strong>, o que você pode fazer clicando no botão abaixo:
-                        table(border='0' cellpadding='0' cellspacing='0' width='75%' style='border-collapse:collapse !important;')
-                          tr
-                            td.panel(align='center' valign='top' style='padding:50px 0;')
-                              - var link = ''
-                              - if(isAlumni === '0')
-                                - link = 'https://pag.ae/1'
-                              - if(isAlumni === '1')
-                                - link = 'https://pag.ae/2'
-                              - if(isAlumni === '2')
-                                - link = 'https://pag.ae/3'
-                              p #{link}
-                              a.primary-button(href=''+link style='background-color:#00c084;border-bottom:3px solid #00aa70;border-radius:40px;color:#ffffff;display:inline-block;font-size:20px;font-weight:bold;line-height:1em;min-width:340px;padding:25px;text-align:center;text-decoration:none;text-transform:uppercase;')  Pague aqui
+                        small
+                          p(style='margin:0;') Para finalizar sua inscrição, é necessário realizar o pagamento através do <strong>Pagseguro</strong>, o que você pode fazer clicando no botão abaixo:
+                          table(border='0' cellpadding='0' cellspacing='0' width='75%' style='border-collapse:collapse !important;')
+                            tr
+                              td.panel(align='center' valign='top' style='padding:50px 0;')
+                      
+                                a.primary-button(href='https://pag.ae/'+link+'' style='background-color:#00c084;border-bottom:3px solid #00aa70;border-radius:40px;color:#ffffff;display:inline-block;font-size:20px;font-weight:bold;line-height:1em;min-width:340px;padding:25px;text-align:center;text-decoration:none;text-transform:uppercase;')  Pague aqui
                          
-                              p(style='margin:0;') Atenciosamente
-                              p.signature(style='margin:0;font-size:26px;')
-                              strong Cursos - ITS Rio
-                              small
+                                p(style='margin:0;') Atenciosamente
+                                p.signature(style='margin:0;font-size:26px;')
+                                strong Cursos - ITS Rio
                                 p Você recebeu esse email por ter realizado um cadastro na 
                                 a(href='https://www.itsrio.org/') ITS Rio
                                 p Caso você não tenha feito esse cadastro, por favor ignore essa mensagem.

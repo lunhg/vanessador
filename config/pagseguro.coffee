@@ -4,12 +4,13 @@ PagSeguroSDK =
         config: ->
                 new Promise (resolve, reject) ->
                         p = require('../package.json').firebase.project.name
-                        Promise.all([
-                                keytar.findPassword("#{p}.pagseguro.email")
-                                keytar.findPassword("#{p}.pagseguro.apiKey")
-                        ]).then (results) ->
-                                resolve {email:results[0], token: results[1]}
-                        .catch reject
+                        try
+                                resolve {
+                                        email:process.env.APIS_EMAIL,
+                                        token: process.env.PAGSEGURO_TOKEN
+                                }
+                        catch e
+                                reject e
 
         toXML: (json) ->
                 
@@ -35,17 +36,16 @@ PagSeguroSDK =
                 self = this
                 new Promise (resolve, reject) ->
                         PagSeguroSDK.config().then (results) ->
-                                if not json
-                                        json = {}
-                                PagSeguroSDK.toXML(json).then (xml) ->
-                                        baseurl = "https://ws.sandbox.pagseguro.uol.com.br/v2#{action}/?"
-                                        baseurl += "&email=#{results.email}"
-                                        baseurl += "&token=#{results.token}"
-                                        _request =
-                                                method: 'POST'
-                                                url: baseurl
-                                                body: xml
-                                                headers: {'Content-Type':'application/xml'}
+                                baseurl = "https://ws.sandbox.pagseguro.uol.com.br/v2#{action}/?"
+                                baseurl += "&email=#{results.email}"
+                                baseurl += "&token=#{results.token}"
+                                _request =
+                                        method: 'POST'
+                                        url: baseurl
+                                        headers: {'Content-Type':'application/xml'}
+                                PagSeguroSDK.toXML(json or {}).then (xml) ->
+                                        console.log xml
+                                        _request.body = xml
                                         onPost =  (err, response, body) ->
                                                 console.log body
                                                 if err then resolve err.message

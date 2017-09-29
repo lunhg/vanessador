@@ -66,7 +66,8 @@ AppManager::templates = ->
                                                 reject e
                                 else
                                         reject err
-                   
+
+                
         @app.get '/templates/routes/:type', (req, res) ->
                 onSuccess = (result) -> res.json result
                 onErr = (err) -> res.json err.message
@@ -88,10 +89,12 @@ AppManager::templates = ->
                 
         @app.get "/templates/index/page", (req, res) ->
                 res.send """<div>
-  <vanessador-menu :autorizado='autorizado' :user='user' :searchList='searchList'></vanessador-menu>
+  <vanessador-menu :autorizado='autorizado' :user='user'></vanessador-menu>
   <div class='container-fluid'>
     <div class='side-body'>
-      <router-view :autorizado='autorizado' :user='user' :atualizar='atualizar' :estudantes='estudantes' :cursos='cursos' :formularios='formularios' :modelos='modelos' :questions='questions' :responses='responses' :matriculas='matriculas' ></router-view>
+      <transition>
+        <router-view :autorizado='autorizado' :user='user' :atualizar='atualizar' :estudantes='estudantes' :cursos='cursos' :formularios='formularios' :modelos='modelos' :questions='questions' :responses='responses' :matriculas='matriculas' :login='login' :logout='logout'></router-view>
+      </transition>
     </div>
   </div>
 </div>"""
@@ -116,12 +119,12 @@ AppManager::templates = ->
                         input_max: {'type':'text', 'placeholder':'3', 'label': 'Linha final'}
 
                 formularios =
-                        input_typeform_code: {'type':'text', 'placeholder':'E20qGg', 'label': 'Código typeform'}
-                        input_curso_code: {'type':'text', 'placeholder':'-Ktm1CBbiRXF7OEUellX', 'label': 'ID curso'}
+                        input_typeform: {'type':'text', 'placeholder':'E20qGg', 'label': 'Código typeform'}
+                        input_curso: {'type':'text', 'placeholder':'-Ktm1CBbiRXF7OEUellX', 'label': 'ID curso'}
 
                 matriculas =
-                        input_fk_curso: {'type':'text', 'label':'ID curso'}
-                        input_fk_estudante: {'type':'text', 'label':'ID estudante'}
+                        input_curso: {'type':'text', 'label':'ID curso'}
+                        input_estudante: {'type':'text', 'label':'ID estudante'}
 
                 estudantes =
                         input_nome: {'type':'text', 'placeholder':'nome', 'label': 'Nome'}
@@ -161,7 +164,6 @@ AppManager::templates = ->
                                 photoURL:false
                                 telephone:false
                         atualizar: {}
-                        searchList: {}
                         modelos:
                                 xls:
                                         cursos: xlsCursos

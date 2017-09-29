@@ -5,41 +5,53 @@
 # é executado pelo firebase
 makeRoutes = (results) ->
         a = for r in results
+                console.log r.data
                 if typeof r.data is 'object'
                         r.data.component.props= ['autorizado', 'user']
                         r.data.props = true
-                        
                                 
-                if r.data.name is 'conta'
-                        r.data.component.methods =
-                                logout: -> this.$emit('logout')
-        
-                for e in ['formularios', 'estudantes', 'cursos', 'matriculas']
+                        for e in ['formularios', 'estudantes', 'cursos', 'matriculas']
                         
-                        if r.data.name is e
-                                r.data.component.props.push r.data.name
-                                r.data.component.props.push "modelos"
-                                r.data.component.props.push "atualizar"
-                                                
-                        r.data.component.components = 
-                                accordion: VueStrap.accordion
-                                panel: VueStrap.panel
+                                if r.data.name is e
+                                        r.data.component.props.push r.data.name
+                                        r.data.component.props.push "modelos"
+                                        r.data.component.props.push "atualizar"
+
+                                #console.log Vue2Autocomplete
+                                r.data.component.components = 
+                                        accordion: VueStrap.accordion
+                                        panel: VueStrap.panel
+                                
         
-                        r.data.component.methods =
-                                importarXLS: importarXLS
-                                getDocumentValue: (id) -> document.getElementById(id).value
-                                edit:edit       
-                                update: update
-                                                                
-                if r.data.name is 'matriculas'
-                        r.data.component.props.push 'estudantes'
-                        r.data.component.props.push 'cursos'
-                        r.data.component.methods['onMatriculas']= onMatriculas
-                                        
-                if r.data.name is 'formularios'
-                        r.data.component.props.push 'questions'
-                        r.data.component.props.push 'responses'
-                        r.data.component.methods['onFormularios']= onFormularios
+                                r.data.component.methods =
+                                        importarXLS: importarXLS
+                                        getDocumentValue: (id) -> document.getElementById(id).value
+                                        edit:edit       
+                                        update: update
+
+                                                
+                        if r.data.name is 'matriculas'
+                                r.data.component.props.push 'estudantes'
+                                r.data.component.props.push 'cursos'
+                                r.data.component.methods['onMatriculas']= onMatriculas
+                                r.data.component.methods['filter'] =  filter
+                                
+                        if r.data.name is 'formularios'
+                                r.data.component.props.push 'questions'
+                                r.data.component.props.push 'responses'
+                                r.data.component.props.push 'formularios'
+                                r.data.component.props.push 'cursos'
+                                r.data.component.methods['onFormularios']= onFormularios
+                                r.data.component.methods['filter'] =  filter
+
+                        if r.data.name is 'login'
+                                r.data.component.methods =
+                                        login: login
+
+                        if r.data.name is '_index'
+                                r.data.component.components = 
+                                        accordion: VueStrap.accordion
+                                        panel: VueStrap.panel
                 r.data
                 
         # return to promise 

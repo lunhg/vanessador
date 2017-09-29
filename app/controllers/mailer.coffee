@@ -9,8 +9,7 @@ AppManager::mailer = ->
                                                 html = pug.compile(content, {filename:_p,doctype:'html'})({
                                                         curso: opt.curso
                                                         nome: opt.nome
-                                                        data: opt.data
-                                                        isAlumni: opt.isAlumni
+                                                        link: opt.link
                                                 })
                                                 resolve html
                                         catch e
@@ -26,27 +25,23 @@ AppManager::mailer = ->
                 projectName = require("#{path.join(__dirname)}/../package.json").firebase.project.name
 
                 to = req.query.to
-                nome = to.split(" <")[0]
-                nome = nome.replace '\"', '' for i in [0..1]
-                curso = req.query.subject.split(" - ")[1]
-                Promise.all([
-                        keytar.findPassword("#{projectName}.mailgun.apiKey")
-                        keytar.findPassword("#{projectName}.mailgun.domain")
-                        getTemplate('mailer-'+req.params.type, {
-                                 nome: nome
-                                 curso: curso
-                                 isAlumni: req.query.alumni
-                        })
-                ]).then (results) ->
+                nome = req.query.nome
+                curso = req.query.curso
+                link = req.query.link
+                getTemplate('mailer-'+req.params.type, {
+                        nome: nome
+                        curso: curso
+                        link: link
+                }).then (html) ->
                         results =
                                 auth:
-                                        api_key: results[0]
-                                        domain: results[1]
+                                        api_key: process.env.MAILGUN_API_KEY
+                                        domain: process.env.MAILGUN_DOMAIN
                                 options:
                                         from: "\"Vanessador-not-reply\" <postmaster@#{results[1]}>"        
                                         to: req.query.to
-                                        subject:  "[Vanessador]: #{req.query.subject}"
-                                        html: results[2]
+                                        subject:  "[Vanessador]: Boleto - #{req.query.curso}"
+                                        html: html
                 .then (results) ->
                         mailer = nodemailer.createTransport nodemailer_mailgun_transport(auth:results.auth)
                         mailer.sendMail(results.options)

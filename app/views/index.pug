@@ -7,6 +7,7 @@ block head
   link(rel="stylesheet" href="https://unpkg.com/angular-toastr/dist/angular-toastr.css")
   link(rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css")
   != css("index")
+  != css("vue-autocomplete")
 
 block inicializador
   section#masterLoader.centralize-area
@@ -29,6 +30,7 @@ block scripts
   != js("vue-router", {'data-turbolinks-track':true})
   != js("vue-resource.min", {'data-turbolinks-track':true})
   != js("vue-computed-promise", {'data-turbolinks-track':true})
+  != js("vue2-autocomplete", {'data-turbolinks-track':true})
   != js("vue-strap.min", {'data-turbolinks-track':true})
   != js("xlsx.full.min", {'data-turbolinks-track':true})
   != js("uuid", {'data-turbolinks-track':true})

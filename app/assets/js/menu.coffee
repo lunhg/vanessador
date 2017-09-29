@@ -16,8 +16,7 @@ fetchMenu = (config) ->
                                         searchList: {}
                                 }
                         methods:
-                                login: -> this.$emit 'login'
-                                logout: -> this.$emit 'logout'
+                                
                                 toogle: (w) ->
                                         if w is 'conta'
                                                 if this.active[w]
@@ -44,4 +43,3 @@ fetchMenu = (config) ->
                                         if !e.target.parentNode.classList.contains('dropdown-menu')
                                                 self.close()
                                 window.addEventListener 'click', onClick, false
-        

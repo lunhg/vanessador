@@ -89,14 +89,17 @@ AppManager = (function() {
 PagSeguroSDK = {
   config: function() {
     return new Promise(function(resolve, reject) {
-      var p;
+      var e, error1, p;
       p = require('../package.json').firebase.project.name;
-      return Promise.all([keytar.findPassword(p + ".pagseguro.email"), keytar.findPassword(p + ".pagseguro.apiKey")]).then(function(results) {
+      try {
         return resolve({
-          email: results[0],
-          token: results[1]
+          email: process.env.APIS_EMAIL,
+          token: process.env.PAGSEGURO_TOKEN
         });
-      })["catch"](reject);
+      } catch (error1) {
+        e = error1;
+        return reject(e);
+      }
     });
   },
   toXML: function(json) {
@@ -131,23 +134,21 @@ PagSeguroSDK = {
     self = this;
     return new Promise(function(resolve, reject) {
       return PagSeguroSDK.config().then(function(results) {
-        if (!json) {
-          json = {};
-        }
-        return PagSeguroSDK.toXML(json).then(function(xml) {
-          var _request, baseurl, onPost;
-          baseurl = "https://ws.sandbox.pagseguro.uol.com.br/v2" + action + "/?";
-          baseurl += "&email=" + results.email;
-          baseurl += "&token=" + results.token;
+        var _request, baseurl;
+        baseurl = "https://ws.sandbox.pagseguro.uol.com.br/v2" + action + "/?";
+        baseurl += "&email=" + results.email;
+        baseurl += "&token=" + results.token;
+        _request = {
+          method: 'POST',
+          url: baseurl,
+          headers: {
+            'Content-Type': 'application/xml'
+          }
+        };
+        return PagSeguroSDK.toXML(json || {}).then(function(xml) {
+          var onPost;
           console.log(xml);
-          _request = {
-            method: 'POST',
-            url: baseurl,
-            body: xml,
-            headers: {
-              'Content-Type': 'application/xml'
-            }
-          };
+          _request.body = xml;
           onPost = function(err, response, body) {
             console.log(body);
             if (err) {
@@ -239,7 +240,6 @@ ServerManager.routes = function() {
       app_manager.index();
       app_manager.config();
       app_manager.templates();
-      app_manager.services();
       app_manager.typeform();
       app_manager.pagseguro();
       app_manager.mailer();
@@ -275,17 +275,13 @@ AppManager.prototype.config = function() {
   return this.app.get('/config', function(req, res) {
     var projectName;
     projectName = require((path.join(__dirname)) + "/../package.json").firebase.project.name;
-    return keytar.findPassword(projectName + ".firebase.apiKey").then(function(apiKey) {
-      return keytar.findPassword(projectName + ".firebase.messagingSenderId").then(function(messagingSenderId) {
-        return res.json({
-          apiKey: apiKey,
-          authDomain: projectName + ".firebaseapp.com",
-          databaseURL: "https://" + projectName + ".firebaseio.com",
-          projectId: projectName,
-          storageBucket: projectName + ".appspot.com",
-          messagingSenderId: messagingSenderId
-        });
-      });
+    return res.json({
+      apiKey: process.env.FIREBASE_API_KEY,
+      authDomain: projectName + ".firebaseapp.com",
+      databaseURL: "https://" + projectName + ".firebaseio.com",
+      projectId: projectName,
+      storageBucket: projectName + ".appspot.com",
+      messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID
     });
   });
 };
@@ -367,7 +363,7 @@ AppManager.prototype.templates = function() {
     return res.json(["_index", "login", "signup", "resetPassword", "confirm", "conta", "formularios", "estudantes", "cursos", "matriculas"]);
   });
   this.app.get("/templates/index/page", function(req, res) {
-    return res.send("<div>\n<vanessador-menu :autorizado='autorizado' :user='user' :searchList='searchList'></vanessador-menu>\n<div class='container-fluid'>\n  <div class='side-body'>\n    <router-view :autorizado='autorizado' :user='user' :atualizar='atualizar' :estudantes='estudantes' :cursos='cursos' :formularios='formularios' :modelos='modelos' :questions='questions' :responses='responses' :matriculas='matriculas' ></router-view>\n  </div>\n</div>\n</div>");
+    return res.send("<div>\n<vanessador-menu :autorizado='autorizado' :user='user'></vanessador-menu>\n<div class='container-fluid'>\n  <div class='side-body'>\n    <transition>\n      <router-view :autorizado='autorizado' :user='user' :atualizar='atualizar' :estudantes='estudantes' :cursos='cursos' :formularios='formularios' :modelos='modelos' :questions='questions' :responses='responses' :matriculas='matriculas' :login='login' :logout='logout'></router-view>\n    </transition>\n  </div>\n</div>\n</div>");
   });
   return this.app.get("/templates/index/data", function(req, res) {
     var cursos, estudantes, formularios, matriculas, xlsCursos, xlsEstudantes, xlsFormularios, xlsMatriculas;
@@ -440,23 +436,23 @@ AppManager.prototype.templates = function() {
       }
     };
     formularios = {
-      input_typeform_code: {
+      input_typeform: {
         'type': 'text',
         'placeholder': 'E20qGg',
         'label': 'Código typeform'
       },
-      input_curso_code: {
+      input_curso: {
         'type': 'text',
         'placeholder': '-Ktm1CBbiRXF7OEUellX',
         'label': 'ID curso'
       }
     };
     matriculas = {
-      input_fk_curso: {
+      input_curso: {
         'type': 'text',
         'label': 'ID curso'
       },
-      input_fk_estudante: {
+      input_estudante: {
         'type': 'text',
         'label': 'ID estudante'
       }
@@ -597,7 +593,6 @@ AppManager.prototype.templates = function() {
         telephone: false
       },
       atualizar: {},
-      searchList: {},
       modelos: {
         xls: {
           cursos: xlsCursos,
@@ -617,7 +612,7 @@ AppManager.prototype.templates = function() {
 AppManager.prototype.services = function() {};
 
 AppManager.prototype.typeform = function() {
-  this.app.get('/typeform/data-api', function(req, res) {
+  return this.app.get('/typeform/data-api', function(req, res) {
     var projectName, pwd;
     projectName = require((path.join(__dirname)) + "/../package.json").firebase.project.name;
     pwd = projectName + ".typeform.apiKey";
@@ -639,21 +634,6 @@ AppManager.prototype.typeform = function() {
       return res.json(err);
     });
   });
-  this.app.scheduler = {
-    count: 1,
-    rule: new node_schedule.RecurrenceRule()
-  };
-  this.app.get('/typeform/scheduller/activate', function(req, res) {
-    this.app.scheduler.rule.second = new node_schedule.Range(0, 59, parseFloat(req.query.time));
-    return this.app.scheduler.scheduleJob(rule, function() {
-      return request_json.createClient('https://localhost:3001').get("/typeform/data-api?uuid=" + req.query.uuid).then(function(result) {
-        return _app.scheduler.count += 1;
-      })["catch"](function(err) {
-        return console.log(err);
-      });
-    });
-  });
-  return this.app.get('/typeform/scheduller/deactivate', function(req, res) {});
 };
 
 AppManager.prototype.pagseguro = function() {
@@ -664,6 +644,7 @@ AppManager.prototype.pagseguro = function() {
           res.send(err);
         }
         if (!err) {
+          res.status(201);
           return res.json(JSON.parse(str));
         }
       });
@@ -673,22 +654,65 @@ AppManager.prototype.pagseguro = function() {
   });
   return this.app.post('/pagseguro/boleto/gerar', function(req, res) {
     return PagSeguroSDK.post('/transactions', {
-      paymentMode: 'default',
-      paymentMethod: 'boleto',
-      currency: 'BRL',
-      itemId1: node_uuid.v4(),
-      itemDescription1: req.query['description'],
-      itemAmount1: req.query['amount'],
-      itemQuantity: 1,
-      senderEmail: req.query['to']
+      payment: {
+        mode: 'default',
+        method: 'boleto',
+        currency: 'BRL',
+        notificationURL: 'http://192.168.0.11:3000/#/notifica',
+        paymentMode: 'default',
+        receiverEmail: 'gcravista@gmail.com',
+        sender: {
+          hash: req.query['hash'],
+          documents: {
+            document: {
+              type: 'CPF',
+              value: req.query['cpf']
+            }
+          },
+          phone: {
+            areaCode: '99',
+            number: '99999999'
+          },
+          name: req.query['nome'],
+          email: req.query['email']
+        },
+        items: {
+          item: {
+            id: req.query['id'],
+            description: req.query['description'],
+            amount: req.query['amount'],
+            quantity: 1
+          }
+        },
+        reference: req.query['id'],
+        shipping: {
+          address: {
+            street: 'NONE',
+            number: 9999,
+            complement: '9o andar',
+            district: 'NONE',
+            city: req.query['city'],
+            state: req.query['state'],
+            country: 'BRA',
+            postalCode: 99999999
+          },
+          type: 1,
+          cost: '0.00',
+          addressRequired: false
+        }
+      }
     }).then(function(result) {
       console.log(result);
       return xml2js.parseString(result, function(err, str) {
+        var _json;
         if (err) {
           res.send(err);
         }
         if (!err) {
-          return res.json(JSON.parse(str));
+          res.status(201);
+          _json = JSON.parse(str);
+          console.log(_json);
+          return res.json(_json);
         }
       });
     })["catch"](function(e) {
@@ -713,8 +737,7 @@ AppManager.prototype.mailer = function() {
             })({
               curso: opt.curso,
               nome: opt.nome,
-              data: opt.data,
-              isAlumni: opt.isAlumni
+              link: opt.link
             });
             return resolve(html);
           } catch (error1) {
@@ -731,32 +754,29 @@ AppManager.prototype.mailer = function() {
     return res.send('SENT MAIL');
   });
   return this.app.post('/mailer/send/:type', function(req, res) {
-    var curso, i, j, nome, projectName, self, to;
+    var curso, link, nome, projectName, self, to;
     self = this;
     projectName = require((path.join(__dirname)) + "/../package.json").firebase.project.name;
     to = req.query.to;
-    nome = to.split(" <")[0];
-    for (i = j = 0; j <= 1; i = ++j) {
-      nome = nome.replace('\"', '');
-    }
-    curso = req.query.subject.split(" - ")[1];
-    return Promise.all([
-      keytar.findPassword(projectName + ".mailgun.apiKey"), keytar.findPassword(projectName + ".mailgun.domain"), getTemplate('mailer-' + req.params.type, {
-        nome: nome,
-        curso: curso,
-        isAlumni: req.query.alumni
-      })
-    ]).then(function(results) {
+    nome = req.query.nome;
+    curso = req.query.curso;
+    link = req.query.link;
+    return getTemplate('mailer-' + req.params.type, {
+      nome: nome,
+      curso: curso,
+      link: link
+    }).then(function(html) {
+      var results;
       return results = {
         auth: {
-          api_key: results[0],
-          domain: results[1]
+          api_key: process.env.MAILGUN_API_KEY,
+          domain: process.env.MAILGUN_DOMAIN
         },
         options: {
           from: "\"Vanessador-not-reply\" <postmaster@" + results[1] + ">",
           to: req.query.to,
-          subject: "[Vanessador]: " + req.query.subject,
-          html: results[2]
+          subject: "[Vanessador]: Boleto - " + req.query.curso,
+          html: html
         }
       };
     }).then(function(results) {
@@ -807,7 +827,7 @@ AppManager.prototype.docs = function() {
 };
 
 onMsg = function(addr) {
-  return "===* Vanessador server ready *===\n* Express/Firebase Server\n* started at " + (Date.now()) + "\n* available in\n  " + addr.address + ":" + addr.port + "\n=================================";
+  return "===* Vanessador server ready *===\n* Express Server\n* started at " + (Date.now()) + "\n* available in\n  " + addr.address + ":" + addr.port + "\n=================================";
 };
 
 p = require('../package.json').firebase.project.name;

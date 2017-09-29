@@ -8,15 +8,19 @@ div.jumbotron(v-if='$parent.autorizado' style='background:transparent !important
   div.container    
     accordion(type="warning" )
       panel(header='Novo Formulario')
+        button.btn.btn-success(v-on:click='onFormularios') Adicionar formulário
         form
           fieldset
             div.form-group(v-for="(v,k) in modelos.formularios")
               label.control-label.input-sm(:for="k") {{ v.label }}
               br
               div
-                input.form-control.input-sm(:type="v.type" :id="k" :placeholder="v.placeholder")
-        button.btn.btn-success(v-on:click='onFormularios') Adicionar formulário
-
+                input.form-control(v-if='k === "input_typeform"' :type='v.type' placeholder='procurar' :id='k')
+                select(v-else :id='k')
+                  option(v-for='(q,w) in filter("input_", k)' :data-value='w' :value='w') 
+                    div
+                      b {{ q['Nome do curso'] }}
+                      
     accordion(type="success")
       panel(header="Importart Excel") 
         form
@@ -37,25 +41,25 @@ div.jumbotron(v-if='$parent.autorizado' style='background:transparent !important
       h2 Lista de formulários
       br
       br
-      div(v-for="(v,k) in formularios" :data="v" :key="k" :header="v")
+      div(v-for="(v,k) in formularios" :key="k" :header="k")
         accordion(type="info" :one-at-time='true')  
-          panel(:header="v")
+          panel(:header="cursos[formularios[k].curso]['Nome do curso']")
             accordion(type="warning" :one-at-time='true')
               panel(header="Respostas enviadas")    
-                div(v-for='(r,q) in responses[v]')
+                div(v-for='(r,q) in responses[k]')
                   accordion(type="success" :one-at-time='true')
-                    panel(:header="q")
-                      div(v-for='(a,c) in responses[v][q]') 
+                    panel(:header='responses[k][q]["answers"][Object.keys(questions[k])[0]] + " - " + responses[k][q]["answers"][Object.keys(questions[k])[7]] + " " + responses[k][q]["answers"][Object.keys(questions[k])[8]]')
+                      div(v-for='(a,c) in responses[k][q]') 
                         accordion(type="info")
                           panel(:header='c')
                     
                             div(v-for='(aa,cc) in a')
                               
-                              small {{ $parent.questions[v][cc] }}: {{ aa }}
+                              small {{ questions[k][cc] }}: {{ aa }}
 
             accordion(type="warning" :one-at-time='true')
               panel(header="Questões") 
-                div(v-for='(r,q) in questions[v]')
+                div(v-for='(r,q) in questions[k]')
                   p {{ q }}: {{ r }}
 
 div(v-else)
