@@ -1,7 +1,6 @@
 fs = require 'fs'
 path = require 'path'
 http = require 'http'
-atob = require 'atob'
 body_parser = require 'body-parser'
 chalk = require 'chalk'
 compression = require 'compression'

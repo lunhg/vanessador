@@ -22,7 +22,7 @@ libsecret
 
     npm run build:API
 
-Para entender o significado de cada uma, verifique os parágrafos abaixo:
+Para entender o significado de cada uma, verifique os paragrafos abaixo:
 
 ##  Instalando chaves de acesso firebase
 
