@@ -57,6 +57,7 @@
             </div>
             
             <div class="content"><div class='highlight'><pre>p = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../package.json'</span>).firebase.project.name
+<<<<<<< HEAD
 Promise.all([keytar.findPassword(<span class="hljs-string">"<span class="hljs-subst">#{p}</span>.paypal.apiKey"</span>), keytar.findPassword(<span class="hljs-string">"<span class="hljs-subst">#{p}</span>.paypal.secret"</span>)])</pre></div></div>
             
         </li>
@@ -73,6 +74,11 @@ Promise.all([keytar.findPassword(<span class="hljs-string">"<span class="hljs-su
             </div>
             
             <div class="content"><div class='highlight'><pre>        .<span class="hljs-keyword">then</span> AppManager.initPagSeguro
+=======
+Promise.all([keytar.findPassword(<span class="hljs-string">"<span class="hljs-subst">#{p}</span>.paypal.apiKey"</span>), keytar.findPassword(<span class="hljs-string">"<span class="hljs-subst">#{p}</span>.paypal.secret"</span>)])
+        .<span class="hljs-keyword">then</span> AppManager.initPayPal
+        .<span class="hljs-keyword">then</span> AppManager.initPagSeguro
+>>>>>>> master
         .<span class="hljs-keyword">then</span> ServerManager.routes
         .<span class="hljs-keyword">then</span> ServerManager.start
         .<span class="hljs-keyword">then</span> (addr) -&gt; <span class="hljs-built_in">console</span>.log chalk.cyan onMsg addr

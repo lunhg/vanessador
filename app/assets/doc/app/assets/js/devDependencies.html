@@ -2,7 +2,7 @@
 
 <html>
 <head>
-  <title>typeform.coffee</title>
+  <title>devDependencies.coffee</title>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
   <link rel="stylesheet" media="all" href="docco.css" />
@@ -11,8 +11,6 @@
   <div id="container">
     <div id="background"></div>
     
-<<<<<<< HEAD:app/assets/doc/app/controllers/typeform.html
-=======
       <ul id="jump_to">
         <li>
           <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
@@ -166,12 +164,11 @@
         </li>
       </ul>
     
->>>>>>> master:app/assets/doc/app/assets/js/typeform.html
     <ul class="sections">
         
           <li id="title">
               <div class="annotation">
-                  <h1>typeform.coffee</h1>
+                  <h1>devDependencies.coffee</h1>
               </div>
           </li>
         
@@ -186,38 +183,15 @@
               
             </div>
             
-            <div class="content"><div class='highlight'><pre>AppManager::typeform = <span class="hljs-function">-&gt;</span>
-        @app.get <span class="hljs-string">'/typeform/data-api'</span>, <span class="hljs-function"><span class="hljs-params">(req, res)</span> -&gt;</span>
-                projectName = <span class="hljs-built_in">require</span>(<span class="hljs-string">"<span class="hljs-subst">#{path.join(__dirname)}</span>/../package.json"</span>).firebase.project.name
-                pwd = <span class="hljs-string">"<span class="hljs-subst">#{projectName}</span>.typeform.apiKey"</span>
-                <span class="hljs-built_in">console</span>.log <span class="hljs-string">"Search for  <span class="hljs-subst">#{pwd}</span>"</span>
-                keytar.findPassword(pwd)
-                        .<span class="hljs-keyword">then</span> (apiKey) -&gt;
-                                _url = <span class="hljs-string">"form/<span class="hljs-subst">#{req.query.uuid}</span>?key=<span class="hljs-subst">#{apiKey}</span>"</span></pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-2">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-2">&#182;</a>
-              </div>
-              <p>_url += “&amp;completed=#{req.query.completed}”
-_url += “&amp;limit=#{req.query.limit}”</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre><span class="hljs-function">                                <span class="hljs-title">onGet</span> = <span class="hljs-params">(err, _res, body)</span> -&gt;</span>
-                                        <span class="hljs-keyword">if</span> err
-                                                res.json err
-                                        <span class="hljs-keyword">else</span>
-                                                <span class="hljs-built_in">console</span>.log body
-                                                res.json body
-                                request_json.createClient(<span class="hljs-string">'https://api.typeform.com/v1/'</span>).get(_url,onGet) 
-                        .<span class="hljs-keyword">catch</span> (err) -&gt;
-                                res.json err</pre></div></div>
+            <div class="content"><div class='highlight'><pre>fs = <span class="hljs-built_in">require</span> <span class="hljs-string">'fs'</span>
+path = <span class="hljs-built_in">require</span> <span class="hljs-string">'path'</span>
+http = <span class="hljs-built_in">require</span> <span class="hljs-string">'http'</span>
+chalk = <span class="hljs-built_in">require</span> <span class="hljs-string">'chalk'</span>
+mocha = <span class="hljs-built_in">require</span> <span class="hljs-string">'mocha'</span>
+mocha_testdata = <span class="hljs-built_in">require</span> <span class="hljs-string">'mocha-testdata'</span>
+should = <span class="hljs-built_in">require</span> <span class="hljs-string">'should'</span>
+supertest = <span class="hljs-built_in">require</span> <span class="hljs-string">'supertest'</span>
+uuid = <span class="hljs-built_in">require</span> <span class="hljs-string">'uuid'</span></pre></div></div>
             
         </li>
         

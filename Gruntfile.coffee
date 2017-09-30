@@ -99,7 +99,7 @@ module.exports = (grunt) ->
                         if r is undefined or r is null
                                 pwd = prompt("Type your #{m}\n", secure:true)
                                 onSet = (r)->
-                                        console.log "Pageguro email created"
+                                        console.log "Pagseguro email created"
                                         done()
                         keytar.setPassword(m,pkg.author,pwd).then onSet
 
@@ -110,7 +110,7 @@ module.exports = (grunt) ->
                         if r is undefined or r is null
                                 pwd = prompt("Type your #{m}\n", secure:true)
                                 onSet = (r)->
-                                        console.log "Paypal secret created"
+                                        console.log "Pagseguro apiKey created"
                                         done()
                         keytar.setPassword(m,pkg.author,pwd).then onSet
 
@@ -139,11 +139,12 @@ module.exports = (grunt) ->
         grunt.registerTask 'build:docs', 'Build documentation with docco', ->
                 
                 c = ""
-                # Document all node.js
-                # T
-                for opt in [
-                        options.coffee.compileJoin.files['bin/www']
-                        options.coffee.compileJoin.files['bin/test.js']
+                # Document all
+                for p in [
+                        {orig: "#{path.join(__dirname)}/boot", dest: "#{path.join(__dirname)}/app/assets/doc/boot", files: ['dependencies', 'devDependencies', 'app', 'server']}
+                        {orig: "#{path.join(__dirname)}/config", dest: "#{path.join(__dirname)}/app/assets/doc/config", files: ['environment', 'app', 'server', 'paypal', 'pagseguro']}
+                        {orig: "#{path.join(__dirname)}/app/controllers", dest: "#{path.join(__dirname)}/app/assets/doc/app/controllers", files: ['config', 'docs', 'index', 'pagseguro', 'paypal', 'services', 'templates', 'typeform']}
+                        {orig: "#{path.join(__dirname)}/app/assets/js", dest: "#{path.join(__dirname)}/app/assets/doc/app/assets/js", files: ['index', 'app', 'config', 'auth-service', 'main-service', 'formulario-service', 'boleto-service', 'main-ctrl', 'run', 'directives', 'boot']}
                 ]
                         for e in opt
                                 dest = e.split('.coffee')[0]
@@ -155,10 +156,16 @@ module.exports = (grunt) ->
                                 _dest = path.join(__dirname, 'app/assets/doc/', dest)
                                 c += " docco #{orig} -o #{_dest} ;"
                         
-                grunt.config('doc_dir', "app/assets/doc")
-                grunt.config('shell', {docco:c})
+                        for path in p.files
+                                f = "#{p.orig}/#{path}.coffee"
+                                console.log "origin: #{f}"
+                                console.log "dest: #{p.dest}"
+                                c += ("docco #{f} -o #{p.dest} ; ")
+        
+                grunt.config('shell', {'docco': c})
+                
                 
         grunt.initConfig options
         
         # register tasks
-        #grunt.registerTask 'default', ['build:init', 'build:libs', 'coffee', 'usebanner']
+        grunt.registerTask 'default', ['build:init', 'build:libs', 'coffee', 'usebanner']

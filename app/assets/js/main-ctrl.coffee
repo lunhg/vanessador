@@ -163,6 +163,8 @@ fetchMainCtrl = ->
                 $rootScope.onDeleteFormulario = (uuid)->
                         _onDel = ->                              
                                 $location.path('/formularios')
+                                $route.reload()
+                                
                         _uuid = document.getElementById('input_typeform_uuid').value
                         if uuid is _uuid
                                 db = firebase.database()

@@ -79,7 +79,11 @@ AppManager = (function() {
     });
     this.app.set('view engine', 'pug');
     this.app.set('assets path', [path.join(__dirname, '..', 'app/assets/fonts'), path.join(__dirname, '..', 'app/assets/doc'), path.join(__dirname, '..', 'app/assets/img'), path.join(__dirname, '..', 'app/assets/css'), path.join(__dirname, '..', 'app/assets/js'), path.join(__dirname, '..', 'app/assets/'), path.join(__dirname, '..', 'app/assets/favicon.ico')]);
+<<<<<<< HEAD
     this.app.set('port', parseInt(process.env.PORT || '8000'));
+=======
+    this.app.set('port', parseInt(process.env.PORT || '3000'));
+>>>>>>> master
   }
 
   return AppManager;
@@ -803,23 +807,207 @@ AppManager.prototype.mailer = function() {
 AppManager.prototype.docs = function() {
   var root;
   root = path.resolve((path.join(__dirname)) + "/../app/assets");
+<<<<<<< HEAD
   this.app.get("/docs/:folder/:file", function(req, res) {
     var _index;
     _index = "doc/" + req.params['folder'] + "/" + req.params['file'] + ".html";
+=======
+  this.app.get("/docs/client/index", function(req, res) {
+    var _index;
+    _index = "doc/app/assets/js/index.html";
     return res.sendFile(_index, {
       'root': root
     });
   });
+  this.app.get("/docs/client/config", function(req, res) {
+    var _index;
+    _index = "doc/app/assets/js/config.html";
+    return res.sendFile(_index, {
+      'root': root
+    });
+  });
+  this.app.get("/docs/client/auth-ctrl", function(req, res) {
+    var _index;
+    _index = "doc/app/assets/js/auth-ctrl.html";
+    return res.sendFile(_index, {
+      'root': root
+    });
+  });
+  this.app.get("/docs/client/run", function(req, res) {
+    var _index;
+    _index = "doc/app/assets/js/run.html";
+    return res.sendFile(_index, {
+      'root': root
+    });
+  });
+  this.app.get("/docs/client/services", function(req, res) {
+    var _index;
+    _index = "doc/app/assets/js/services.html";
+    return res.sendFile(_index, {
+      'root': root
+    });
+  });
+  this.app.get("/docs/client/boot", function(req, res) {
+    var _index;
+    _index = "doc/app/assets/js/boot.html";
+    return res.sendFile(_index, {
+      'root': root
+    });
+  });
+  this.app.get("/docs/client/docco.css", function(req, res) {
+    var _index;
+    _index = "doc/app/assets/js/docco.css";
+    return res.sendFile(_index, {
+      'root': root
+    });
+  });
+  this.app.get("/docs/server/config/environment", function(req, res) {
+    var _index;
+    _index = "doc/config/environment.html";
+    return res.sendFile(_index, {
+      'root': root
+    });
+  });
+  this.app.get("/docs/server/config/app", function(req, res) {
+    var _index;
+    _index = "doc/config/app.html";
+    return res.sendFile(_index, {
+      'root': root
+    });
+  });
+  this.app.get("/docs/server/config/server", function(req, res) {
+    var _index;
+    _index = "doc/config/server.html";
+    return res.sendFile(_index, {
+      'root': root
+    });
+  });
+  this.app.get("/docs/server/config/paypal", function(req, res) {
+    var _index;
+    _index = "doc/config/paypal.html";
+    return res.sendFile(_index, {
+      'root': root
+    });
+  });
+  this.app.get("/docs/server/config/pagseguro", function(req, res) {
+    var _index;
+    _index = "doc/config/pagseguro.html";
+    return res.sendFile(_index, {
+      'root': root
+    });
+  });
+  this.app.get("/docs/server/config/docco.css", function(req, res) {
+    var _index;
+    _index = "doc/config/docco.css";
+    return res.sendFile(_index, {
+      'root': root
+    });
+  });
+  this.app.get("/docs/server/boot/dependencies", function(req, res) {
+    var _index;
+    _index = "doc/boot/dependencies.html";
+    return res.sendFile(_index, {
+      'root': root
+    });
+  });
+  this.app.get("/docs/server/boot/devDependencies", function(req, res) {
+    var _index;
+    _index = "doc/boot/devDependencies.html";
+    return res.sendFile(_index, {
+      'root': root
+    });
+  });
+  this.app.get("/docs/server/boot/app", function(req, res) {
+    var _index;
+    _index = "doc/boot/app.html";
+>>>>>>> master
+    return res.sendFile(_index, {
+      'root': root
+    });
+  });
+<<<<<<< HEAD
   this.app.get("/docs/:folder/:sub/:file", function(req, res) {
     var _index;
     _index = "doc/" + req.params['folder'] + "/" + req.params['sub'] + "/" + req.params['file'] + ".html";
+=======
+  this.app.get("/docs/server/boot/server", function(req, res) {
+    var _index;
+    _index = "doc/boot/server.html";
+>>>>>>> master
     return res.sendFile(_index, {
       'root': root
     });
   });
+<<<<<<< HEAD
   return this.app.get("/docs/:app/docco.css", function(req, res) {
+=======
+  this.app.get("/docs/server/boot/docco.css", function(req, res) {
+>>>>>>> master
     var _index;
-    _index = "doc/config/docco.css";
+    _index = "doc/boot/docco.css";
+    return res.sendFile(_index, {
+      'root': root
+    });
+  });
+  this.app.get("/docs/server/app/controllers/config", function(req, res) {
+    var _index;
+    _index = "doc/app/controllers/config.html";
+    return res.sendFile(_index, {
+      'root': root
+    });
+  });
+  this.app.get("/docs/server/app/controllers/docs", function(req, res) {
+    var _index;
+    _index = "doc/app/controllers/docs.html";
+    return res.sendFile(_index, {
+      'root': root
+    });
+  });
+  this.app.get("/docs/server/app/controllers/index", function(req, res) {
+    var _index;
+    _index = "doc/app/controllers/index.html";
+    return res.sendFile(_index, {
+      'root': root
+    });
+  });
+  this.app.get("/docs/server/app/controllers/pagseguro", function(req, res) {
+    var _index;
+    _index = "doc/app/controllers/pagseguro.html";
+    return res.sendFile(_index, {
+      'root': root
+    });
+  });
+  this.app.get("/docs/server/app/controllers/paypal", function(req, res) {
+    var _index;
+    _index = "doc/app/controllers/paypal.html";
+    return res.sendFile(_index, {
+      'root': root
+    });
+  });
+  this.app.get("/docs/server/app/controllers/services", function(req, res) {
+    var _index;
+    _index = "doc/app/controllers/services.html";
+    return res.sendFile(_index, {
+      'root': root
+    });
+  });
+  this.app.get("/docs/server/app/controllers/templates", function(req, res) {
+    var _index;
+    _index = "doc/app/controllers/templates.html";
+    return res.sendFile(_index, {
+      'root': root
+    });
+  });
+  this.app.get("/docs/server/app/controllers/typeform", function(req, res) {
+    var _index;
+    _index = "doc/app/controllers/typeform.html";
+    return res.sendFile(_index, {
+      'root': root
+    });
+  });
+  return this.app.get("/docs/server/app/controllers/docco.css", function(req, res) {
+    var _index;
+    _index = "doc/app/controllers/docco.css";
     return res.sendFile(_index, {
       'root': root
     });
