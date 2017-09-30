@@ -1,10 +1,8 @@
+#= require log
 #= require app
+#= require menu
+#= require vue-firebase
+#= require routes
 #= require config
-#= require auth-service
-#= require formulario-service
-#= require boleto-service
-#= require main-service
-#= require main-ctrl
-#= require directives
-#= require run
+#= require excel
 #= require boot

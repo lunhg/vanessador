@@ -52,7 +52,7 @@
                         fs.readFile file_path, <span class="hljs-string">'utf8'</span>, <span class="hljs-function"><span class="hljs-params">(err, content)</span> -&gt;</span>
                                 <span class="hljs-keyword">if</span> err <span class="hljs-keyword">then</span> _callback(err)
                                 fn = pug.compile content, {filename: file_path, doctype:<span class="hljs-string">'html'</span>}        
-                                _callback <span class="hljs-literal">null</span>, fn({filters: [ marked ]})
+                                _callback <span class="hljs-literal">null</span>, fn(filters: [jstransformer_marked])
                 
                 @app.set <span class="hljs-string">'view engine'</span>, <span class="hljs-string">'pug'</span></pre></div></div>
             

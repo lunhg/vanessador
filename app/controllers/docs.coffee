@@ -1,34 +1,9 @@
 AppManager::docs = ->
 
         root = path.resolve "#{path.join(__dirname)}/../app/assets"
-
-        # Doc client (app/assests/js)
-        @app.get "/docs/client/index", (req, res) ->
-                _index = "doc/app/assets/js/index.html"
-                res.sendFile _index, 'root':root
-
-        @app.get "/docs/client/config", (req, res) ->
-                _index = "doc/app/assets/js/config.html"
-                res.sendFile _index, 'root':root
-
-        @app.get "/docs/client/auth-ctrl", (req, res) ->
-                _index = "doc/app/assets/js/auth-ctrl.html"
-                res.sendFile _index, 'root':root
-
-        @app.get "/docs/client/run", (req, res) ->
-                _index = "doc/app/assets/js/run.html"
-                res.sendFile _index, 'root':root
-
-        @app.get "/docs/client/services", (req, res) ->
-                _index = "doc/app/assets/js/services.html"
-                res.sendFile _index, 'root':root
-                
-        @app.get "/docs/client/boot", (req, res) ->
-                _index = "doc/app/assets/js/boot.html"
-                res.sendFile _index, 'root':root
-
-        @app.get "/docs/client/docco.css", (req, res) ->
-                _index = "doc/app/assets/js/docco.css"
+                                        
+        @app.get "/docs/:folder/:file", (req, res) ->
+                _index = "doc/#{req.params['folder']}/#{req.params['file']}.html"
                 res.sendFile _index, 'root':root
 
         # Doc config/

@@ -1,0 +1,21 @@
+section.centralize-area(v-if="!estudantes && !cursos")
+  br
+  br
+  br
+  h1 Importar XLS
+  p Carregue na base de dados informações sobre estudantes, cursos e matrículas
+  div
+    label(for="importarXLS")
+      img(src="/assets/images/excel.png")
+    input#importarXLS(style="display:none" type="file" name="xlsfile" v-on:change='importarXLS')
+
+section.centralize-area(v-else)
+  br
+  br
+  br
+  h1 Dados XLS carregados
+  p Informações sobre <router-link to="/estudantes">estudantes</router-link> e <router-link to="/cursos">cursos</router-link> carregados 
+  div
+    label(for="importarXLS")
+      img(src="/assets/images/excel.png")
+    input#importarXLS(style="display:none" type="file" name="xlsfile" v-on:change='importarXLS')

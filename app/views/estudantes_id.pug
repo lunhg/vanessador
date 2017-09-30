@@ -1,0 +1,12 @@
+section.centralize-area
+  br
+  br
+  br
+  div(v-show="!estudante")
+    h1 Carregando...
+  div(v-show="estudante")
+    table.table.table-striped.table-hover
+      tbody
+        tr(v-for="(v,k) in estudante")
+          th(v-if="k !== 'Nome' || k !== 'Colunas1'") {{ k }}
+          td(v-if="k !== 'Nome' || k !== 'Colunas1'") {{ v }}

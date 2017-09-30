@@ -1,19 +1,58 @@
-section.col-md-12.centralize-area(ng-show="user === null")
+div.jumbotron(v-if='$parent.autorizado' style='background:transparent !important')
   br
   br
   br
+  h2 Cursos
   br
-  form
-    fieldset Adicionar formulário
-    - var form = {'input_nome_curso':{'type':'text', 'placeholder':'nome do curso'}, 'input_id_typeform':{'type':'text', 'placeholder': 'id typeform'}}
-    - for(var key in form)
-      - var val = form[key]
-      div.form-group
-        label.col-lg-2.control-label(for=""+key)
-          div.col-lg-10 
-            input.form-control(style="width:300px;" type=""+val.type id=""+key placeholder=""+val.placeholder)
+  br
+  div.container
+    accordion(type="warning")
+      panel(header='Novo Curso')
+        form
+          fieldset
+            div.form-group(v-for="(v,k) in modelos.cursos")
+              label.control-label(:for="k") {{ v.label }}
+              br
+              div
+                input.form-control(:type="v.type" :id="k" :placeholder="v.placeholder")
+    accordion(type="success")
+      panel(header="Importart Excel") 
+        
+        form
+          fieldset
+            div.form-group(v-for="(v,k) in modelos.xls.cursos")
+              label.control-label(:for="k") {{ v.label }}
+              br
+              div
+                input.form-control(:type="v.type" :id="k" :placeholder="v.placeholder")
 
-  button.btn.btn-default(type="submit" ng-click="loginEmailAndPassword()") Login 
-  br
-  br
-  a(href="#!/resetPassword") Resete sua senha
+        input(type="file" v-on:change='importarXLS')
+
+  div.container
+    br
+    br
+    div(v-show='cursos === null')
+      img(src="/assets/images/loading.gif" width="64" height="64")
+    div(v-show='cursos !== null')
+      h2 Lista de cursos
+      accordion(type="info" :one-at-time='true')  
+        panel(v-for="(v,k) in cursos" :data="v" :key="k" :header="v['Nome do curso']")
+          button.btn.btn-warning(v-show='!atualizar[k]' :name='k' v-on:click.prevent='edit') Atualizar
+          button.btn.btn-success(v-show='atualizar[k]' :name='k' v-on:click.prevent='update') Enviar
+          form
+            fieldset
+              div.form-group(v-for="(val,key) in v")
+                label.control-label(:for='k+"_"+key' :id='k+"@"+key+"@label"') {{ key }} 
+                br
+                div(v-if='!atualizar[k]') 
+                  small 
+                    span {{ val }}
+                    br
+                      
+                div(v-else) 
+                  input.form-control(v-show='key === "Data de Término " || key === "Data de início"' type='date' :id='k+"@"+key' :value='val')
+                  input.form-control(v-show='key !== "Data de Término " && key !== "Data de início"' type='text' :id='k+"@"+key' :value='val')
+div(v-else)
+  h1 401
+  p Não Autorizado
+  img(src='https://i.pinimg.com/originals/82/62/90/826290d0a78a5d464815e9112abf788a.jpg') 

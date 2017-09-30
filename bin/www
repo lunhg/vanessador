@@ -1,5 +1,5 @@
 #!/usr/bin/env /home/pi/.nvm/versions/node/v8.0.0/bin/node
-var AppManager, PagSeguroSDK, PayPalReq, ServerManager, atob, body_parser, chalk, compression, connect_assets, express, foreach, fs, http, keytar, marked, morgan, node_uuid, onMsg, p, path, paypal_rest_sdk, pug, request, request_json, xml2js, xmlbuilder;
+var AppManager, PagSeguroSDK, ServerManager, atob, body_parser, chalk, compression, connect_assets, express, foreach, fs, http, jstransformer_marked, keytar, morgan, node_schedule, node_uuid, nodemailer, nodemailer_mailgun_transport, onMsg, p, path, paypal_rest_sdk, pug, request, request_json, request_promise, testcafe, testcafe_vue_selectors, xml2js, xmlbuilder;
 
 fs = require('fs');
 
@@ -21,13 +21,19 @@ express = require('express');
 
 foreach = require('foreach');
 
-keytar = require('keytar');
+jstransformer_marked = require('jstransformer-marked');
 
-marked = require('marked');
+keytar = require('keytar');
 
 morgan = require('morgan');
 
+node_schedule = require('node-schedule');
+
 node_uuid = require('node-uuid');
+
+nodemailer = require('nodemailer');
+
+nodemailer_mailgun_transport = require('nodemailer-mailgun-transport');
 
 paypal_rest_sdk = require('paypal-rest-sdk');
 
@@ -36,6 +42,12 @@ pug = require('pug');
 request = require('request');
 
 request_json = require('request-json');
+
+request_promise = require('request-promise');
+
+testcafe = require('testcafe');
+
+testcafe_vue_selectors = require('testcafe-vue-selectors');
 
 xml2js = require('xml2js');
 
@@ -61,61 +73,37 @@ AppManager = (function() {
           doctype: 'html'
         });
         return _callback(null, fn({
-          filters: [marked]
+          filters: [jstransformer_marked]
         }));
       });
     });
     this.app.set('view engine', 'pug');
     this.app.set('assets path', [path.join(__dirname, '..', 'app/assets/fonts'), path.join(__dirname, '..', 'app/assets/doc'), path.join(__dirname, '..', 'app/assets/img'), path.join(__dirname, '..', 'app/assets/css'), path.join(__dirname, '..', 'app/assets/js'), path.join(__dirname, '..', 'app/assets/'), path.join(__dirname, '..', 'app/assets/favicon.ico')]);
+<<<<<<< HEAD
+    this.app.set('port', parseInt(process.env.PORT || '8000'));
+=======
     this.app.set('port', parseInt(process.env.PORT || '3000'));
+>>>>>>> master
   }
 
   return AppManager;
 
 })();
 
-AppManager.initPayPal = function(results) {
-  return new Promise(function(resolve, reject) {
-    var c, e, error1;
-    try {
-      c = {
-        'mode': 'sandbox',
-        'client_id': results[0],
-        'client_secret': results[1]
-      };
-      paypal_rest_sdk.configure(c);
-      return resolve();
-    } catch (error1) {
-      e = error1;
-      return reject(e);
-    }
-  });
-};
-
-PayPalReq = (function() {
-  function PayPalReq() {
-    this.data = {};
-  }
-
-  PayPalReq.prototype.add = function(k, v) {
-    return this.data[k] = v;
-  };
-
-  return PayPalReq;
-
-})();
-
 PagSeguroSDK = {
   config: function() {
     return new Promise(function(resolve, reject) {
-      var p;
+      var e, error1, p;
       p = require('../package.json').firebase.project.name;
-      return Promise.all([keytar.findPassword(p + ".pagseguro.email"), keytar.findPassword(p + ".pagseguro.apiKey")]).then(function(results) {
+      try {
         return resolve({
-          email: results[0],
-          token: results[1]
+          email: process.env.APIS_EMAIL,
+          token: process.env.PAGSEGURO_TOKEN
         });
-      })["catch"](reject);
+      } catch (error1) {
+        e = error1;
+        return reject(e);
+      }
     });
   },
   toXML: function(json) {
@@ -150,23 +138,23 @@ PagSeguroSDK = {
     self = this;
     return new Promise(function(resolve, reject) {
       return PagSeguroSDK.config().then(function(results) {
-        json.receiver = {
-          email: results.email
+        var _request, baseurl;
+        baseurl = "https://ws.sandbox.pagseguro.uol.com.br/v2" + action + "/?";
+        baseurl += "&email=" + results.email;
+        baseurl += "&token=" + results.token;
+        _request = {
+          method: 'POST',
+          url: baseurl,
+          headers: {
+            'Content-Type': 'application/xml'
+          }
         };
-        return PagSeguroSDK.toXML(json).then(function(xml) {
-          var _request, baseurl, onPost, query;
+        return PagSeguroSDK.toXML(json || {}).then(function(xml) {
+          var onPost;
           console.log(xml);
-          baseurl = "https://ws.sandbox.pagseguro.uol.com.br/v2" + action;
-          query = "?email=" + results.email + "&token=" + results.token;
-          _request = {
-            method: 'POST',
-            url: baseurl + query,
-            body: xml,
-            headers: {
-              'Content-Type': 'application/xml'
-            }
-          };
+          _request.body = xml;
           onPost = function(err, response, body) {
+            console.log(body);
             if (err) {
               resolve(err.message);
             }
@@ -184,48 +172,19 @@ PagSeguroSDK = {
     self = this;
     return new Promise(function(resolve, reject) {
       return PagSeguroSDK.config().then(function(result) {
-        var _request, baseurl, onGet, query;
-        baseurl = "https://ws.sandbox.pagseguro.uol.com.br/v2" + action;
-        query = "?email=" + result.email + "&token=" + result.token;
-        _request = {
-          method: 'GET',
-          url: baseurl + query,
-          headers: {
-            'Content-Type': 'application/xml'
-          }
-        };
-        onGet = function(err, response, body) {
-          if (err) {
-            resolve(err.message);
-          }
-          if (!err) {
-            return resolve(body);
-          }
-        };
-        return request(_request, onGet);
-      });
-    });
-  },
-  put: function(action, json) {
-    var self;
-    self = this;
-    return new Promise(function(resolve, reject) {
-      return PagSeguroSDK.config().then(function(result) {
-        var url;
-        url = "https://ws.sandbox.pagseguro.uol.com.br/v2" + action + "?email=" + result.email + "&token=" + result.token;
-        PagSeguro.toXML(json).then(function(xml) {
-          var _request, baseurl, onPut, query;
+        json.email = results.email;
+        json.token = results.token;
+        return PagSeguroSDK.toXML(json).then(function(xml) {
+          var _request, baseurl, onGet;
           baseurl = "https://ws.sandbox.pagseguro.uol.com.br/v2" + action;
-          query = "?email=" + results.email + "&token=" + results.token;
           _request = {
-            method: 'PUT',
-            url: baseurl + query,
-            body: xml,
+            method: 'GET',
+            url: baseurl,
             headers: {
               'Content-Type': 'application/xml'
             }
           };
-          return onPut = function(err, response, body) {
+          onGet = function(err, response, body) {
             if (err) {
               resolve(err.message);
             }
@@ -233,8 +192,8 @@ PagSeguroSDK = {
               return resolve(body);
             }
           };
+          return request(_request, onGet);
         });
-        return request(_request, onPut);
       });
     });
   }
@@ -285,10 +244,9 @@ ServerManager.routes = function() {
       app_manager.index();
       app_manager.config();
       app_manager.templates();
-      app_manager.services();
       app_manager.typeform();
-      app_manager.paypal();
       app_manager.pagseguro();
+      app_manager.mailer();
       app_manager.docs();
       return resolve(app);
     } catch (error1) {
@@ -306,7 +264,8 @@ AppManager.prototype.boot = function() {
     extended: false
   }));
   return this.app.use(connect_assets({
-    paths: this.app.get('assets path')
+    paths: this.app.get('assets path'),
+    bundle: true
   }));
 };
 
@@ -320,17 +279,13 @@ AppManager.prototype.config = function() {
   return this.app.get('/config', function(req, res) {
     var projectName;
     projectName = require((path.join(__dirname)) + "/../package.json").firebase.project.name;
-    return keytar.findPassword(projectName + ".firebase.apiKey").then(function(apiKey) {
-      return keytar.findPassword(projectName + ".firebase.messagingSenderId").then(function(messagingSenderId) {
-        return res.json({
-          apiKey: apiKey,
-          authDomain: projectName + ".firebaseapp.com",
-          databaseURL: "https://" + projectName + ".firebaseio.com",
-          projectId: projectName,
-          storageBucket: projectName + ".appspot.com",
-          messagingSenderId: messagingSenderId
-        });
-      });
+    return res.json({
+      apiKey: process.env.FIREBASE_API_KEY,
+      authDomain: projectName + ".firebaseapp.com",
+      databaseURL: "https://" + projectName + ".firebaseio.com",
+      projectId: projectName,
+      storageBucket: projectName + ".appspot.com",
+      messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID
     });
   });
 };
@@ -351,35 +306,41 @@ AppManager.prototype.templates = function() {
             };
             html = pug.compile(content, opt)();
             result = {
-              template: html,
-              controller: '',
-              route: ''
+              component: {
+                template: html
+              },
+              name: p
             };
             if (p.match(/_index/)) {
-              result.controller = 'AuthCtrl';
-              result.route = "/";
+              result.path = "/";
             } else if (p.match(/^formularios_uuid_[a-z]+$/)) {
-              result.controller = 'TypeformCtrl';
               r = p.split("_");
-              result.route = "/" + r[0] + "/:uuid/" + r[2];
+              result.path = "/" + r[0] + "/:uuid/" + r[2];
             } else if (p.match(/^formularios_uuid_\w+_[a-z]+$/)) {
               r = p.split("_");
-              result.route = "/" + r[0] + "/:uuid/" + r[2] + "/:token";
+              result.path = "/" + r[0] + "/:uuid/" + r[2] + "/:token";
             } else if (p.match(/formularios_novo/)) {
               r = p.split("_");
-              result.route = "/" + r[0] + "/novo";
+              result.path = "/" + r[0] + "/novo";
             } else if (p.match(/^boletos$/)) {
-              result.route = "/boletos";
+              result.path = "/boletos";
             } else if (p.match(/boletos_id/)) {
               r = p.split("_");
-              result.route = "/boletos/:invoiceid";
+              result.path = "/boletos/:invoiceid";
             } else if (p.match(/^conta_\w+_\w+$/)) {
               r = p.split("_");
-              result.route = "/" + r[0] + "/:option/:action";
+              result.path = "/" + r[0] + "/:option/:action";
+            } else if (p.match(/^estudantes$/)) {
+              result.path = "/estudantes";
+            } else if (p.match(/^estudantes_id$/)) {
+              result.path = "/estudantes/:id";
+            } else if (p.match(/^cursos$/)) {
+              result.path = "/cursos";
+            } else if (p.match(/^cursos_id$/)) {
+              result.path = "/cursos/:id";
             } else {
-              result.route = "/" + p;
+              result.path = "/" + p;
             }
-            console.log(result);
             return resolve(result);
           } catch (error1) {
             e = error1;
@@ -392,86 +353,267 @@ AppManager.prototype.templates = function() {
       });
     });
   };
-  return this.app.get('/templates', function(req, res) {
-    var onErr, onSuccess, template;
-    onSuccess = function(results) {
-      return res.json(results);
+  this.app.get('/templates/routes/:type', function(req, res) {
+    var onErr, onSuccess;
+    onSuccess = function(result) {
+      return res.json(result);
     };
     onErr = function(err) {
       return res.json(err.message);
     };
-    return Promise.all((function() {
-      var i, len, ref, results1;
-      ref = require("../package.json")['angular-templates'];
-      results1 = [];
-      for (i = 0, len = ref.length; i < len; i++) {
-        template = ref[i];
-        results1.push(getTemplate(template));
+    return getTemplate(req.params['type']).then(onSuccess)["catch"](onErr);
+  });
+  this.app.get('/templates/index/routes', function(req, res) {
+    return res.json(["_index", "login", "signup", "resetPassword", "confirm", "conta", "formularios", "estudantes", "cursos", "matriculas"]);
+  });
+  this.app.get("/templates/index/page", function(req, res) {
+    return res.send("<div>\n<vanessador-menu :autorizado='autorizado' :user='user'></vanessador-menu>\n<div class='container-fluid'>\n  <div class='side-body'>\n    <transition>\n      <router-view :autorizado='autorizado' :user='user' :atualizar='atualizar' :estudantes='estudantes' :cursos='cursos' :formularios='formularios' :modelos='modelos' :questions='questions' :responses='responses' :matriculas='matriculas' :login='login' :logout='logout'></router-view>\n    </transition>\n  </div>\n</div>\n</div>");
+  });
+  return this.app.get("/templates/index/data", function(req, res) {
+    var cursos, estudantes, formularios, matriculas, xlsCursos, xlsEstudantes, xlsFormularios, xlsMatriculas;
+    xlsCursos = {
+      input_list: {
+        'type': 'text',
+        'placeholder': 'ABCDEFG',
+        'label': 'Colunas'
+      },
+      input_min: {
+        'type': 'text',
+        'placeholder': '2',
+        'label': 'Linha inicial'
+      },
+      input_max: {
+        'type': 'text',
+        'placeholder': '26',
+        'label': 'Linha final'
       }
-      return results1;
-    })()).then(onSuccess)["catch"](onErr);
+    };
+    xlsEstudantes = {
+      input_list: {
+        'type': 'text',
+        'placeholder': 'ABCDEFGHIJKLMNO',
+        'label': 'Colunas'
+      },
+      input_min: {
+        'type': 'text',
+        'placeholder': '2',
+        'label': 'Linha inicial'
+      },
+      input_max: {
+        'type': 'text',
+        'placeholder': '726',
+        'label': 'Linha final'
+      }
+    };
+    xlsFormularios = {
+      input_list: {
+        'type': 'text',
+        'placeholder': 'AB',
+        'label': 'Colunas'
+      },
+      input_min: {
+        'type': 'text',
+        'placeholder': '2',
+        'label': 'Linha inicial'
+      },
+      input_max: {
+        'type': 'text',
+        'placeholder': '3',
+        'label': 'Linha final'
+      }
+    };
+    xlsMatriculas = {
+      input_list: {
+        'type': 'text',
+        'placeholder': 'AB',
+        'label': 'Colunas'
+      },
+      input_min: {
+        'type': 'text',
+        'placeholder': '2',
+        'label': 'Linha inicial'
+      },
+      input_max: {
+        'type': 'text',
+        'placeholder': '3',
+        'label': 'Linha final'
+      }
+    };
+    formularios = {
+      input_typeform: {
+        'type': 'text',
+        'placeholder': 'E20qGg',
+        'label': 'Código typeform'
+      },
+      input_curso: {
+        'type': 'text',
+        'placeholder': '-Ktm1CBbiRXF7OEUellX',
+        'label': 'ID curso'
+      }
+    };
+    matriculas = {
+      input_curso: {
+        'type': 'text',
+        'label': 'ID curso'
+      },
+      input_estudante: {
+        'type': 'text',
+        'label': 'ID estudante'
+      }
+    };
+    estudantes = {
+      input_nome: {
+        'type': 'text',
+        'placeholder': 'nome',
+        'label': 'Nome'
+      },
+      input_email1: {
+        'type': 'text',
+        'placeholder': 'email1@dominio',
+        'label': 'Email 1'
+      },
+      input_email2: {
+        'type': 'text',
+        'placeholder': 'email2@dominio',
+        'label': 'Email 2'
+      },
+      input_email3: {
+        'type': 'text',
+        'placeholder': 'email3@dominio',
+        'label': 'Email 3'
+      },
+      input_profissao: {
+        'type': 'text',
+        'placeholder': 'trabalho',
+        'label': 'Profissão'
+      },
+      input_idade: {
+        'type': 'text',
+        'placeholder': '8-80',
+        'label': 'Idade'
+      },
+      input_genero: {
+        'type': 'text',
+        'placeholder': 'M/F/Outro',
+        'label': 'Gênero'
+      },
+      input_telefone: {
+        'type': 'text',
+        'placeholder': '12345678',
+        'label': 'Telefone'
+      },
+      input_estado: {
+        'type': 'text',
+        'placeholder': 'propriedade',
+        'label': 'Estado'
+      },
+      input_cidade: {
+        'type': 'text',
+        'placeholder': 'propriedade',
+        'label': 'Cidade'
+      },
+      input_isAlumni: {
+        'type': 'check',
+        'label': 'É Alumni?'
+      }
+    };
+    cursos = {
+      input_nome: {
+        'type': 'text',
+        'placeholder': 'nome',
+        'label': 'Nome'
+      },
+      input_typeform_code: {
+        'type': 'text',
+        'placeholder': 'E20qGg',
+        'label': 'Código typeform'
+      },
+      input_inicio_matricula: {
+        'type': 'date',
+        'label': 'Início das matrículas'
+      },
+      input_fim_matricula: {
+        'type': 'date',
+        'label': 'Fim das matrículas'
+      },
+      input_carga_horaria: {
+        'type': 'text',
+        'placeholder': '6 hs',
+        'label': 'Carga Horária'
+      },
+      input_quantidade_aulas: {
+        'type': 'number',
+        'placeholder': '3',
+        'label': 'Quantidade de Aulas'
+      },
+      input_data_inicio: {
+        'type': 'date',
+        'label': 'Data de início das aulas'
+      },
+      input_data_termino: {
+        'type': 'date',
+        'label': 'Data de término das aulas'
+      },
+      input_data_inicio_valor1: {
+        'type': 'number',
+        'label': 'Valor para data de início 1 (R$)'
+      },
+      input_data_inicio_valor2: {
+        'type': 'number',
+        'label': 'Valor para data de início 2 (R$)'
+      },
+      input_data_inicio_valor3: {
+        'type': 'number',
+        'label': 'Valor para data de início 3 (R$)'
+      },
+      input_valor_cheio: {
+        'type': 'number',
+        'placeholder': '200',
+        'label': 'Valor Cheio (R$)'
+      },
+      input_link_valor1: {
+        'type': 'text',
+        'placeholder': 'https://pag.ae/12345',
+        'label': 'Codigo Pagseguro 1'
+      },
+      input_link_valor2: {
+        'type': 'text',
+        'placeholder': 'https://pag.ae/45678',
+        'label': 'Codigo Pagseguro 2'
+      },
+      input_link_valor3: {
+        'type': 'text',
+        'placeholder': 'https://pag.ae/90123',
+        'label': 'Codigo Pagseguro 3'
+      }
+    };
+    return res.json({
+      search: '',
+      autorizado: false,
+      user: {
+        displayName: false,
+        email: false,
+        photoURL: false,
+        telephone: false
+      },
+      atualizar: {},
+      modelos: {
+        xls: {
+          cursos: xlsCursos,
+          estudantes: xlsEstudantes,
+          formularios: xlsFormularios,
+          matriculas: xlsMatriculas
+        },
+        formularios: formularios,
+        matriculas: matriculas,
+        estudantes: estudantes,
+        cursos: cursos
+      }
+    });
   });
 };
 
-AppManager.prototype.services = function() {
-  var _on, getTemplate;
-  getTemplate = function(p) {
-    return new Promise(function(resolve, reject) {
-      var _p;
-      _p = path.resolve((path.join(__dirname)) + "/../app/views/" + p + ".pug");
-      return fs.readFile(_p, 'utf8', function(err, content) {
-        var html;
-        if (!err) {
-          html = pug.compile(content, {
-            filename: _p,
-            doctype: 'html'
-          })();
-          return resolve({
-            name: p,
-            options: {
-              restrict: 'A',
-              template: html,
-              replace: true,
-              transclude: true
-            }
-          });
-        } else {
-          return reject(err);
-        }
-      });
-    });
-  };
-  _on = function(what) {
-    var a, i, len, ref, w;
-    a = [];
-    ref = require("../package.json")["angular-" + what];
-    for (i = 0, len = ref.length; i < len; i++) {
-      w = ref[i];
-      a.push(getTemplate(w));
-    }
-    return Promise.all(a);
-  };
-  this.app.get("/services", function(req, res) {
-    var onErr, onSuccess;
-    onSuccess = function(result) {
-      return res.json(result);
-    };
-    onErr = function(err) {
-      return res.json(err);
-    };
-    return _on('services').then(onSuccess)["catch"](onErr);
-  });
-  return this.app.get("/directives", function(req, res) {
-    var onErr, onSuccess;
-    onSuccess = function(result) {
-      return res.json(result);
-    };
-    onErr = function(err) {
-      return res.json(err);
-    };
-    return _on('directives').then(onSuccess)["catch"](onErr);
-  });
-};
+AppManager.prototype.services = function() {};
 
 AppManager.prototype.typeform = function() {
   return this.app.get('/typeform/data-api', function(req, res) {
@@ -482,8 +624,7 @@ AppManager.prototype.typeform = function() {
     return keytar.findPassword(pwd).then(function(apiKey) {
       var _url, onGet;
       _url = "form/" + req.query.uuid + "?key=" + apiKey;
-      _url += "&completed=" + req.query.completed;
-      _url += "&limit=" + req.query.limit;
+      _url += "&completed=true";
       onGet = function(err, _res, body) {
         if (err) {
           return res.json(err);
@@ -499,397 +640,166 @@ AppManager.prototype.typeform = function() {
   });
 };
 
-AppManager.prototype.paypal = function() {
-  var create_invoice;
-  create_invoice = function(req) {
-    var ppr;
-    ppr = new PayPalReq();
-    ppr.add('merchant_info', {
-      "email": "gcravista-facilitator@gmail.com",
-      "first_name": "Vanessador",
-      "last_name": "Bot",
-      "business_name": "ITS",
-      "phone": {
-        "country_code": "51",
-        "national_number": "15998006760"
-      },
-      "address": {
-        "line1": "Abolição 403 - Vila Jardini",
-        "city": "Sorocaba",
-        "state": "SP",
-        "postal_code": "18044070",
-        "country_code": "BR"
-      }
-    });
-    ppr.add("billing_info", [
-      {
-        "email": req.query.billing_info_email
-      }
-    ]);
-    ppr.add({
-      "items": [
-        {
-          "name": "Boleto de pagamento - ITS - formulário " + req.query.form,
-          "quantity": 1.0,
-          "unit_price": {
-            "currency": "BRL",
-            "value": req.query.value
-          }
-        }
-      ]
-    });
-    ppr.add("note", "Boleto de pagamento " + (node_uuid.v4()), ppr.add("payment_term", {
-      "term_type": "NET_45"
-    }));
-    ppr.add("shipping_info", {
-      "first_name": req.query.first_name,
-      "last_name": req.query.last_name,
-      "business_name": "Not applicable",
-      "phone": {
-        "country_code": req.query.phone_country_code,
-        "national_number": req.query.phone_national_number
-      },
-      "address": {
-        "line1": req.query.line,
-        "city": req.query.city,
-        "state": req.query.state,
-        "postal_code": req.query.postal_code,
-        "country_code": req.query.country_code
-      }
-    });
-    ppr.add("tax_inclusive", false);
-    ppr.add("total_amount", {
-      "currency": "BRL",
-      "value": req.query.value
-    });
-    return ppr.data;
-  };
-  this.app.post('/paypal/invoices/novo', function(req, res) {
-    return paypal_rest_sdk.invoice.create(create_invoice(req), function(err, invoice) {
-      if (err) {
-        res.json(err);
-      }
-      return res.json(invoice.id);
-    });
-  });
-  this.app.get('/paypal/invoices/:id/number', function(req, res) {
-    return paypal_rest_sdk.invoice.get(req.params.id, function(err, invoice) {
-      if (err) {
-        res.json(err);
-      }
-      return res.json(invoice.number);
-    });
-  });
-  this.app.get('/paypal/invoices/:id/status', function(req, res) {
-    return paypal_rest_sdk.invoice.get(req.params.id, function(err, invoice) {
-      if (err) {
-        res.json(err);
-      }
-      return res.json(invoice.status);
-    });
-  });
-  this.app.get('/paypal/invoices/:id/billing_info', function(req, res) {
-    return paypal_rest_sdk.invoice.get(req.params.id, function(err, invoice) {
-      if (err) {
-        res.json(err);
-      }
-      return res.json(invoice.billing_info);
-    });
-  });
-  this.app.get('/paypal/invoices/:id/invoice_date', function(req, res) {
-    return paypal_rest_sdk.invoice.get(req.params.id, function(err, invoice) {
-      if (err) {
-        res.json(err);
-      }
-      return res.json(invoice.invoice_date);
-    });
-  });
-  this.app.get('/paypal/invoices/:id/total_amount', function(req, res) {
-    return paypal_rest_sdk.invoice.get(req.params.id, function(err, invoice) {
-      if (err) {
-        res.json(err);
-      }
-      return res.json(invoice.total_amount);
-    });
-  });
-  this.app.post('/paypal/invoices/:id/send', function(req, res) {
-    return paypal_rest_sdk.invoice.send(req.params.id, function(err, rv) {
-      if (err) {
-        res.json(err);
-      }
-      return res.json("Um email de notificação está sendo processado pelo PayPal");
-    });
-  });
-  this.app.post('/paypal/invoices/:id/remind', function(req, res) {
-    var options;
-    options = {
-      "subject": "Lembrança de pagamento",
-      "note": "Enviamos este email para lhe lembrar do pagamento do boleto " + req.params.id,
-      "send_to_merchant": true,
-      "send_to_payer": true
-    };
-    return paypal_rest_sdk.invoice.remind(req.params.id, options, function(err, rv) {
-      if (err) {
-        res.json(err);
-      }
-      console.log(chalk.green(rv));
-      return res.json("Seu email de notificação está sendo processado pelo PayPal");
-    });
-  });
-  this.app.post('/paypal/invoices/:id/cancel', function(req, res) {
-    var error1, options;
-    options = {
-      "subject": "Cancelamento de pagamento",
-      "note": "Cancelamento do boleto " + req.params.id,
-      "send_to_merchant": true,
-      "send_to_payer": true
-    };
-    try {
-      return paypal_rest_sdk.invoice.cancel(req.params.id, options, function(err, rv) {
+AppManager.prototype.pagseguro = function() {
+  this.app.post('/pagseguro/boleto/gerar/id', function(req, res) {
+    return PagSeguroSDK.post('/sessions').then(function(result) {
+      return xml2js.parseString(result, function(err, str) {
         if (err) {
-          res.json(err);
+          res.send(err);
         }
-        console.log(chalk.green(rv));
-        return res.json("Seu email de notificação está sendo processado pelo PayPal");
+        if (!err) {
+          res.status(201);
+          return res.json(JSON.parse(str));
+        }
       });
-    } catch (error1) {
-      return res.json(err);
-    }
+    })["catch"](function(e) {
+      return res.send(e);
+    });
   });
-  return this.app["delete"]('/paypal/invoices/:id', function(req, res) {
-    return paypal_rest_sdk.invoice.del(req.params.id, function(err, rv) {
-      if (err) {
-        res.json(err);
+  return this.app.post('/pagseguro/boleto/gerar', function(req, res) {
+    return PagSeguroSDK.post('/transactions', {
+      payment: {
+        mode: 'default',
+        method: 'boleto',
+        currency: 'BRL',
+        notificationURL: 'http://192.168.0.11:3000/#/notifica',
+        paymentMode: 'default',
+        receiverEmail: 'gcravista@gmail.com',
+        sender: {
+          hash: req.query['hash'],
+          documents: {
+            document: {
+              type: 'CPF',
+              value: req.query['cpf']
+            }
+          },
+          phone: {
+            areaCode: '99',
+            number: '99999999'
+          },
+          name: req.query['nome'],
+          email: req.query['email']
+        },
+        items: {
+          item: {
+            id: req.query['id'],
+            description: req.query['description'],
+            amount: req.query['amount'],
+            quantity: 1
+          }
+        },
+        reference: req.query['id'],
+        shipping: {
+          address: {
+            street: 'NONE',
+            number: 9999,
+            complement: '9o andar',
+            district: 'NONE',
+            city: req.query['city'],
+            state: req.query['state'],
+            country: 'BRA',
+            postalCode: 99999999
+          },
+          type: 1,
+          cost: '0.00',
+          addressRequired: false
+        }
       }
-      return res.json("Boleto " + req.params.id + " deletado");
+    }).then(function(result) {
+      console.log(result);
+      return xml2js.parseString(result, function(err, str) {
+        var _json;
+        if (err) {
+          res.send(err);
+        }
+        if (!err) {
+          res.status(201);
+          _json = JSON.parse(str);
+          console.log(_json);
+          return res.json(_json);
+        }
+      });
+    })["catch"](function(e) {
+      return res.send(e);
     });
   });
 };
 
-AppManager.prototype.pagseguro = function() {
-  var onParseXML;
-  onParseXML = function(result) {
-    var self;
-    self = this;
+AppManager.prototype.mailer = function() {
+  var getTemplate;
+  getTemplate = function(p, opt) {
     return new Promise(function(resolve, reject) {
-      return xml2js.parseString(result, function(err, str) {
-        if (err) {
-          reject(err);
-        }
+      var _p;
+      _p = path.resolve((path.join(__dirname)) + "/../app/views/" + p + ".pug");
+      return fs.readFile(_p, 'utf8', function(err, content) {
+        var e, error1, html;
         if (!err) {
-          return self.res.json(JSON.parse(str));
+          try {
+            html = pug.compile(content, {
+              filename: _p,
+              doctype: 'html'
+            })({
+              curso: opt.curso,
+              nome: opt.nome,
+              link: opt.link
+            });
+            return resolve(html);
+          } catch (error1) {
+            e = error1;
+            return reject(e);
+          }
+        } else {
+          return reject(err);
         }
       });
     });
   };
-  this.app.get('/pagseguro/planos', function(req, res) {
-    return PagSeguroSDK.get('/pre-approvals').then(onParseXML.bind({
-      res: res
-    }))["catch"](function(e) {
-      return res.send(e);
-    });
+  this.app.post('/mailer/mailgun', function(req, res) {
+    return res.send('SENT MAIL');
   });
-  this.app.post('/pagseguro/planos', function(req, res) {
-    return PagSeguroSDK.post('/pre-approvals/request', {
-      "directPreApproval": {
-        "plan": req.query['plan'],
-        "reference": req.query['ref'],
-        "sender": {
-          "name": req.query['nome'],
-          "email": req.query['email'],
-          "ip": req.ip,
-          "hash": node_uuid.v4(),
-          "phone": {
-            "areacode": req.query['areacode'],
-            "number": req.query['number']
-          },
-          "documents": {
-            "document": {
-              "type": req.query['doc_type'],
-              "number": req.query['doc_num']
-            }
-          }
+  return this.app.post('/mailer/send/:type', function(req, res) {
+    var curso, link, nome, projectName, self, to;
+    self = this;
+    projectName = require((path.join(__dirname)) + "/../package.json").firebase.project.name;
+    to = req.query.to;
+    nome = req.query.nome;
+    curso = req.query.curso;
+    link = req.query.link;
+    return getTemplate('mailer-' + req.params.type, {
+      nome: nome,
+      curso: curso,
+      link: link
+    }).then(function(html) {
+      var results;
+      return results = {
+        auth: {
+          api_key: process.env.MAILGUN_API_KEY,
+          domain: process.env.MAILGUN_DOMAIN
         },
-        "paymentMethod": {
-          "token": req.query['payment_token'],
-          "type": req.query['payment_type'],
-          "holder": {
-            "name": req.query['nome'],
-            "birthDate": req.query['birthDate'],
-            "document": {
-              "type": req.query['doc_type'],
-              "number": req.query['doc_num']
-            },
-            "phone": {
-              "areacode": req.query['areacode'],
-              "number": req.query['number']
-            }
-          }
+        options: {
+          from: "\"Vanessador-not-reply\" <postmaster@" + results[1] + ">",
+          to: req.query.to,
+          subject: "[Vanessador]: Boleto - " + req.query.curso,
+          html: html
         }
-      }
-    }).then(onParseXML.bind({
-      res: res
-    }))["catch"](function(e) {
-      return res.send(e);
-    });
-  });
-  this.app.get('/pagseguro/planos/notificacoes', function(req, res) {
-    return PagSeguroSDK.get("/pre-approvals/notifications?page=" + req.query['page'] + "&maxPagesResults=50&interval=" + req.query['dias']).then(onParseXML.bind({
-      res: res
-    }))["catch"](function(e) {
-      return res.send(e);
-    });
-  });
-  this.app.get('/pagseguro/planos/notificacoes/:id', function(req, res) {
-    return PagSeguroSDK.get("/pre-approvals/notifications/" + req.params['id']).then(onParseXML.bind({
-      res: res
-    }))["catch"](function(e) {
-      return res.send(e);
-    });
-  });
-  this.app.post('/pagseguro/planos/pagamento/:id', function(req, res) {
-    var id;
-    id = node_uuid.v4();
-    return PagSeguroSDK.post('/pre-approvals/payment', {
-      "payment": {
-        "preApprovalCode": req.query['code'],
-        "reference": req.query['ref'],
-        "senderHash": node_uuid.v4(),
-        "senderIp": req.ip,
-        "items": [
-          {
-            "id": req.params['id'],
-            "description": "Boleto de pagamento",
-            "quantity": 1,
-            "amount": "10.00",
-            "weight": 1,
-            "shippingCost": 0.00
-          }
-        ]
-      }
-    }).then(onParseXML.bind({
-      res: res
-    }))["catch"](function(e) {
-      return res.send(e);
-    });
-  });
-  this.app.get('/pagseguro/planos/requerer', function(req, res) {
-    return PagSeguroSDK.get('/pre-approvals/request').then(onParseXML.bind({
-      res: res
-    }))["catch"](function(e) {
-      return res.send(e);
-    });
-  });
-  this.app.post('/pagseguro/planos/requerer', function(req, res) {
-    return PagSeguroSDK.post('/pre-approvals/request', {
-      "preApprovalRequest": {
-        "redirect_url": req.query['redirect_url'],
-        "redirect_url": req.query['review_url'],
-        "reference": req.query['ref'],
-        "preApproval": {
-          "name": req.query['name'],
-          "charge": "AUTO",
-          "period": "MONTHLY",
-          "amountPerPayment": req.query['amount'],
-          "membershipFee": (parseFloat(req.query['amount']) * 0.05).toFixed(2),
-          "expiration": {
-            "value": 1,
-            "unit": "MONTHS"
-          },
-          "details": 'ITS_' + node_uuid.v4()
-        }
-      }
-    }).then(onParseXML.bind({
-      res: res
-    }))["catch"](function(e) {
-      return res.send(e);
-    });
-  });
-  this.app.put('/pagseguro/planos/:id', function(req, res) {
-    return PagSeguroSDK.put("/pre-approvals/" + req.params['id'] + "/payment", {
-      "amountPerPayment": req.query['amount'],
-      "updateSubscriptions": req.query['update']
-    }).then(onParseXML.bind({
-      res: res
-    }))["catch"](function(e) {
-      return res.send(e);
-    });
-  });
-  this.app.get('/pagseguro/planos/:id', function(req, res) {
-    return PagSeguroSDK.get("/pre-approvals/" + req.params['id']).then(onParseXML.bind({
-      res: res
-    }))["catch"](function(e) {
-      return res.send(e);
-    });
-  });
-  this.app.put('/pagseguro/planos/:id/cancela', function(req, res) {
-    return PagSeguroSDK.put("/pre-approvals/" + req.params['id'] + "/payment", {
-      "pre-approval-code": req.query['code']
-    }).then(onParseXML.bind({
-      res: res
-    }))["catch"](function(e) {
-      return res.send(e);
-    });
-  });
-  this.app.put('/pagseguro/plano/:id/desconto', function(req, res) {
-    return PagSeguroSDK.put("/pre-approvals/" + req.params['id'] + "/payment", {
-      "type": "DISCOUNT_PERCENT",
-      "value": req.params['value']
-    }).then(onParseXML.bind({
-      res: res
-    }))["catch"](function(e) {
-      return res.send(e);
-    });
-  });
-  this.app.get('/pagseguro/plano/:id/ordens', function(req, res) {
-    return PagSeguroSDK.get("/pre-approvals/" + req.params['id'] + "/payment-orders").then(onParseXML.bind({
-      res: res
-    }))["catch"](function(e) {
-      return res.send(e);
-    });
-  });
-  this.app.post('/pagseguro/plano/:id/ordens/:pid', function(req, res) {
-    return PagSeguroSDK.get("/pre-approvals/" + req.params['id'] + "/payment-orders/" + req.params['pid'] + "/payment").then(onParseXML.bind({
-      res: res
-    }))["catch"](function(e) {
-      return res.send(e);
-    });
-  });
-  this.app.put('/pagseguro/plano/:id/ordens/:pid', function(req, res) {
-    return PagSeguroSDK.get("/pre-approvals/" + req.params['id'] + "/status", {
-      "status": req.query['status']
-    }).then(onParseXML.bind({
-      res: res
-    }))["catch"](function(e) {
-      return res.send(e);
-    });
-  });
-  return this.app.put('/pagseguro/plano/:id/ordens/:pid', function(req, res) {
-    return PagSeguroSDK.get("/pre-approvals/" + req.params['id'] + "/status", {
-      "type": "CREDITCARD",
-      "sender": {
-        "ip": req.ip,
-        "hash": node_uuid.v4()
-      },
-      "creditCard": {
-        "token": req.query['token'],
-        "holder": {
-          "name": req.query['nome'],
-          "birthDate": req.query['birthDate'],
-          "document": {
-            "type": req.query['doc_type'],
-            "number": req.query['doc_num']
-          },
-          "phone": {
-            "areacode": req.query['areacode'],
-            "number": req.query['number']
-          }
-        }
-      }
-    }).then(onParseXML.bind({
-      res: res
-    }))["catch"](function(e) {
-      return res.send(e);
+      };
+    }).then(function(results) {
+      var mailer;
+      mailer = nodemailer.createTransport(nodemailer_mailgun_transport({
+        auth: results.auth
+      }));
+      return mailer.sendMail(results.options).then(function(r) {
+        res.status(201);
+        return res.json(r);
+      })["catch"](function(error) {
+        console.log(error);
+        res.status(500);
+        return res.send(error);
+      });
+    })["catch"](function(error) {
+      console.log(error);
+      res.status(500);
+      return res.send(error);
     });
   });
 };
@@ -897,6 +807,11 @@ AppManager.prototype.pagseguro = function() {
 AppManager.prototype.docs = function() {
   var root;
   root = path.resolve((path.join(__dirname)) + "/../app/assets");
+<<<<<<< HEAD
+  this.app.get("/docs/:folder/:file", function(req, res) {
+    var _index;
+    _index = "doc/" + req.params['folder'] + "/" + req.params['file'] + ".html";
+=======
   this.app.get("/docs/client/index", function(req, res) {
     var _index;
     _index = "doc/app/assets/js/index.html";
@@ -1005,18 +920,29 @@ AppManager.prototype.docs = function() {
   this.app.get("/docs/server/boot/app", function(req, res) {
     var _index;
     _index = "doc/boot/app.html";
+>>>>>>> master
     return res.sendFile(_index, {
       'root': root
     });
   });
+<<<<<<< HEAD
+  this.app.get("/docs/:folder/:sub/:file", function(req, res) {
+    var _index;
+    _index = "doc/" + req.params['folder'] + "/" + req.params['sub'] + "/" + req.params['file'] + ".html";
+=======
   this.app.get("/docs/server/boot/server", function(req, res) {
     var _index;
     _index = "doc/boot/server.html";
+>>>>>>> master
     return res.sendFile(_index, {
       'root': root
     });
   });
+<<<<<<< HEAD
+  return this.app.get("/docs/:app/docco.css", function(req, res) {
+=======
   this.app.get("/docs/server/boot/docco.css", function(req, res) {
+>>>>>>> master
     var _index;
     _index = "doc/boot/docco.css";
     return res.sendFile(_index, {
@@ -1089,12 +1015,12 @@ AppManager.prototype.docs = function() {
 };
 
 onMsg = function(addr) {
-  return "===* Vanessador server ready *===\n* Express/Firebase Server\n* started at " + (Date.now()) + "\n* available in\n  " + addr.address + ":" + addr.port + "\n=================================";
+  return "===* Vanessador server ready *===\n* Express Server\n* started at " + (Date.now()) + "\n* available in\n  " + addr.address + ":" + addr.port + "\n=================================";
 };
 
 p = require('../package.json').firebase.project.name;
 
-Promise.all([keytar.findPassword(p + ".paypal.apiKey"), keytar.findPassword(p + ".paypal.secret")]).then(AppManager.initPayPal).then(AppManager.initPagSeguro).then(ServerManager.routes).then(ServerManager.start).then(function(addr) {
+Promise.all([keytar.findPassword(p + ".paypal.apiKey"), keytar.findPassword(p + ".paypal.secret")]).then(AppManager.initPagSeguro).then(ServerManager.routes).then(ServerManager.start).then(function(addr) {
   return console.log(chalk.cyan(onMsg(addr)));
 })["catch"](function(e) {
   return console.log(e);

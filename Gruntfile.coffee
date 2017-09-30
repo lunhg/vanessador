@@ -114,8 +114,30 @@ module.exports = (grunt) ->
                                         done()
                         keytar.setPassword(m,pkg.author,pwd).then onSet
 
-        grunt.registerTask 'build:doc:client', 'Build documentation with docco', ->
-                grunt.config('doc_dir', "app/assets/doc")
+        grunt.registerTask 'build:mailgun:apiKey', 'Store mailgun apiKey on keychain', ->
+                done = @async()
+                m = "#{pkg.firebase.project.name}.mailgun.apiKey"
+                keytar.findPassword(m).then (r) ->
+                        if r is undefined or r is null
+                                pwd = prompt("Type your #{m}\n", secure:true)
+                                onSet = (r)->
+                                        console.log "Mailgun api key created"
+                                        done()
+                        keytar.setPassword(m,pkg.author,pwd).then onSet
+
+        grunt.registerTask 'build:mailgun:domain', 'Store mailgun domain on keychain', ->
+                done = @async()
+                m = "#{pkg.firebase.project.name}.mailgun.domain"
+                keytar.findPassword(m).then (r) ->
+                        if r is undefined or r is null
+                                pwd = prompt("Type your #{m}\n", secure:true)
+                                onSet = (r)->
+                                        console.log "Mailgun domain created"
+                                        done()
+                        keytar.setPassword(m,pkg.author,pwd).then onSet
+
+        grunt.registerTask 'build:docs', 'Build documentation with docco', ->
+                
                 c = ""
                 # Document all
                 for p in [
@@ -124,6 +146,15 @@ module.exports = (grunt) ->
                         {orig: "#{path.join(__dirname)}/app/controllers", dest: "#{path.join(__dirname)}/app/assets/doc/app/controllers", files: ['config', 'docs', 'index', 'pagseguro', 'paypal', 'services', 'templates', 'typeform']}
                         {orig: "#{path.join(__dirname)}/app/assets/js", dest: "#{path.join(__dirname)}/app/assets/doc/app/assets/js", files: ['index', 'app', 'config', 'auth-service', 'main-service', 'formulario-service', 'boleto-service', 'main-ctrl', 'run', 'directives', 'boot']}
                 ]
+                        for e in opt
+                                dest = e.split('.coffee')[0]
+                                name = dest.split('/')
+                                name = name[name.length-1]
+                                dest = dest.split(name)[0]
+                                orig = path.join(__dirname, "#{e}")
+                                
+                                _dest = path.join(__dirname, 'app/assets/doc/', dest)
+                                c += " docco #{orig} -o #{_dest} ;"
                         
                         for path in p.files
                                 f = "#{p.orig}/#{path}.coffee"

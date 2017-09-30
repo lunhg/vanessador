@@ -3,17 +3,15 @@ AppManager::typeform = ->
                 projectName = require("#{path.join(__dirname)}/../package.json").firebase.project.name
                 pwd = "#{projectName}.typeform.apiKey"
                 console.log "Search for  #{pwd}"
-                keytar.findPassword(pwd)
-                        .then (apiKey) ->
-                                _url = "form/#{req.query.uuid}?key=#{apiKey}"
-                                _url += "&completed=#{req.query.completed}"
-                                _url += "&limit=#{req.query.limit}"
-                                onGet = (err, _res, body) ->
-                                        if(err)
-                                                res.json err
-                                        else
-                                                console.log body
-                                                res.json body
-                                request_json.createClient('https://api.typeform.com/v1/').get(_url,onGet) 
-                        .catch (err) ->
-                                res.json err
+                keytar.findPassword(pwd).then (apiKey) ->
+                        _url = "form/#{req.query.uuid}?key=#{apiKey}"
+                        _url += "&completed=true"
+                        onGet = (err, _res, body) ->
+                                if err
+                                        res.json err
+                                else
+                                        console.log body
+                                        res.json body
+                        request_json.createClient('https://api.typeform.com/v1/').get(_url,onGet) 
+                .catch (err) ->
+                        res.json err

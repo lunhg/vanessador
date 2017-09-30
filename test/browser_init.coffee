@@ -1,0 +1,1 @@
+Selector = require('testcafe').Selector

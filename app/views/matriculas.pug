@@ -1,0 +1,76 @@
+div.jumbotron(v-if='$parent.autorizado' style='background:transparent !important')
+  br 
+  br
+  br
+  h2 Matrículas
+  br
+  br
+  div.container    
+    accordion(type="warning" )
+      panel(header='Nova Matrícula')
+        button.btn.btn-success(v-on:click='onMatriculas') Adicionar matrícula
+        form
+          fieldset
+            div.form-group(v-for="(v,k) in modelos.matriculas")
+              label.control-label.input-sm(:for="k") {{ v.label }}
+              br
+              div(:id='k')        
+                select(:id='"list-"+k')
+                  option(v-for='(q,w) in filter("input_", k)' :data-value='w' :value='w') 
+                    div
+                      b(v-if='k === "input_estudante"') {{ q['Nome'] }}
+                      b(v-else) {{ q['Nome do curso'] }}
+        //form
+        //  fieldset
+        //    div.form-group(v-for='(v,k) in modelos.matriculas' role='search')
+        //      label.control-label.input-sm(:for='k') {{ v.label }}
+        //      br
+        //      input.form-control.input-sm(:type='v.type' :id='k' :placeholder='v.placeholder')
+              
+
+        //button.btn.btn-success(v-on:click='onMatriculas') Adicionar formulário
+
+    accordion(type="success")
+      panel(header="Importar Excel") 
+        form
+          fieldset
+            div.form-group(v-for="(v,k) in modelos.xls.matriculas")
+              label.control-label(:for="k") {{ v.label }}
+              br
+              div
+                input.form-control(:type="v.type" :id="k" :placeholder="v.placeholder")
+        input(type="file" :name='matriculas' v-on:change='importarXLS')
+
+  div.container
+    br
+    br
+    div(v-show='matriculas === null')
+      img(src="/assets/images/loading.gif" width="64" height="64")
+    div(v-show='matriculas !== null')
+      h2 Lista de matrículas
+      br
+      br
+      div(v-for="(v,k) in matriculas" :data="v" :key="k")
+        accordion(type="info" :one-at-time='true')  
+          panel(:header='cursos[v.curso]["Nome do curso"] + " - " + estudantes[v.estudante]["Nome"] + " " +estudantes[v.estudante]["Sobrenome"]')
+            button.btn.btn-warning(v-show='!atualizar[k]' :name='k' v-on:click.prevent='edit') Atualizar
+            button.btn.btn-success(v-show='atualizar[k]' :name='k' v-on:click.prevent='update') Enviar
+            form
+              fieldset
+                div.form-group(v-for="(val,key) in v")
+                  label.control-label(:for='key') {{ key }} 
+                  br
+                  div(v-if='!atualizar[k]') 
+                    small 
+                      span {{ val }}
+                      br
+                      
+                  div(v-else)
+                    input.form-control(type='text' :id='k' :placeholder='val')
+                    
+
+
+div(v-else)
+  h1 401
+  p Não Autorizado
+  img(src='https://i.pinimg.com/originals/82/62/90/826290d0a78a5d464815e9112abf788a.jpg') 

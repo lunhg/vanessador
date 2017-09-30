@@ -1,17 +1,80 @@
-section.centralize-area
+div.jumbotron(v-if='!autorizado' style='background:transparent !important')
   br
   br
   br
-  div(ng-show="user === null")
-    h1 Gerencie cursos
-    br
-    br
-    h2 O vanessador auxilia administradores do ITS a gerenciar formulários 
-      a(href="https://www.typeform.com/") typeform.
+  h2 Gerencie cursos
+  br
+  br
+  p O vanessador auxilia administradores do ITS a gerenciar formulários, cursos, matrículas, estudantes e boletos gerados para o ITS/Rio.
 
-  div(ng-show="user !== null")
-    h1 Bem vindo
-    br
-    br
-    h2 Escolha alguma das opções do menu acima
-        
+  div
+    img(width='256' height='340' src='http://3.bp.blogspot.com/-tlCpn9xB8ng/USwaEcK5AzI/AAAAAAAAAY8/-OHTZZdmYJM/s1600/Secret%C3%A1ria-no-telefone_cor.jpg')
+    img(src='https://networkofcenters.net/sites/networkofcenters.net/files/styles/center_logo/public/itsrio_logo_0.png?itok=Al7hOVyS' width='256' height='256')
+
+div.jumbotron(v-else)
+  br
+  br
+  br
+  h1 FAQ
+  
+  accordion
+    panel(header='Sobre o vanessador')
+      :marked
+        O vanessador é um programa gerenciador de cadastros de cursos, matrículas de ex-alunos (Alumni) e novos alunos através de formulários de pré-matrícula.
+
+  accordion
+    panel(header='Público alvo')
+      :marked
+        - administradores de documentos do ITS/Rio
+        - Desenvolvedores web do ITS/Rio
+
+      accordion
+        panel(header='Dados Técnicos')
+          :marked
+            - Navegadores testados:
+              - Mozilla/5.0 Ubuntu Chromium/53.0.2785.143 Chrome/53.0.2785.143 Safari/537.36
+              - Chrome / Android 6.0.1
+            - Ambiente de desenvolvimento, bibliotecas e linguagens:
+              - [Node.js](https://nodejs.org/en/)
+              - [Grunt](https://gruntjs.com/)
+              - [Express.js](http://expressjs.com/pt-br/)
+              - [Coffeescript](http://coffeescript.org/)
+              - [Vue.js 2](http://coffeescript.org/)
+              - [Firebase](firebase.google.com)
+
+  accordion
+    panel(header='Conta')
+      :marked
+        Nesta página apresentamos dados básicos do usuário que administrará o sistema. Atualmente, algumas propriedades desta página, como o acesso aos links de edição de informações ou o _upload_ de uma foto de perfil, estão em desenvolvimento e podem não funcionar.
+
+  accordion
+    panel(header='Estudantes')
+      :marked
+        Estudantes são alunos novos, ou ex-alunos. Ex-alunos são classificados em [Estudantes](/#/estudantes) como _Alumni_. 
+
+        Estudantes realizam seu pré-cadastro em um [formulário](/#/formulário). Este pré-cadastro possui uma referência especial de um link (_typeform_)[https://typeform.com]. Geralmente eles aparecem na forma `https://<seu nick typeform>.typeform.com/to/<código typeform>`. Para os propósitos deste software, nós inserimos, na página formulários apenas o código typeform. 
+
+        Durante o envio de boleto (ver [Formulários](/#/formularios)), esta identificação é responsável pelo tipo de email enviado, no caso, sem desconto para alunos novos (link Pagseguro3), e com desconto de 25% para ex-alunos (link Pagseguro1).
+
+  accordion
+    panel(header='Cursos')
+      :marked
+        Um curso é um conjunto de aulas ministradas periodicamente até atingir uma determinada quantidade de horas. Cada curso tem um custo, uma data de início e uma data de fim.
+
+      accordion
+        panel(header='Como crio um ou mais cursos?')
+          :marked
+            Clique na aba [cursos](/#/cursos). Você verá dois campos: 
+
+            * um campo para adicionar novos cursos:
+              * manualmente (amarelo)
+              * através de uma planilha excel (verde)
+              * uma lista de cursos cadastrados em uma base de dados [Firebase](https://firebase.google.com/) (Azul)
+
+  accordion
+    panel(header='Matrículas')
+
+  accordion
+    panel(header='Formulários')
+
+  

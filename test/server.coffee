@@ -1,5 +1,3 @@
-agent = supertest.agent("http://localhost:3000")
-
 describe chalk.green('Vanessador app client'), ->
 
 

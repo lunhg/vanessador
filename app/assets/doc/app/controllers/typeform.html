@@ -11,6 +11,162 @@
   <div id="container">
     <div id="background"></div>
     
+<<<<<<< HEAD:app/assets/doc/app/controllers/typeform.html
+=======
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page_wrapper">
+            <div id="jump_page">
+              
+                
+                <a class="source" href="app.html">
+                  app.coffee
+                </a>
+              
+                
+                <a class="source" href="auth-service.html">
+                  auth-service.coffee
+                </a>
+              
+                
+                <a class="source" href="boleto-service.html">
+                  boleto-service.coffee
+                </a>
+              
+                
+                <a class="source" href="boot.html">
+                  boot.coffee
+                </a>
+              
+                
+                <a class="source" href="config.html">
+                  config.coffee
+                </a>
+              
+                
+                <a class="source" href="directives.html">
+                  directives.coffee
+                </a>
+              
+                
+                <a class="source" href="formulario-service.html">
+                  formulario-service.coffee
+                </a>
+              
+                
+                <a class="source" href="index.html">
+                  index.coffee
+                </a>
+              
+                
+                <a class="source" href="main-ctrl.html">
+                  main-ctrl.coffee
+                </a>
+              
+                
+                <a class="source" href="main-service.html">
+                  main-service.coffee
+                </a>
+              
+                
+                <a class="source" href="run.html">
+                  run.coffee
+                </a>
+              
+                
+                <a class="source" href="config.html">
+                  config.coffee
+                </a>
+              
+                
+                <a class="source" href="docs.html">
+                  docs.coffee
+                </a>
+              
+                
+                <a class="source" href="index.html">
+                  index.coffee
+                </a>
+              
+                
+                <a class="source" href="pagseguro.html">
+                  pagseguro.coffee
+                </a>
+              
+                
+                <a class="source" href="paypal.html">
+                  paypal.coffee
+                </a>
+              
+                
+                <a class="source" href="services.html">
+                  services.coffee
+                </a>
+              
+                
+                <a class="source" href="templates.html">
+                  templates.coffee
+                </a>
+              
+                
+                <a class="source" href="typeform.html">
+                  typeform.coffee
+                </a>
+              
+                
+                <a class="source" href="app.html">
+                  app.coffee
+                </a>
+              
+                
+                <a class="source" href="dependencies.html">
+                  dependencies.coffee
+                </a>
+              
+                
+                <a class="source" href="devDependencies.html">
+                  devDependencies.coffee
+                </a>
+              
+                
+                <a class="source" href="server.html">
+                  server.coffee
+                </a>
+              
+                
+                <a class="source" href="app.html">
+                  app.coffee
+                </a>
+              
+                
+                <a class="source" href="environment.html">
+                  environment.coffee
+                </a>
+              
+                
+                <a class="source" href="pagseguro.html">
+                  pagseguro.coffee
+                </a>
+              
+                
+                <a class="source" href="paypal.html">
+                  paypal.coffee
+                </a>
+              
+                
+                <a class="source" href="server.html">
+                  server.coffee
+                </a>
+              
+            </div>
+          </div>
+        </li>
+      </ul>
+    
+>>>>>>> master:app/assets/doc/app/assets/js/typeform.html
     <ul class="sections">
         
           <li id="title">
@@ -37,11 +193,24 @@
                 <span class="hljs-built_in">console</span>.log <span class="hljs-string">"Search for  <span class="hljs-subst">#{pwd}</span>"</span>
                 keytar.findPassword(pwd)
                         .<span class="hljs-keyword">then</span> (apiKey) -&gt;
-                                _url = <span class="hljs-string">"form/<span class="hljs-subst">#{req.query.uuid}</span>?key=<span class="hljs-subst">#{apiKey}</span>"</span>
-                                _url += <span class="hljs-string">"&amp;completed=<span class="hljs-subst">#{req.query.completed}</span>"</span>
-                                _url += <span class="hljs-string">"&amp;limit=<span class="hljs-subst">#{req.query.limit}</span>"</span>
-<span class="hljs-function">                                <span class="hljs-title">onGet</span> = <span class="hljs-params">(err, _res, body)</span> -&gt;</span>
-                                        <span class="hljs-keyword">if</span>(err)
+                                _url = <span class="hljs-string">"form/<span class="hljs-subst">#{req.query.uuid}</span>?key=<span class="hljs-subst">#{apiKey}</span>"</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>_url += “&amp;completed=#{req.query.completed}”
+_url += “&amp;limit=#{req.query.limit}”</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function">                                <span class="hljs-title">onGet</span> = <span class="hljs-params">(err, _res, body)</span> -&gt;</span>
+                                        <span class="hljs-keyword">if</span> err
                                                 res.json err
                                         <span class="hljs-keyword">else</span>
                                                 <span class="hljs-built_in">console</span>.log body

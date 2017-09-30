@@ -1,34 +1,68 @@
-section.centralize-area
-  div
+div.jumbotron(v-if='$parent.autorizado' style='background:transparent !important')
+  br 
+  br
+  br
+  h2 Formulários Pré-matrícula
+  br
+  br
+  div.container    
+    accordion(type="warning" )
+      panel(header='Novo Formulario')
+        button.btn.btn-success(v-on:click='onFormularios') Adicionar formulário
+        form
+          fieldset
+            div.form-group(v-for="(v,k) in modelos.formularios")
+              label.control-label.input-sm(:for="k") {{ v.label }}
+              br
+              div
+                input.form-control(v-if='k === "input_typeform"' :type='v.type' placeholder='procurar' :id='k')
+                select(v-else :id='k')
+                  option(v-for='(q,w) in filter("input_", k)' :data-value='w' :value='w') 
+                    div
+                      b {{ q['Nome do curso'] }}
+                      
+    accordion(type="success")
+      panel(header="Importart Excel") 
+        form
+          fieldset
+            div.form-group(v-for="(v,k) in modelos.xls.formularios")
+              label.control-label(:for="k") {{ v.label }}
+              br
+              div
+                input.form-control(:type="v.type" :id="k" :placeholder="v.placeholder")
+        input(type="file" :name='formularios' v-on:change='importarXLS')
+
+  div.container
     br
     br
-    br
-    h2 Inspecione um formulário
-    br
-    br
-    br
-    table.table.table-striped.table-hover
-      thead
-        tr
-          th uuid
-          th Nome
-          th Tags
-          th Proprietários
-          th Ações
-      tbody
-        tr(ng-repeat="(k,v) in registeredForms") 
-          td 
-            a(href="https://{{ v.base_url }}/{{ k }}") {{ k }}
-          td {{ v.name }}
-          td
-            p(ng-repeat="(i, e) in v.tags")
-              a(href="/#!/formularios/tags/{{ e }}") {{ v.tags.join(", ") }}
-          td 
-            a(href="/#!/users/{{ v.owner }}/profile") {{ v.owner }}
-          td
-            div.nav.navbar-nav
-              a.btn.btn-default(href="/#!/formularios/{{ k }}/stats") Estatisticas
-              a.btn.btn-info(href="/#!/formularios/{{ k }}/questions") Questões 
-              a.btn.btn-primary(href="/#!/formularios/{{ k }}/responses") Respostas
-              a.btn.btn-success(ng-click="onUpdateFormulario(k)") Atualizar
-              a.btn.btn-warning(href="/#!/formularios/{{ k }}/delete") Delete
+    div(v-show='formularios === null')
+      img(src="/assets/images/loading.gif" width="64" height="64")
+    div(v-show='formularios !== null')
+      h2 Lista de formulários
+      br
+      br
+      div(v-for="(v,k) in formularios" :key="k" :header="k")
+        accordion(type="info" :one-at-time='true')  
+          panel(:header="cursos[formularios[k].curso]['Nome do curso']")
+            accordion(type="warning" :one-at-time='true')
+              panel(header="Respostas enviadas")    
+                div(v-for='(r,q) in responses[k]')
+                  accordion(type="success" :one-at-time='true')
+                    panel(:header='responses[k][q]["answers"][Object.keys(questions[k])[0]] + " - " + responses[k][q]["answers"][Object.keys(questions[k])[7]] + " " + responses[k][q]["answers"][Object.keys(questions[k])[8]]')
+                      div(v-for='(a,c) in responses[k][q]') 
+                        accordion(type="info")
+                          panel(:header='c')
+                    
+                            div(v-for='(aa,cc) in a')
+                              
+                              small {{ questions[k][cc] }}: {{ aa }}
+
+            accordion(type="warning" :one-at-time='true')
+              panel(header="Questões") 
+                div(v-for='(r,q) in questions[k]')
+                  p {{ q }}: {{ r }}
+
+div(v-else)
+  h1 401
+  p Não Autorizado
+  img(src='https://i.pinimg.com/originals/82/62/90/826290d0a78a5d464815e9112abf788a.jpg') 

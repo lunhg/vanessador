@@ -8,7 +8,7 @@ class AppManager
                         fs.readFile file_path, 'utf8', (err, content) ->
                                 if err then _callback(err)
                                 fn = pug.compile content, {filename: file_path, doctype:'html'}        
-                                _callback null, fn({filters: [ marked ]})
+                                _callback null, fn(filters: [jstransformer_marked])
                 
                 @app.set 'view engine', 'pug'
 

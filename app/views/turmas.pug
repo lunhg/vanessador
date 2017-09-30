@@ -1,0 +1,56 @@
+div.jumbotron(v-if='$parent.autorizado' style='background:transparent !important')
+  br
+  br
+  br
+  h2 Turmas
+  br
+  br
+  div.container
+    accordion(type="warning")
+      panel(header='Nova turma')
+        form
+          fieldset
+            div.form-group(v-for="(v,k) in modelos.turmas")
+              label.control-label(:for="k") {{ v.label }}
+              br
+              div
+                input.form-control(:type="v.type" :id="k" :placeholder="v.placeholder")
+        button.btn.btn-success(v-on:click="onTurmas") Adicionar turma
+
+    accordion(type="success")
+      panel(header="Importart Excel")
+        form
+          fieldset
+            div.form-group(v-for="(v,k) in modelos.xls.turmas")
+              label.control-label(:for="k") {{ v.label }}
+              br
+              div
+                input.form-control(:type="v.type" :id="k" :placeholder="v.placeholder")
+        input(type="file" :name='turmas' v-on:change='importarXLS')
+  div.container
+    br
+    br
+    div(v-show='turmas === null')
+      img(src="/assets/images/loading.gif" width="64" height="64")
+    div(v-show='turmas !== null')
+      h2 Lista de Turmas
+      br
+      br
+      accordion(type="info" :one-at-time='true')  
+        panel(v-for="(v,k) in turmas" :data="v" :key="k" :header="k")
+          button.btn.btn-warning(v-show='!atualizar[k]' :name='k' v-on:click.prevent='edit') Atualizar
+          button.btn.btn-success(v-show='atualizar[k]' :name='k' v-on:click.prevent='update') Enviar
+          form
+            fieldset
+              div.form-group(v-for="(val,key) in v")
+                label.control-label(:for='key') {{ key }} 
+                br
+                div(v-if='!atualizar[k]') 
+                  small 
+                  span {{ val }}
+                div(v-else)
+                  input.form-control(type='text' :id='k' :placeholder='val')
+div(v-else)
+  h1 401
+  p Não Autorizado
+  img(src='https://i.pinimg.com/originals/82/62/90/826290d0a78a5d464815e9112abf788a.jpg') 
