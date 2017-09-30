@@ -12,9 +12,9 @@
     "build:docs": "grunt build:docs shell:docco",
     "build:app": "grunt build:init build:libs coffee usebanner --verbose",
     "test:server": "mocha --timeout 15000 bin/test.js",
-    "test:client": "testcafe remote bin/test/ --quarantine --ports 1337,1338 --proxy-host https://iqzmbsjy.p19.weaved.com/ --qr-code",
+    "test:client": "testcafe remote bin/test/ --quarantine --ports 1337,1338 --qr-code",
     "test": "npm run test:server ; test:client",
-    "serve": "./bin/www &",
+    "serve": "bin/www",
     "start": "npm run build:app && npm run serve"
   },
   "repository": {
@@ -26,7 +26,6 @@
   ],
   "license": "SEE LICENSE IN LICENSE.md",
   "dependencies": {
-    "atob": "^2.0.3",
     "body-parser": "^1.17.2",
     "chalk": "^2.0.1",
     "compression": "^1.7.0",
@@ -83,23 +82,19 @@
             "boot/dependencies.coffee",
             "config/environment.coffee",
             "config/app.coffee",
-            "config/pagseguro.coffee",
             "config/server.coffee",
             "boot/app.coffee",
             "app/controllers/index.coffee",
             "app/controllers/config.coffee",
             "app/controllers/templates.coffee",
-            "app/controllers/services.coffee",
             "app/controllers/typeform.coffee",
-            "app/controllers/pagseguro.coffee",
             "app/controllers/mailer.coffee",
             "app/controllers/docs.coffee",
             "boot/server.coffee"
           ],
           "bin/test.js": [
             "boot/devDependencies.coffee",
-            "test/agent.coffee",
-            "test/pagseguro.coffee"
+            "test/agent.coffee"
           ],
           "bin/test/login.test.js": [
             "test/browser_init.coffee",

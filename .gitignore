@@ -4,3 +4,9 @@
 certs/
 node_modules/
 **/#\..*.coffee
+**.orig
+**.BACKUP.*
+**.LOCAL.*
+**.BASE.*
+**.REMOTE.*
+**.html~master

@@ -24,115 +24,104 @@ div.row
                   input#search-input.form-control(type="text" placeholder="Search" v-on:keyup.prevent='onSearch')
                   
     
-    div.collapse.navbar-collapse.navbar-left
-      ul.nav.navbar-nav
-        li
-          a.nav-link(href="/#!/") Vanessador
+          //Search List
+          ul#search-list.list-group.scrollable-menu
+            li.list-group-item(v-for='(v,k) in searchList')
+              small
+                div(v-if='searchList[searchInput]')
+                  p {{ k }}
+                  
+                div(v-else)
+                  div(v-show='v["Nome"]') 
+                    b {{ v['Nome']+" "+v['Sobrenome'] }}
+                    p ID: {{ v['ID User'] }}
+                    p Alumni: {{ v['Alumini(Sim_Não)'] }}
+                    div Emails de contato: 
+                      span 
+                        a(:mailto='v["Email1"]' v-show='v["Email1"] !== "UNDEFINED"') {{ v['Email1'] }}
+                      span
+                        a(:mailto='v["Email2"]' v-show='v["Email2"] !== "UNDEFINED"') {{ v['Email2'] }}
+                      span 
+                        a(:mailto='v["Email3"]' v-show='v["Email3"] !== "UNDEFINED"') {{ v['Email3'] }}
+                      span(v-show='v["Email1"] === "UNDEFINED" && v["Email2"] === "UNDEFINED" && v["Email3"] === "UNDEFINED"') Nenhum email definido
 
-    div#navCollapse.collapse.navbar-collapse.navbar-right
-      ul.nav.navbar-nav(ng-show="user === null")   
-        li
-          a.nav-link.active(href="https://www.github.com/lunhg/vanessador") Contribua
-        li
-          a.nav-link(href="/#!/login" ng-show="user == null") Login
-        li(ng-show="user === null")
-          a.nav-link(href="/#!/signup" ng-show="user == null") Cadastre-se
-      
-      ul.nav.navbar-nav(ng-show="user != null")
+                  div(v-show='v["Nome do curso"]') 
+                    b {{ v['Nome do curso'] }}
+                    p ID: {{ v['ID do Curso'] }}
+                    p Carga: {{ v['Carga Horária'] }} ({{ v['Quantidade de aulas '] }} aulas)
+                    p Início: {{ v['Data de início'] }}
+                    p Valor: R$ {{ v['Valor Cheio '] }} 
 
-        li#docs-menu(ng-show="user !== null" ng-mouseenter="onDropdownmenu('docs-menu', $event)" ng-mouseleave="onDropupmenu('docs-menu', $event)")
-          a.btn-btn-default.dropdown-toogle(data-toogle="dropdown" aria-expanded="true") Docs
-            span.caret
-          ul.dropdown-menu(aria-labelledby="docs-menu")
-            li
-              p Servidor/Express/Boot
-            li.divider
-            li
-              a(href="/docs/server/boot/dependencies") Dependencies
-            li
-              a(href="/docs/server/boot/devDependencies") devDependencies
-            li
-              a(href="/docs/server/boot/app") App
-            li
-              a(href="/docs/server/boot/server") Server
-            li.divider            
-            li
-              p Servidor/Express/Configiração
-            li.divider
-            li
-              a(href="/docs/server/config/environment") Ambiente
-            li
-              a(href="/docs/server/config/app") App
-            li
-              a(href="/docs/server/config/server") Server
-            li
-              a(href="/docs/server/config/paypal") Paypal
-            li
-              a(href="bdocs/server/config/pagseguro") Pagseguro
-            
-            li.divider
-            li
-              p Servidor/Express/Rotas
-            li.divider
-            li
-              a(href="/docs/server/app/controllers/index") Index
-            li
-              a(href="/docs/server/app/controllers/config") Config
-            li
-              a(href="/docs/server/app/controllers/services") Serviços
-            li
-              a(href="/docs/server/app/controllers/templates") Modelos
-            li
-              a(href="/docs/server/app/controllers/typeform") Typeform
-            li
-              a(href="/docs/server/app/controllers/paypal") Paypal
-            li
-              a(href="/docs/server/app/controllers/pagseguro") Pagseguro
-           
-            li.divider
-            li
-              a(href="/docs/client/index") Cliente/Angular
-            li.divider
-            li
-              a(href="/docs/client/app") App
-            li
-              a(href="/docs/client/config") Config
-            li
-              a(href="/docs/client/auth-service") Auth Service
-            li
-              a(href="/docs/client/formulario-service") Formulario Service
-            li
-              a(href="/docs/client/main-service") Main Service
-            li
-              a(href="/docs/client/boleto-service") Boleto Service
-            li
-              a(href="/docs/client/main-ctrl") Main Control
-            li
-              a(href="/docs/client/directives") Directives
+                  div(v-show='v["id_typeform"]')
+                    b Matrícula {{ k }}: 
+                    p Pré-matrícula: {{ v['id_typeform'] }}
+                  
+                  
+                  
+        
+          // Main menu
+          div.side-menu-container
+            ul.nav.navbar-nav(v-if="!$parent.autorizado")
+              li
+                a#github-button.nav-link.active(href="https://www.github.com/lunhg/vanessador") Contribua
+              li
+                <router-link id='login-button' :to="{name:'login'}">Login</router-link>
+    
+            ul.nav.navbar-nav(v-else)
+              li#conta-menu
+                div
+                  br
+                  <router-link id='conta-button' :to="{path:'/conta'}">
+                    img(v-if="user.photoURL" :src="user.photoURL" width='28' height='28')
+                    img(v-else src="/assets/images/vanessadora.png" width='28' height='28')
+                  </router-link> 
+                  span Conta
+                  br
 
-        // https://stackoverflow.com/questions/27837220/ie10-ng-repeat-mousedown-mouseenter#27841532
-        li#boletos-menu(ng-show="user !== null" ng-,mouseenter="onDropdownmenu('boletos-menu', $event)" ng-mouseleave="onDropupmenu('boletos-menu', $event)")
-          a(href="/#!/boletos") Boletos 
-          
-        li#formularios-menu(ng-show="user !== null" ng-mouseenter="onDropdownmenu('formularios-menu', $event)" ng-mouseleave="onDropupmenu('formularios-menu', $event)")
-          a.btn-btn-default.dropdown-toogle(data-toogle="dropdown" aria-expanded="true") Formulários
-            span.caret
-          ul.dropdown-menu(aria-labelledby="formularios-menu")
-            li
-              a(href="/#!/formularios/novo") Novo formulário 
-            li
-              a(href="/#!/formularios") Ver seus formulários
+              li#estudantes-menu
+                div
+                  br
+                  <router-link id='estudantes-button' to="/estudantes">
+                    img(src="/assets/images/estudante.png" width='32' height='32')
+                  </router-link>
+                  span Estudantes
+                  br
 
-        li#user-menu(ng-mouseenter="onDropdownmenu('user-menu', $event)" ng-mouseleave="onDropupmenu('user-menu', $event)")
-          a.btn-btn-default.dropdown-toogle(data-toogle="dropdown" href="#" aria-expanded="true") {{ user.displayName || user.email }}
-            img.img-responsive.img-circle.navbar-right(width="32" heigth="32" ng-show="user.photoUrl !== null" ng-src="{{ user.photoURL }}")
-            span.caret
-  
-          ul.dropdown-menu(aria-labelledby="user-menu")
-            li
-              a(href="/#!/conta") Conta
-            li
-              a(ng-click="logout()") Logout
+              li#cursos-menu
+                div
+                  br
+                  <router-link id='cursos-button' to="/cursos">
+                    img(src="/assets/images/cursos.png" width='34' height='34')
+                  </router-link>
+                  span Cursos
+                  br
 
+             
 
+              li#matriculas-menu
+                div
+                  br
+                  <router-link id='matriculas-button' to="/matriculas">
+                    img(src="/assets/images/matriculas.png" width='28' height='28')
+                  </router-link>
+                  span Matrículas
+                  br
 
+              li#formularios-menu
+                div
+                  br
+                  <router-link id='formularios-button' :to="{path:'/formularios'}">
+                    img(src="/assets/images/formularios.png" width='28' height='28')    
+                  </router-link>
+                  span Formulários 
+                    small Pré-matrículas
+                  br
+
+              li#signout-menu
+                div
+                  br
+                  <router-link id='logout-button' to='/login'>    
+                    img(v-on:click.prevent="$parent.logout" src='/assets/images/logout.png' width='28' height='28' rel='nofollow')      
+                  </router-link> 
+                  span Logout
+                  br
