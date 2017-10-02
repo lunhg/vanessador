@@ -77,7 +77,8 @@ AppManager = (function() {
     });
     this.app.set('view engine', 'pug');
     this.app.set('assets path', [path.join(__dirname, '..', 'app/assets/fonts'), path.join(__dirname, '..', 'app/assets/doc'), path.join(__dirname, '..', 'app/assets/img'), path.join(__dirname, '..', 'app/assets/css'), path.join(__dirname, '..', 'app/assets/js'), path.join(__dirname, '..', 'app/assets/'), path.join(__dirname, '..', 'app/assets/favicon.ico')]);
-    this.app.set('port', parseInt(process.env.PORT || '3000'));
+    console.log(process.env.PORT);
+    this.app.set('port', parseInt(process.env.PORT));
   }
 
   return AppManager;
@@ -111,6 +112,7 @@ ServerManager.routes = function() {
       app_manager.config();
       app_manager.templates();
       app_manager.typeform();
+      app_manager.mailer();
       app_manager.docs();
       return resolve(app);
     } catch (error1) {

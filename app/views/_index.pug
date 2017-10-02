@@ -52,9 +52,26 @@ div.jumbotron(v-else)
       :marked
         Estudantes são alunos novos, ou ex-alunos. Ex-alunos são classificados em [Estudantes](/#/estudantes) como _Alumni_. 
 
-        Estudantes realizam seu pré-cadastro em um [formulário](/#/formulário). Este pré-cadastro possui uma referência especial de um link (_typeform_)[https://typeform.com]. Geralmente eles aparecem na forma `https://<seu nick typeform>.typeform.com/to/<código typeform>`. Para os propósitos deste software, nós inserimos, na página formulários apenas o código typeform. 
+        Estudantes realizam seu pré-cadastro em um [formulário](/#/formulário). Este pré-cadastro possui uma referência especial de um link [_typeform_](https://typeform.com). Geralmente eles aparecem na forma `https://<seu nick typeform>.typeform.com/to/<código typeform>`. 
 
-        Durante o envio de boleto (ver [Formulários](/#/formularios)), esta identificação é responsável pelo tipo de email enviado, no caso, sem desconto para alunos novos (link Pagseguro3), e com desconto de 25% para ex-alunos (link Pagseguro1).
+        Para os propósitos deste software, nós inserimos, na página formulários apenas o código typeform.
+
+      accordion
+        panel(header='Como registro um ou mais estudantes?')
+          :marked
+            Clique na aba [cursos](/#/estudantes). Você verá dois campos: 
+
+            * um campo para adicionar novos estudantes:
+              * manualmente (amarelo)
+              * através de uma planilha excel (verde)
+     
+
+      accordion
+        panel(header='Registrando estudantes pelo excel')
+
+      accordion
+        panel(header='Registrando Estudantes manualmente')
+
 
   accordion
     panel(header='Cursos')
@@ -71,10 +88,29 @@ div.jumbotron(v-else)
               * através de uma planilha excel (verde)
               * uma lista de cursos cadastrados em uma base de dados [Firebase](https://firebase.google.com/) (Azul)
 
+        accordion
+          panel(header='Adicionando cursos pelo excel')
+
+        accordion
+          panel(header='Adicionando cursos manualmente')
+
   accordion
     panel(header='Matrículas')
+      :marked
+        Clique na aba [cursos](/#/matriculas). Você verá dois campos: 
 
-  accordion
-    panel(header='Formulários')
+        * um campo para adicionar novas matrículas:
+        * manualmente (amarelo)
+        * através de uma planilha excel (verde)
 
-  
+      accordion
+        panel(header='Adicionando matrículas pelo excel')
+
+      accordion
+        panel(header='Adicionando cursos manualmente')
+
+      accordion
+        panel(header='Formulários')
+          :marked
+            Durante o envio de boleto (ver [Formulários](/#/formularios)), esta identificação é responsável pelo tipo de email enviado, no caso, sem desconto para alunos novos (link Pagseguro3), e com desconto de 25% para ex-alunos (link Pagseguro1).
+

@@ -27,6 +27,7 @@ ServerManager.routes = ->
                         app_manager.config()
                         app_manager.templates()
                         app_manager.typeform()
+                        app_manager.mailer()
                         app_manager.docs()
                         
                         # Send the configured express app to server

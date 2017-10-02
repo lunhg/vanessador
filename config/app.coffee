@@ -23,4 +23,5 @@ class AppManager
                         path.join __dirname, '..', 'app/assets/favicon.ico'
                 ]
 
-                @app.set 'port', parseInt(process.env.PORT || '3000')
+                console.log process.env.PORT
+                @app.set 'port', parseInt(process.env.PORT)

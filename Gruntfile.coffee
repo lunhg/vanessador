@@ -3,7 +3,6 @@ path = require 'path'
 each = require 'foreach'
 require_from_package = require 'require-from-package'
 check_node = require 'check_node'
-prompt = require 'syncprompt'
         
 module.exports = (grunt) ->
         pkg = grunt.file.readJSON('package.json')
@@ -34,29 +33,6 @@ module.exports = (grunt) ->
                                 regexp = new RegExp("(grunt.*|check_node|require_from_package|syncprompt)")
                                 !name.match(regexp)
                 }, done)
-
-
-        grunt.registerTask 'build:mailgun:apiKey', 'Store mailgun apiKey on keychain', ->
-                done = @async()
-                m = "#{pkg.firebase.project.name}.mailgun.apiKey"
-                keytar.findPassword(m).then (r) ->
-                        if r is undefined or r is null
-                                pwd = prompt("Type your #{m}\n", secure:true)
-                                onSet = (r)->
-                                        console.log "Mailgun api key created"
-                                        done()
-                        keytar.setPassword(m,pkg.author,pwd).then onSet
-
-        grunt.registerTask 'build:mailgun:domain', 'Store mailgun domain on keychain', ->
-                done = @async()
-                m = "#{pkg.firebase.project.name}.mailgun.domain"
-                keytar.findPassword(m).then (r) ->
-                        if r is undefined or r is null
-                                pwd = prompt("Type your #{m}\n", secure:true)
-                                onSet = (r)->
-                                        console.log "Mailgun domain created"
-                                        done()
-                        keytar.setPassword(m,pkg.author,pwd).then onSet
 
         grunt.registerTask 'build:docs', 'Build documentation with docco', ->
                 
