@@ -38,7 +38,7 @@ AppManager::mailer = ->
                                         api_key: process.env.MAILGUN_API_KEY
                                         domain: process.env.MAILGUN_DOMAIN
                                 options:
-                                        from: "\"Vanessador-not-reply\" <postmaster@#{results[1]}>"        
+                                        from: "\"Vanessador-not-reply\" <postmaster@#{process.env.MAILGUN_DOMAIN}>"        
                                         to: req.query.to
                                         subject:  "[Vanessador]: Boleto - #{req.query.curso}"
                                         html: html

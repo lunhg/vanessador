@@ -481,26 +481,17 @@ AppManager.prototype.templates = function() {
 
 AppManager.prototype.typeform = function() {
   return this.app.get('/typeform/data-api', function(req, res) {
-    var projectName, pwd;
-    projectName = require((path.join(__dirname)) + "/../package.json").firebase.project.name;
-    pwd = projectName + ".typeform.apiKey";
-    console.log("Search for  " + pwd);
-    return keytar.findPassword(pwd).then(function(apiKey) {
-      var _url, onGet;
-      _url = "form/" + req.query.uuid + "?key=" + apiKey;
-      _url += "&completed=true";
-      onGet = function(err, _res, body) {
-        if (err) {
-          return res.json(err);
-        } else {
-          console.log(body);
-          return res.json(body);
-        }
-      };
-      return request_json.createClient('https://api.typeform.com/v1/').get(_url, onGet);
-    })["catch"](function(err) {
-      return res.json(err);
-    });
+    var _url, onGet;
+    _url = "form/" + req.query.uuid + "?key=" + process.env.TYPEFORM_API_KEY;
+    _url += "&completed=true";
+    onGet = function(err, _res, body) {
+      if (err) {
+        return res.json(err);
+      } else {
+        return res.json(body);
+      }
+    };
+    return request_json.createClient('https://api.typeform.com/v1/').get(_url, onGet);
   });
 };
 
@@ -556,7 +547,7 @@ AppManager.prototype.mailer = function() {
           domain: process.env.MAILGUN_DOMAIN
         },
         options: {
-          from: "\"Vanessador-not-reply\" <postmaster@" + results[1] + ">",
+          from: "\"Vanessador-not-reply\" <postmaster@" + process.env.MAILGUN_DOMAIN + ">",
           to: req.query.to,
           subject: "[Vanessador]: Boleto - " + req.query.curso,
           html: html
