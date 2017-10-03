@@ -44,6 +44,12 @@ makeRoutes = (results) ->
                                 r.data.component.methods['onFormularios']= onFormularios
                                 r.data.component.methods['filter'] =  filter
 
+                        if r.data.name is 'estudantes'
+                                r.data.component.methods['onEstudantes']= onEstudantes
+
+                        if r.data.name is 'cursos'
+                                r.data.component.methods['onCursos']= onCursos
+                                
                         if r.data.name is 'login'
                                 r.data.component.methods =
                                         login: login

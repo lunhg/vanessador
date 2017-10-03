@@ -20,15 +20,6 @@ div.jumbotron(v-if='$parent.autorizado' style='background:transparent !important
                     div
                       b(v-if='k === "input_estudante"') {{ q['Nome'] }}
                       b(v-else) {{ q['Nome do curso'] }}
-        //form
-        //  fieldset
-        //    div.form-group(v-for='(v,k) in modelos.matriculas' role='search')
-        //      label.control-label.input-sm(:for='k') {{ v.label }}
-        //      br
-        //      input.form-control.input-sm(:type='v.type' :id='k' :placeholder='v.placeholder')
-              
-
-        //button.btn.btn-success(v-on:click='onMatriculas') Adicionar formulário
 
     accordion(type="success")
       panel(header="Importar Excel") 

@@ -128,10 +128,12 @@ AppManager::templates = ->
 
                 estudantes =
                         input_nome: {'type':'text', 'placeholder':'nome', 'label': 'Nome'}
+                        input_sobrenome: {'type':'text', 'placeholder':'sobrenome', 'label': 'Sobrenome'}
                         input_email1: {'type':'text', 'placeholder':'email1@dominio', 'label': 'Email 1'}
                         input_email2: {'type':'text', 'placeholder':'email2@dominio', 'label': 'Email 2'}
                         input_email3: {'type':'text', 'placeholder':'email3@dominio', 'label': 'Email 3'}
                         input_profissao: {'type':'text', 'placeholder':'trabalho', 'label': 'Profissão'}
+                        input_graduacao: {'type':'text', 'placeholder':'graduação', 'label': 'Graduação'}
                         input_idade: {'type':'text', 'placeholder':'8-80', 'label': 'Idade'}
                         input_genero: {'type':'text', 'placeholder':'M/F/Outro', 'label': 'Gênero'}
                         input_telefone: {'type':'text', 'placeholder':'12345678', 'label': 'Telefone'}
@@ -146,12 +148,12 @@ AppManager::templates = ->
                         input_fim_matricula: {'type':'date', 'label': 'Fim das matrículas'}
                         input_carga_horaria: {'type':'text', 'placeholder':'6 hs', 'label': 'Carga Horária'}
                         input_quantidade_aulas: {'type':'number', 'placeholder':'3', 'label': 'Quantidade de Aulas'}
-                        input_data_inicio: {'type':'date', 'label': 'Data de início das aulas'}
+                        input_data_inicio {'type':'date', 'label': 'Data de início das aulas'}
                         input_data_termino: {'type':'date', 'label': 'Data de término das aulas'}
-                        input_data_inicio_valor1: {'type':'number', 'label': 'Valor para data de início 1 (R$)'}
-                        input_data_inicio_valor2: {'type':'number', 'label': 'Valor para data de início 2 (R$)'}
-                        input_data_inicio_valor3: {'type':'number', 'label': 'Valor para data de início 3 (R$)'}
-                        input_valor_cheio: {'type':'number', 'placeholder':'200', 'label': 'Valor Cheio (R$)'}
+                        input_data_inicio_valor1: {'type':'number', 'label': 'Valor para data de início 1 (reais)'}
+                        input_data_inicio_valor2: {'type':'number', 'label': 'Valor para data de início 2 (reais)'}
+                        input_data_inicio_valor3: {'type':'number', 'label': 'Valor para data de início 3 (reais)'}
+                        input_valor_cheio: {'type':'number', 'placeholder':'200', 'label': 'Valor Cheio (reais)'}
                         input_link_valor1: {'type':'text', 'placeholder': 'https://pag.ae/12345', 'label': 'Codigo Pagseguro 1'}
                         input_link_valor2: {'type':'text', 'placeholder': 'https://pag.ae/45678', 'label': 'Codigo Pagseguro 2'}
                         input_link_valor3: {'type':'text', 'placeholder': 'https://pag.ae/90123', 'label': 'Codigo Pagseguro 3'}

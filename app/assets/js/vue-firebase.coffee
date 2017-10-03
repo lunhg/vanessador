@@ -227,14 +227,56 @@ onMatriculas = (event) ->
         o.id = uuid.v4()
         firebase.database().ref("matriculas/#{o.id}/").set o
 
-# Adiciona turmas
-onTurmas= (event) ->
+# Adiciona Estudante
+onEstudantes= (event) ->
         o = {}
-        for e in ['id_curso', 'typeform', 'codigo_valor1', 'codigo_valor2', 'codigo_valor3' ]
+        for e in ['nome', 'sobrenome', 'email1', 'email2', 'email3', 'profissao','graduacao', 'idade', 'genero', 'telefone', 'estado', 'cidade', 'isAlumni' ]
                 el = document.getElementById 'input_'+e
-                o[e] = el.value
+                switch(e)
+                        when 'nome' then o['Nome'] = el.value or "UNDEFINED"
+                        when 'sobrenome' then o['Sobrenome'] = el.value or "UNDEFINED"
+                        when 'email1' then o['Email1'] = el.value or "UNDEFINED"
+                        when 'email2' then o['Email2'] = el.value or "UNDEFINED"
+                        when 'email3' then o['Email3'] = el.value or "UNDEFINED"
+                        when 'profissao' then o['Profissão'] = el.value or "UNDEFINED"
+                        when 'graduacao' then o['Graduação'] = el.value or "UNDEFINED"
+                        when 'genero' then o['Gênero'] = el.value or "UNDEFINED"
+                        when 'telefone' then o['Telefone'] = el.value or "UNDEFINED"
+                        when 'isAlumni' then o['Alumni(Sim_Não)'] = el.value or "UNDEFINED"
+        
+        o['Cidade_Estado_País'] = "#{o['cidade']}, #{o['estado']}, Brasil"
+        delete o['cidade']
+        delete o['estado']
+        delete o['cidade']                     
+        o['ID User'] = uuid.v4()
+        firebase.database().ref("estudantes/#{o['ID User']}").set o
+        
+# Adiciona turmas
+onCursos= (event) ->
+        o = {}
+        for e in ['nome', 'typeform_code', 'inicio_matricula','fim_matricula', 'carga_horaria','quantidade_aulas','data_inicio','data_inicio_valor1', 'data_inicio_valor2', 'data_inicio_valor3', 'valor_cheio', 'link_valor1', 'link_valor2', 'link_valor3']
+                el = document.getElementById 'input_'+e
+                switch(e)
+                        when 'nome' then o['Nome do curso'] = el.value or "UNDEFINED"
+                        when 'typeformcode' then o['Código Typeform'] = el.value or "UNDEFINED"
+                        when 'inicio_matricula' then o['Início das matrículas'] = el.value or "UNDEFINED"
+                        when 'fim_matricula' then o['Fim das matrículas'] = el.value or "UNDEFINED"
+                        when 'carga_horaria' then o['Carga Horária'] = el.value or "UNDEFINED"
+                        when 'quantidade_aulas' then o['Quantidade de Aulas'] = el.value or "UNDEFINED"
+                        when 'data_inicio' then o['Data de início das aulas'] = el.value or "UNDEFINED"
+                        when 'data_inicio_valor1' then o['Valor para data de início 1 (reais)'] = el.value or "UNDEFINED"
+                        when 'data_inicio_valor2' then o['Valor para data de início 2 (reais)'] = el.value or "UNDEFINED"
+                        when 'data_inicio_valor3' then o['Valor para data de início 3 (reais)'] = el.value or "UNDEFINED"
+                        when 'valor_cheio' then o['Valor Cheio (reais)'] = el.value or "UNDEFINED"
+                        when 'link_valor1' then o['Codigo Pagseguro 1'] = el.value or "UNDEFINED"
+                        when 'link_valor2' then o['Codigo Pagseguro 2'] = el.value or "UNDEFINED"
+                        when 'link_valor3' then o['Codigo Pagseguro 3'] = el.value or "UNDEFINED"
+                        
                 
-        firebase.database().ref("turmas/").push o
+        o['ID do Curso'] = uuid.v4()
+                
+        firebase.database().ref("cursos/#{o['ID do Curso']}").set o
+
 
 # Variáveis computáveis
 onComputed = (type) ->
@@ -306,12 +348,12 @@ onAuthStateChanged = ->
                         self.autorizado = true
                         for e in 'displayName email photoURL telephone'.split(' ')
                                 Vue.set self.user, e, self.user[e]
-                else
                         for e in ['formularios', 'responses', 'questions', 'estudantes', 'cursos', 'matriculas']
                                 _e = e
                                 firebase.database().ref(e+'/').once 'value', (snapshot) ->
                                         
-                                        Vue.set self, _e, snapshot.val() 
+                                        Vue.set self, _e, snapshot.val()
+                else 
                         Vue.set self, 'autorizado', false
         
                 

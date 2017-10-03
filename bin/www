@@ -333,6 +333,11 @@ AppManager.prototype.templates = function() {
         'placeholder': 'nome',
         'label': 'Nome'
       },
+      input_sobrenome: {
+        'type': 'text',
+        'placeholder': 'sobrenome',
+        'label': 'Sobrenome'
+      },
       input_email1: {
         'type': 'text',
         'placeholder': 'email1@dominio',
@@ -352,6 +357,11 @@ AppManager.prototype.templates = function() {
         'type': 'text',
         'placeholder': 'trabalho',
         'label': 'Profissão'
+      },
+      input_graduacao: {
+        'type': 'text',
+        'placeholder': 'graduação',
+        'label': 'Graduação'
       },
       input_idade: {
         'type': 'text',

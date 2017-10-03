@@ -8,6 +8,7 @@ div.jumbotron(v-if='$parent.autorizado' style='background:transparent !important
   div.container
     accordion(type="warning")
       panel(header='Novo Curso')
+        button.btn.btn-success(v-on:click='onCursos') Adicionar curso
         form
           fieldset
             div.form-group(v-for="(v,k) in modelos.cursos")
