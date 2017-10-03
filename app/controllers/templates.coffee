@@ -148,7 +148,7 @@ AppManager::templates = ->
                         input_fim_matricula: {'type':'date', 'label': 'Fim das matrículas'}
                         input_carga_horaria: {'type':'text', 'placeholder':'6 hs', 'label': 'Carga Horária'}
                         input_quantidade_aulas: {'type':'number', 'placeholder':'3', 'label': 'Quantidade de Aulas'}
-                        input_data_inicio {'type':'date', 'label': 'Data de início das aulas'}
+                        input_data_inicio: {'type':'date', 'label': 'Data de início das aulas'}
                         input_data_termino: {'type':'date', 'label': 'Data de término das aulas'}
                         input_data_inicio_valor1: {'type':'number', 'label': 'Valor para data de início 1 (reais)'}
                         input_data_inicio_valor2: {'type':'number', 'label': 'Valor para data de início 2 (reais)'}

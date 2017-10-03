@@ -432,20 +432,20 @@ AppManager.prototype.templates = function() {
       },
       input_data_inicio_valor1: {
         'type': 'number',
-        'label': 'Valor para data de início 1 (R$)'
+        'label': 'Valor para data de início 1 (reais)'
       },
       input_data_inicio_valor2: {
         'type': 'number',
-        'label': 'Valor para data de início 2 (R$)'
+        'label': 'Valor para data de início 2 (reais)'
       },
       input_data_inicio_valor3: {
         'type': 'number',
-        'label': 'Valor para data de início 3 (R$)'
+        'label': 'Valor para data de início 3 (reais)'
       },
       input_valor_cheio: {
         'type': 'number',
         'placeholder': '200',
-        'label': 'Valor Cheio (R$)'
+        'label': 'Valor Cheio (reais)'
       },
       input_link_valor1: {
         'type': 'text',
