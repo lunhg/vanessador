@@ -18,39 +18,17 @@ libsecret
     
 #  Instalando chaves de acesso às APIs firebase, typeform, paypal e pagseguro
 
-É possível executar um único comando:
+## Nos sistemas Linux
 
-    npm run build:API
+Edite o arquivo `~/.profile` com as seguintes informações:
 
-Para entender o significado de cada uma, verifique os paragrafos abaixo:
-
-##  Instalando chaves de acesso firebase
-
-[Crie](https://firebase.google.com/docs/web/setup) um projeto firebase com as credenciais de chave de `API` e `messagingSenderId`:
-
-
-    grunt build:firebase:apiKey
-    grunt build:firebase:messagingSenderId
-    
-##  Instalando chaves de acesso typeform
-
-[Crie](https://www.typeform.com/help/data-api/) um projeto typeform com as credenciais de chave de `API`:
-
-    grunt build:typeform:apiKey
-
-##  Instalando chaves de acesso paypal
-
-[Crie](https://developer.paypal.com/developer/applications/) uma conta sandbox paypal com as credenciais de chave de `API` e `secret`:
-
-    grunt build:paypal:apiKey
-    grunt build:paypal:secret
-    
-##  Instalando chaves de acesso pagseguro
-
-[Crie](https://pagseguro.uol.com.br/preferencias/integracoes.jhtml) uma conta sandbox pagseguro com as credenciais de chave de `API` e `email`:
-
-    grunt build:pagseguro:apiKey
-    grunt build:pagseguro:email
+    export FIREBASE_API_KEY=<key>
+    export FIREBASE_MESSAGING_SENDER_ID=<id>
+    export MAILGUN_API_KEY=<key>
+    export MAILGUN_DOMAIN=<domain>
+    export TYPEFORM_API_KEY=<key>
+    export APIS_EMAIL=<email>
+    export PORT=<port>
 
 # Documentação
 
@@ -63,6 +41,10 @@ Toda documentação é gerada pelos comentários feitos nos códigos-fontes atra
 Um único comando compila o código-fonte e executa o servidor localizado em `bin/www`
 
     npm start
+
+ou
+
+    npm run build:app
 
 # Testes
 

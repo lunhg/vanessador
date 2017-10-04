@@ -4,11 +4,6 @@
   "description": "a firebase app with typeform requests",
   "main": "bin/www",
   "scripts": {
-    "build:API:firebase": "grunt build:firebase:apiKey ; grunt build:firebase:messagingSenderId",
-    "build:API:typeform": "grunt build:typeform:apiKey",
-    "build:API:pagseguro": "grunt build:pagseguro:apiKey ; grunt build:pagseguro:email",
-    "build:API:mailgun": "grunt build:mailgun:apiKey ; grunt build:mailgun:domain",
-    "build:API": "npm run build:API:firebase ; npm run build:API:typeform ; npm run build:API:pagseguro ; npm run build:API:mailgun",
     "build:docs": "grunt build:docs shell:docco",
     "build:app": "grunt build:init build:libs coffee usebanner --verbose",
     "test:server": "mocha --timeout 15000 bin/test.js",
