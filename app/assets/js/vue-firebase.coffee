@@ -171,6 +171,8 @@ onFormularios = (event) ->
                                 for k, e in snapshot.val()
                                         for q, w of estudantes
                                                 # É Alumni
+                                                console.log e
+                                                console.log w
                                                 if w['Nome'] is e['Nome'] and w['Sobrenome'] is e['Sobrenome']
                                                         __estudantes__.push est
                                                 # Não é alumni

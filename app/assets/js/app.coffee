@@ -41,13 +41,21 @@ makeApp = (router) ->
                                                 self = this
                                                 if f is 'formularios'
                                                         onComputed('responses')().then (r) ->
-                                                                console.log r
                                                                 Vue.set(self, 'responses', r)
                                                         onComputed('questions')().then (q) ->
                                                                 Vue.set(self, 'questions', q)
+                                                        onComputed('cursos')().then (q) ->
+                                                                Vue.set(self, 'cursos', q)
+
+                                                if f is 'matriculas'
+                                                        onComputed('estudantes')().then (r) ->
+                                                                Vue.set(self, 'estudantes', r)
+                                                        onComputed('cursos')().then (q) ->
+                                                                Vue.set(self, 'cursos', q)
                                                 onComputed(f)().then (data) ->
                                                         console.log data
                                                         Vue.set(self, f, data)
+                                        
                                         
                                                 
 
