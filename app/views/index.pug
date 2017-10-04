@@ -8,6 +8,7 @@ block head
   link(rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css")
   != css("index")
   != css("vue-autocomplete")
+  != css("vue-toastr.min")
 
 block inicializador
   section#masterLoader.centralize-area
@@ -29,9 +30,10 @@ block scripts
   != js("vue", {'data-turbolinks-track':true})
   != js("vue-router", {'data-turbolinks-track':true})
   != js("vue-resource.min", {'data-turbolinks-track':true})
-  != js("vue-computed-promise", {'data-turbolinks-track':true})
-  != js("vue2-autocomplete", {'data-turbolinks-track':true})
+  //!= js("vue-computed-promise", {'data-turbolinks-track':true})
+  //!= js("vue2-autocomplete", {'data-turbolinks-track':true})
   != js("vue-strap.min", {'data-turbolinks-track':true})
+  != js("vue-toastr.min", {'data-turbolinks-track':true})
   != js("xlsx.full.min", {'data-turbolinks-track':true})
   != js("uuid", {'data-turbolinks-track':true})
   != js("firebase", {'data-turbolinks-track':true})

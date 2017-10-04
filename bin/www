@@ -233,7 +233,17 @@ AppManager.prototype.templates = function() {
     return res.json(["_index", "login", "signup", "resetPassword", "confirm", "conta", "formularios", "estudantes", "cursos", "matriculas"]);
   });
   this.app.get("/templates/index/page", function(req, res) {
-    return res.send("<div>\n<vanessador-menu :autorizado='autorizado' :user='user'></vanessador-menu>\n<div class='container-fluid'>\n  <div class='side-body'>\n    <transition>\n      <router-view :autorizado='autorizado' :user='user' :atualizar='atualizar' :estudantes='estudantes' :cursos='cursos' :formularios='formularios' :modelos='modelos' :questions='questions' :responses='responses' :matriculas='matriculas' :login='login' :logout='logout'></router-view>\n    </transition>\n  </div>\n</div>\n</div>");
+    var p;
+    p = path.join(__dirname, '..', 'app/views', 'vue.pug');
+    return fs.readFile(p, 'utf8', function(err, content) {
+      var html, opt;
+      opt = {
+        filename: p,
+        doctype: 'html'
+      };
+      html = pug.compile(content, opt)();
+      return res.send(html);
+    });
   });
   return this.app.get("/templates/index/data", function(req, res) {
     var cursos, estudantes, formularios, matriculas, xlsCursos, xlsEstudantes, xlsFormularios, xlsMatriculas;

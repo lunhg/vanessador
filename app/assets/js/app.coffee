@@ -2,7 +2,7 @@
 # Cria uma intância Vue de acordo com um `router` definido no arquivo `app/assets/js/routes` 
 makeApp = (router) ->
         Vue.use(VueRouter)
-        Vue.use(VueComputedPromise)
+        #Vue.use(VueComputedPromise)
         Promise.all([
                 Vue.http.get("/templates/index/page")
                 Vue.http.get("/templates/index/data")
@@ -16,7 +16,8 @@ makeApp = (router) ->
                                 # O componente `vanessador-menu` é definido no arquivo `app/assets/js/menu`
                                 # enquanto o componente `router-view` é definido no arquivo precedente
                                 template: results[0].data
-
+                                components:
+                                        'vue-toastr': window.vueToastr
                                 # Função executada quando o aplicativo Vue.js for criado
                                 # Deve registrar que, quando o usuário estiver logado,
                                 # as variáveis de data e computados deverão ser atualizadas

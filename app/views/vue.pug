@@ -1,0 +1,6 @@
+div
+  <vanessador-menu :autorizado='autorizado' :user='user'></vanessador-menu>
+  div.container-fluid
+    div.side-body
+      <vue-toastr ref="toastr"></vue-toastr>
+      <router-view :autorizado='autorizado' :user='user' :atualizar='atualizar' :estudantes='estudantes' :cursos='cursos' :formularios='formularios' :modelos='modelos' :questions='questions' :responses='responses' :matriculas='matriculas' :login='login' :logout='logout'></router-view>

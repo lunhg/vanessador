@@ -9,3 +9,5 @@ log = (msg) ->
         # Give to main page a percept of fluxus
         fluxus = -> p.innerHTML = msg.toString()
         setTimeout fluxus, 750
+
+toast = (root, obj) -> root.$refs.toastr.Add(obj)

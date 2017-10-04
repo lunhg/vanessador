@@ -16,9 +16,25 @@ login = ->
         id_login = 'input_login_email'
         id_password = 'input_login_password'
         self = this
-        onLogin = (user) -> log "user #{user.uid} logged"
-                        
-        onErr = (err) -> log err
+        onLogin = (user) ->
+                toast self.$parent, {
+                        title: "Bem-vindo(a)",
+                        msg: user.name or user.email
+                        clickClose: true
+                        timeout: 5000
+                        position: "toast-top-right",
+                        type: "success"
+                }
+        onErr = (err) ->
+                log err
+                toast self.$parent, 'error', {
+                        title: "Error",
+                        msg: err.message
+                        clickClose: true
+                        timeout: 5000
+                        position: "toast-top-right",
+                        type: "warning"
+                }
         email = document.getElementById(id_login).value
         if email.match(emailRE)
                 firebase.auth()
@@ -30,7 +46,16 @@ login = ->
 # Logout
 logout = ->
         self = this
-        onSignout = -> self.$router.push '/login'
+        onSignout = ->
+                self.$router.push '/login'
+                toast self, {
+                        title: "Você saiu",
+                        msg: "com sucesso do vanessador"
+                        clickClose: true
+                        timeout: 5000
+                        position: "toast-top-right",
+                        type: "success"
+                }
         firebase.auth().signOut().then(onSignout).catch (e) -> console.log e
 
 # Adiciona ou remove usuários
@@ -52,7 +77,7 @@ onFormularios = (event) ->
         typeformcode = document.getElementById('input_typeform')
         typeformcode = typeformcode.value
         cursos = document.getElementById('input_curso')
-        curso = cursos.options[cursos.selectedIndex  or 0].getAttribute('data-value')
+        curso = cursos.options[cursos.selectedIndex or 0].getAttribute('data-value')
         query.push "uuid=#{typeformcode}"
         query = query.join('&')
         self = this
@@ -353,6 +378,8 @@ onAuthStateChanged = ->
                                 firebase.database().ref(e+'/').once 'value', (snapshot) ->
                                         
                                         Vue.set self, _e, snapshot.val()
+
+                        self.$router.push '/'
                 else 
                         Vue.set self, 'autorizado', false
         

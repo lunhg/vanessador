@@ -88,16 +88,11 @@ AppManager::templates = ->
                 ]
                 
         @app.get "/templates/index/page", (req, res) ->
-                res.send """<div>
-  <vanessador-menu :autorizado='autorizado' :user='user'></vanessador-menu>
-  <div class='container-fluid'>
-    <div class='side-body'>
-      <transition>
-        <router-view :autorizado='autorizado' :user='user' :atualizar='atualizar' :estudantes='estudantes' :cursos='cursos' :formularios='formularios' :modelos='modelos' :questions='questions' :responses='responses' :matriculas='matriculas' :login='login' :logout='logout'></router-view>
-      </transition>
-    </div>
-  </div>
-</div>"""
+                p = path.join(__dirname, '..', 'app/views', 'vue.pug')
+                fs.readFile p, 'utf8', (err, content) ->
+                        opt = {filename: p, doctype:'html'}
+                        html = pug.compile(content, opt)()
+                        res.send html
 
         @app.get "/templates/index/data", (req, res) ->
                 xlsCursos =
