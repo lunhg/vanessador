@@ -10,4 +10,5 @@ log = (msg) ->
         fluxus = -> p.innerHTML = msg.toString()
         setTimeout fluxus, 750
 
-toast = (root, obj) -> root.$refs.toastr.Add(obj)
+toast = (root, obj) ->
+        root.$refs.toastr.Add(obj)

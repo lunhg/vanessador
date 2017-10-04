@@ -26,14 +26,14 @@ login = ->
                         type: "success"
                 }
         onErr = (err) ->
-                log err
-                toast self.$parent, 'error', {
-                        title: "Error",
+                console.log err
+                toast self.$parent, {
+                        title: err.code,
                         msg: err.message
                         clickClose: true
                         timeout: 5000
                         position: "toast-top-right",
-                        type: "warning"
+                        type: "error"
                 }
         email = document.getElementById(id_login).value
         if email.match(emailRE)
@@ -42,7 +42,14 @@ login = ->
                         .then(onLogin)
                         .catch(onErr)
         else
-                log new Error("Email not allowed")
+                 toast self.$parent, {
+                        title: "Email inválido",
+                        msg: "Cheque se você digitou corretamente seu email na forma usuário@email.domínio"
+                        clickClose: true
+                        timeout: 5000
+                        position: "toast-top-right",
+                        type: "error"
+                }
 # Logout
 logout = ->
         self = this
