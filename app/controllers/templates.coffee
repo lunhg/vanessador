@@ -60,6 +60,7 @@ AppManager::templates = ->
                                                         
                                                 else 
                                                         result.path = "/#{p}"
+                                                        
                                                 resolve result
                                         catch e
                                                 console.log e
@@ -85,6 +86,7 @@ AppManager::templates = ->
                         "estudantes"
                         "cursos"
                         "matriculas"
+                        "cobrancas"
                 ]
                 
         @app.get "/templates/index/page", (req, res) ->

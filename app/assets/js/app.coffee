@@ -36,29 +36,47 @@ makeApp = (router) ->
                                 watch: 
                                         '$route': (to, from) ->
                                                 if not this.autorizado then this.$router.push '/login'
-                                                console.log to
                                                 f = to.path.split('/')[1]
                                                 self = this
-                                                if f is 'formularios'
-                                                        onComputed('responses')().then (r) ->
-                                                                Vue.set(self, 'responses', r)
-                                                        onComputed('questions')().then (q) ->
-                                                                Vue.set(self, 'questions', q)
-                                                        onComputed('cursos')().then (q) ->
-                                                                Vue.set(self, 'cursos', q)
 
-                                                if f is 'matriculas'
+                                                if f is 'cobrancas'
+                                                        onComputed('matriculas')().then (r) ->
+                                                                Vue.set(self, 'matriculas', r)
+                                                                        
                                                         onComputed('estudantes')().then (r) ->
                                                                 Vue.set(self, 'estudantes', r)
-                                                        onComputed('cursos')().then (q) ->
-                                                                Vue.set(self, 'cursos', q)
-                                                onComputed(f)().then (data) ->
-                                                        console.log data
-                                                        Vue.set(self, f, data)
-                                        
-                                        
-                                                
+                                                                        
+                                                        onComputed('traces')().then (traces) ->
+                                                                console.log traces
+                                                                Vue.set(self, 'cobrancas', traces)
+                                                                onTraces(traces, self).then ->
+                                                                        
+                                                else
+                                                        if f is 'matriculas'
+                                                                onComputed('estudantes')().then (r) ->
+                                                                        Vue.set(self, 'estudantes', r)
+                                                                onComputed('cursos')().then (q) ->
+                                                                        Vue.set(self, 'cursos', q)
 
+                                                                onComputed('matriculas')().then (r) ->
+                                                                        Vue.set(self, 'matriculas', r)
+
+                                                        if f is 'formularios'
+                                                                onComputed('responses')().then (r) ->
+                                                                        Vue.set(self, 'responses', r)
+                                                                onComputed('questions')().then (q) ->
+                                                                        Vue.set(self, 'questions', q)
+                                                                onComputed('cursos')().then (q) ->
+                                                                        Vue.set(self, 'cursos', q)
+                                                                onComputed('formularios')().then (r) ->
+                                                                        Vue.set(self, 'formularios', r)
+                                                                
+                                                        if f is 'estudantes'
+                                                                onComputed('estudantes')().then (r) ->
+                                                                        Vue.set(self, 'estudantes', r)
+                                                        if f is 'cursos'
+                                                                onComputed('cursos')().then (r) ->
+                                                                        Vue.set(self, 'cursos', r)
                                 # Dados computados são aqueles que serão recuperados
                                 # durante uma requisição à base de dados do firebase.
                                 # É importante lembrar que tais requisições são assíncronas

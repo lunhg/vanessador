@@ -7,6 +7,8 @@ onCells = (sheet, opt) ->
                         _list = opt.list.split('')
                         for r in _list 
                                 key = sheet[r+''+opt.min].v.replace new RegExp("/", "g"), '_'
+                                console.log key
+                                console.log sheet[r+i]
                                 if sheet[r+i] is undefined
                                         if key is 'ID User'
                                                 o[key] = id
@@ -21,7 +23,7 @@ onCells = (sheet, opt) ->
                                         else
                                                 o[key] = "UNDEFINED"
                                 else
-                                        o[key] = sheet[r+i].v
+                                        o[key] = sheet[r+i].v or sheet[r+i].w
 
                         if a[id]['ID do Curso'] then a[id]['ID do Curso'] = id
                         if a[id]['Nome ']
@@ -53,7 +55,9 @@ importarXLS = (event) ->
                         _name = if _name is 'alunos' then 'estudantes' else _name
                         firebase.database().ref(_name+"/").set(cells)
                          
-                onCells(sheet, list:list, min:min, max:max).then(__onCells__).then self.$options.computed[_name]
+                onCells(sheet, list:list, min:min, max:max).then(__onCells__).then ->
+                        firebase.database().ref(_name+"/").once('value').then (snapshot) ->
+                                Vue.set self, _name, snapshot.val()
                 
                 
         reader.readAsBinaryString(event.target.files[0])

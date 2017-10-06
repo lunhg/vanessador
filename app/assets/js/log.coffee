@@ -11,4 +11,5 @@ log = (msg) ->
         setTimeout fluxus, 750
 
 toast = (root, obj) ->
+        obj.title = "#{moment().format('MMMM Do YYYY, h:mm:ss a')} \n #{obj.title}"
         root.$refs.toastr.Add(obj)

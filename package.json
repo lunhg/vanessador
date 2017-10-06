@@ -62,7 +62,8 @@
   },
   "firebase": {
     "project": {
-      "name": "vanessador-46e68"
+	"development": "vanessador2-c7c3c",
+	"production": "vanessador-46e68"
     }
   },
   "options": {

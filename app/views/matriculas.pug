@@ -18,19 +18,19 @@ div.jumbotron(v-if='$parent.autorizado' style='background:transparent !important
                 select(:id='"list-"+k')
                   option(v-for='(q,w) in filter("input_", k)' :data-value='w' :value='w') 
                     div
-                      b(v-if='k === "input_estudante"') {{ q['Nome'] }}
+                      b(v-if='k === "input_estudante"') {{ q['Nome'] }} {{ q['Sobrenome'] }}
                       b(v-else) {{ q['Nome do curso'] }}
 
-    accordion(type="success")
-      panel(header="Importar Excel") 
-        form
-          fieldset
-            div.form-group(v-for="(v,k) in modelos.xls.matriculas")
-              label.control-label(:for="k") {{ v.label }}
-              br
-              div
-                input.form-control(:type="v.type" :id="k" :placeholder="v.placeholder")
-        input(type="file" :name='matriculas' v-on:change='importarXLS')
+    //accordion(type="success")
+    //  panel(header="Importar Excel") 
+    //    form
+    //      fieldset
+    //        div.form-group(v-for="(v,k) in modelos.xls.matriculas")
+    //          label.control-label(:for="k") {{ v.label }}
+    //          br
+    //          div
+    //            input.form-control(:type="v.type" :id="k" :placeholder="v.placeholder")
+    //    input(type="file" :name='matriculas' v-on:change='importarXLS')
 
   div.container
     br

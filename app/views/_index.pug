@@ -68,6 +68,16 @@ div.jumbotron(v-else)
 
       accordion
         panel(header='Registrando estudantes pelo excel')
+          :marked
+            - Clique no campo colunas e insira o conjunto de letras que correspondem às colunas da planilha nomeada como `alunos` em um arquivo excel com múltiplas planilhas. Os dados apresentados em uma planilha `alunos`serão convertidos para `estudantes`.
+
+            - Clique no campo `Linha Inicial` e insira a linha onde estão os campos/chaves apropriados para os valores da planilha `alunos`.
+
+            - Clique no campo `Linha Final` e insira a linha onde terminam os campos/valores apropriados para os valores da planilha `alunos`.
+
+            - Clique em `Escolher arquivo`
+
+            - Clique em outro item do menu e volte ao menu `estudantes` para que os dados apresentem as informações atualizadas (pedimos desculpas pelo incoveniente e estamos trabalhando neste bug).
 
       accordion
         panel(header='Registrando Estudantes manualmente')
@@ -88,11 +98,21 @@ div.jumbotron(v-else)
               * através de uma planilha excel (verde)
               * uma lista de cursos cadastrados em uma base de dados [Firebase](https://firebase.google.com/) (Azul)
 
-        accordion
-          panel(header='Adicionando cursos pelo excel')
+      accordion
+        panel(header='Adicionando cursos pelo excel')
+          :marked
+            - Clique no campo colunas e insira o conjunto de letras que correspondem às colunas da planilha nomeada como `cursos` em um arquivo excel com múltiplas planilhas. 
 
-        accordion
-          panel(header='Adicionando cursos manualmente')
+            - Clique no campo `Linha Inicial` e insira a linha onde estão os campos/chaves apropriados para os valores da planilha `cursos`.
+
+            - Clique no campo `Linha Final` e insira a linha onde terminam os campos/valores apropriados para os valores da planilha `cursos`.
+
+            - Clique em `Escolher arquivo`
+
+            - Clique em outro item do menu e volte ao menu `cursos` para que os dados apresentem as informações atualizadas (pedimos desculpas pelo incoveniente e estamos trabalhando neste bug).
+
+      accordion
+        panel(header='Adicionando cursos manualmente')
 
   accordion
     panel(header='Matrículas')
@@ -101,16 +121,11 @@ div.jumbotron(v-else)
 
         * um campo para adicionar novas matrículas:
         * manualmente (amarelo)
-        * através de uma planilha excel (verde)
+        * Matrículas são adicionadas automaticamente a cada vez que criamos um formulário pré-matrícula
 
-      accordion
-        panel(header='Adicionando matrículas pelo excel')
-
-      accordion
-        panel(header='Adicionando cursos manualmente')
-
-      accordion
-        panel(header='Formulários')
-          :marked
-            Durante o envio de boleto (ver [Formulários](/#/formularios)), esta identificação é responsável pelo tipo de email enviado, no caso, sem desconto para alunos novos (link Pagseguro3), e com desconto de 25% para ex-alunos (link Pagseguro1).
+  
+  accordion
+    panel(header='Formulários')
+      :marked
+        Formulários pré-matrícula são formuário Typeform. Cada resposta de um conjunto de formulários baixados pela API do Typeform serão associados a um curso, de forma que cada resposta será associada a um estudantes novos/existente, bem como respectivas matrículas.
 

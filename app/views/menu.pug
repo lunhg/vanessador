@@ -79,15 +79,6 @@ div.row
                   span Conta
                   br
 
-              li#estudantes-menu
-                div
-                  br
-                  <router-link id='estudantes-button' to="/estudantes">
-                    img(src="/assets/images/estudante.png" width='32' height='32')
-                  </router-link>
-                  span Estudantes
-                  br
-
               li#cursos-menu
                 div
                   br
@@ -95,17 +86,6 @@ div.row
                     img(src="/assets/images/cursos.png" width='34' height='34')
                   </router-link>
                   span Cursos
-                  br
-
-             
-
-              li#matriculas-menu
-                div
-                  br
-                  <router-link id='matriculas-button' to="/matriculas">
-                    img(src="/assets/images/matriculas.png" width='28' height='28')
-                  </router-link>
-                  span Matrículas
                   br
 
               li#formularios-menu
@@ -117,6 +97,31 @@ div.row
                   span Formulários 
                     small Pré-matrículas
                   br
+              li#matriculas-menu
+                div
+                  br
+                  <router-link id='matriculas-button' to="/matriculas">
+                    img(src="/assets/images/matriculas.png" width='28' height='28')
+                  </router-link>
+                  span Matrículas
+                  br
+
+              li#estudantes-menu
+                div
+                  br
+                  <router-link id='estudantes-button' to="/estudantes">
+                    img(src="/assets/images/estudante.png" width='32' height='32')
+                  </router-link>
+                  span Estudantes
+                  br      
+
+              li#cobrancas-menu
+                div
+                  br
+                  <router-link id='cobrancas-button' :to="{path:'/cobrancas'}">
+                    img(src="/assets/images/cobranca.png" width='28' height='28')    
+                  </router-link>
+                  span Cobranças
 
               li#signout-menu
                 div

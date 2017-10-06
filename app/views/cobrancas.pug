@@ -1,0 +1,22 @@
+div.jumbotron(v-if='$parent.autorizado' style='background:transparent !important')
+  br 
+  br
+  br
+  h2 Cobranças
+  br
+  br
+  div.container
+    br
+    br
+    div(v-show='cobrancas === null')
+      img(src="/assets/images/loading.gif" width="64" height="64")
+    div(v-show='cobrancas !== null')
+      p {{ cobrancas }}
+      div(v-for="(v,k) in cobrancas" :key="k" :header="k")
+        accordion(type="info" :one-at-time='true')  
+          panel(:header="cursos[cobrancas[k].curso]['Nome do curso'] +' '+estudantes[cobrancas[k].estudante]['Nome']") {{ v }}
+
+div(v-else)
+  h1 401
+  p Não Autorizado
+  img(src='https://i.pinimg.com/originals/82/62/90/826290d0a78a5d464815e9112abf788a.jpg') 

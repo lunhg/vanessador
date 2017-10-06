@@ -5,12 +5,11 @@
 # é executado pelo firebase
 makeRoutes = (results) ->
         a = for r in results
-                console.log r.data
                 if typeof r.data is 'object'
                         r.data.component.props= ['autorizado', 'user']
                         r.data.props = true
                                 
-                        for e in ['formularios', 'estudantes', 'cursos', 'matriculas']
+                        for e in ['formularios', 'estudantes', 'cursos', 'matriculas', 'cobrancas']
                         
                                 if r.data.name is e
                                         r.data.component.props.push r.data.name
@@ -49,6 +48,11 @@ makeRoutes = (results) ->
 
                         if r.data.name is 'cursos'
                                 r.data.component.methods['onCursos']= onCursos
+
+
+                        if r.data.name is 'cobrancas'
+                                r.data.component.props.push 'estudantes'
+                                r.data.component.props.push 'matriculas'
                                 
                         if r.data.name is 'login'
                                 r.data.component.methods =
