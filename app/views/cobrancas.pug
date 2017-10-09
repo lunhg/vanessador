@@ -11,10 +11,23 @@ div.jumbotron(v-if='$parent.autorizado' style='background:transparent !important
     div(v-show='cobrancas === null')
       img(src="/assets/images/loading.gif" width="64" height="64")
     div(v-show='cobrancas !== null')
-      p {{ cobrancas }}
       div(v-for="(v,k) in cobrancas" :key="k" :header="k")
         accordion(type="info" :one-at-time='true')  
-          panel(:header="cursos[cobrancas[k].curso]['Nome do curso'] +' '+estudantes[cobrancas[k].estudante]['Nome']") {{ v }}
+          panel(:header="cursos[cobrancas[k].curso]['Nome do curso'] +' - '+estudantes[cobrancas[k].estudante]['Nome']+' '+estudantes[cobrancas[k].estudante]['Sobrenome']")
+            button.btn.btn-warning(v-show='!atualizar[k]' :name='k' v-on:click.prevent='edit') Atualizar
+            button.btn.btn-success(v-show='atualizar[k]' :name='k' v-on:click.prevent='update') Enviar
+            form
+              fieldset
+                div.form-group(v-for="(val,key) in v")
+                  label.control-label(:for='key') {{ key }} 
+                  br
+                  div(v-if='!atualizar[k]') 
+                    small 
+                      span {{ val }}
+                      br
+                      
+                  div(v-else)
+                    input.form-control(type='text' :id='k' :placeholder='val')
 
 div(v-else)
   h1 401

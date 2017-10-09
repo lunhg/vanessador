@@ -1,4 +1,4 @@
-# vanessador
+# Vanessador
 
 Vanessador  um aplicativo firebase+typeform+express.js para gerenciar formulários
 
@@ -18,17 +18,28 @@ libsecret
     
 #  Instalando chaves de acesso às APIs firebase, typeform, paypal e pagseguro
 
-## Nos sistemas Linux
+Crie um arquivo `.env` com as seguintes informações (IMPORTANTE: não suba este arquivo ao menos que estiver na fase de produção).
 
-Edite o arquivo `~/.profile` com as seguintes informações:
+    VANESSADOR_ENV="<development | test | production>"  
+    FIREBASE_API_KEY="<key>"
+    FIREBASE_MESSAGING_SENDER_ID="<id>"
+    MAILGUN_API_KEY="<key>"
+    MAILGUN_DOMAIN="<domain>"
+    TYPEFORM_API_KEY="<key>"
+    APIS_EMAIL="<email>"
+    PORT="<port>"
 
-    export FIREBASE_API_KEY=<key>
-    export FIREBASE_MESSAGING_SENDER_ID=<id>
-    export MAILGUN_API_KEY=<key>
-    export MAILGUN_DOMAIN=<domain>
-    export TYPEFORM_API_KEY=<key>
-    export APIS_EMAIL=<email>
-    export PORT=<port>
+## Configure o modo da base de dados
+
+Para maior organização, podemos atribuir base de dados diferentes para os modos `development`, `test`e `production` no arquivo `package.json` de acordo com o nome que o firebase atribui.
+
+    "firebase": {
+        "project": {
+          "development": "vanessador-dev-zzzzz",
+	  "test": "vanessador-test-yyyyy",
+          "production": "vanessador-prod-xxxxx"
+        }
+    }
 
 # Documentação
 

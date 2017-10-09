@@ -25,6 +25,7 @@
     "chalk": "^2.0.1",
     "compression": "^1.7.0",
     "connect-assets": "^5.4.0",
+    "dotenv": "^4.0.0",
     "express": "^4.15.3",
     "foreach": "^2.0.5",
     "jstransformer-marked": "^1.0.2",
@@ -53,7 +54,7 @@
     "grunt-shell": "^2.1.0",
     "mocha": "^3.4.2",
     "mocha-testdata": "^1.2.0",
-    "node-uuid": "^1.4.8",  
+    "node-uuid": "^1.4.8",
     "require-from-package": "0.0.4",
     "should": "^11.2.1",
     "supertest": "^3.0.0",
@@ -62,8 +63,8 @@
   },
   "firebase": {
     "project": {
-	"development": "vanessador2-c7c3c",
-	"production": "vanessador-46e68"
+      "development": "vanessador2-c7c3c",
+      "production": "vanessador-46e68"
     }
   },
   "options": {

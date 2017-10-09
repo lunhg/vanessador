@@ -20,4 +20,4 @@ section.centralize-area
               input.form-control(type=""+val.type id=""+key placeholder=""+val.placeholder)
     br
     br
-    a.btn.btn-success(ng-click="createUserWithEmailAndPassword()") Cadastrar 
+    a.btn.btn-success(v-on:click.prevent="createUserWithEmailAndPassword()") Cadastrar 

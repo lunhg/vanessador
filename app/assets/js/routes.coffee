@@ -51,6 +51,7 @@ makeRoutes = (results) ->
 
 
                         if r.data.name is 'cobrancas'
+                                r.data.component.props.push 'cursos'
                                 r.data.component.props.push 'estudantes'
                                 r.data.component.props.push 'matriculas'
                                 

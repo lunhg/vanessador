@@ -206,26 +206,7 @@ onFormularios = (event) ->
                                         if estudante[question.question] is undefined
                                                 estudante[question.question] = r.answers[question.id]
                                 estudantes.push estudante
-                        if estudantes.length > 0
-                                toast self.$parent, {
-                                        title: "Estudantes"
-                                        msg: "#{estudantes.length} estudantes checados",
-                                        clickClose: true
-                                        timeout: 120000
-                                        position: "toast-top-right",
-                                        type: "warning"
-                                }
-                                resolve estudantes
-                        else
-                                toast self.$parent, {
-                                        title: "Estudantes"
-                                        msg: "Nenhum estudante checado",
-                                        clickClose: true
-                                        timeout: 120000
-                                        position: "toast-top-right",
-                                        type: "warning"
-                                }
-                                reject()
+                        resolve estudantes
 
         onTrace = (estudante)->
                 new Promise (resolve, reject) ->
@@ -272,7 +253,7 @@ onFormularios = (event) ->
                                 estudante
                                 
                         save = (e) ->
-                                new Promise (resolve, reject) ->
+                                new Promise (_resolve, reject) ->
                                         db.ref("/estudantes/#{e['ID User']}").set(e).then(->
                                                 toast self.$parent, {
                                                         title: "Estudante"
@@ -282,60 +263,50 @@ onFormularios = (event) ->
                                                         position: "toast-top-right",
                                                         type: "warning"
                                                 }
-                                        ).then(->
-                                                onTrace(e).then(resolve)
-                                        ).catch(reject)
-                                        
+                                        ).then(_resolve).catch(_reject)
+
                         db.ref("estudantes/").once('value').then((snapshot) ->
                                 for e in estudantes
-                                        alreadyFound = false
-                                        for k,v of snapshot.val()
-                                                if e['Email1'] is v['Email1'] and not alreadyFound
-                                                        alreadyFound = true
-                                                        p = Promise.resolve(v).then(->
-                                                                toast self.$parent, {
-                                                                        title: "Estudante"
-                                                                        msg: "#{e['ID User']} já existe",
-                                                                        clickClose: true
-                                                                        timeout: 200000
-                                                                        position: "toast-top-right",
-                                                                        type: "warning"
-                                                                }
-                                                        )
-                                                        promises.push p
-                                        if not alreadyFound 
+                                        if snapshot.val() is null
                                                 estudante = make(e)
                                                 promises.push save(estudante)
-                        ).catch((err) ->
-                                for e in estudantes
-                                        estudante = make(e)
-                                        promises.push save(estudante)
+                                        else
+                                                alreadyFound = false
+                                                for k,v of snapshot.val()
+                                                        console.log v
+                                                        console.log e
+                                                        if e['Email'] is v['Email1'] and not alreadyFound
+                                                                alreadyFound = true
+                                                                msg = "#{v['ID User']} já existe"
+                                                                promises.push Promise.resolve(v).then(->
+                                                                        toast self.$parent, {
+                                                                                title: "Estudante"
+                                                                                msg: msg
+                                                                                clickClose: true
+                                                                                timeout: 200000
+                                                                                position: "toast-top-right",
+                                                                                type: "warning"
+                                                                        }
+                                                                ).then(onTrace(v)).catch(reject)
+                                                        if e['Email'] is v['Email1'] and not alreadyFound
+                                                                alreadyFound = true
+                                                                estudante = make(e)
+                                                                promises.push save(estudante).then(onTrace(estudante)).then(resolve).catch(reject)
                         )
-                                                
-                                               
-                        Promise.all(promises).then((r)->
-                                toast self.$parent, {
-                                        title: "Estudante"
-                                        msg: "#{r.length} estudante(s) registrado(s)",
-                                        clickClose: true
-                                        timeout: 200000
-                                        position: "toast-top-right",
-                                        type: "warning"
-                                }
-                        ).catch((err)->
+                                                                  
+                        Promise.all(promises).then(resolve).catch((err)->
                                 toast self.$parent, {
                                         title: err.code
                                         msg: err.message
                                         clickClose: true
                                         timeout: 200000
                                         position: "toast-top-right",
-                                        type: "warning"
+                                        type: "error"
                                 }
                         )
 
         # * Capture o typeform
-        # * popule as respostas (verificando a existência desse aluno no
-        #   firebase, dando-lhe uma verificação `isAlumini={0 or 1 or 2}` para cada `answer` )
+        # * popule as respostas (verificando a existência desse aluno no firebase, dando-lhe uma verificação `isAlumini={0 or 1 or 2}` para cada `answer` )
         # * e registre uma chave para cada formulario
         this.$http.get(query)
                 .then onRegisterForm
@@ -360,8 +331,8 @@ onTraces = (traces, root) ->
                         sent_mail = t.sent_mail
                         if not created
                                 console.log created
-                                p = db.ref("matriculas/#{m}").set({id:m, estudante:e, curso: t.curso}).then((->
-                                        db.ref("traces/#{t.id}/matricula/created").set(true)
+                                promises.push(db.ref("matriculas/#{m}").set({id:m, estudante:e, curso: t.curso}).then((->
+                                        db.ref("traces/#{this.t.id}/matricula/created").set(true)
                                         toast root, {
                                                 title: "Matrícula"
                                                 msg: "#{this.m} registrada",
@@ -370,66 +341,68 @@ onTraces = (traces, root) ->
                                                 position: "toast-top-right",
                                                 type: "warning"
                                         }
-                                ).bind(m:m))
-                                .then((->
-                                        ref1 = "estudantes/#{this.t.estudante}"
-                                        ref2 = "cursos/#{this.t.curso}"
-                                        email = {}
+                                ).bind(t:t, m:m)).then((->
                                         self = this
-                                        db.ref(ref1).once('value').then (e) ->
-                                                estudante = e.val()
-                                                console.log estudante
-                                                email.to = estudante['Email1']
-                                                email.nome = estudante['Nome'] + " " +estudante['Sobrenome']
-                                                db.ref(ref2).once('value').then (c) ->
+                                        new Promise (resolve, reject) ->
+                                                ref = "estudantes/#{self.t.estudante}"
+                                                email = {}
+                                                self = this
+                                                db.ref(ref).once('value').then( (e) ->
+                                                        estudante = e.val()
+                                                        console.log estudante
+                                                        email.to = estudante['Email1']
+                                                        email.nome = estudante['Nome']
+                                                        email.nome += " #{estudante['Sobrenome']}"
+                                                        resolve email
+                                                ).catch reject
+                                ).bind(t:t)).then(((email) ->
+                                        self = this
+                                        new Promise (resolve, reject) ->
+                                                ref = "cursos/#{self.t.curso}"
+                                                db.ref(ref).once('value').then (c) ->
                                                         _curso = c.val()
-                                                        email.curso = c['Nome do curso']
+                                                        email.curso = _curso['Nome do curso']
                                                         if e['Alumni(Sim_Não)'] is "Sim"
-                                                                link = _curso['Código Pagseguro 1']
+                                                                email.link = _curso['Código Pagseguro 1']
                                                         else
-                                                                link = _curso['Código Pagseguro 3']
-                                                        console.log(link)
+                                                                email.link = _curso['Código Pagseguro 3']
                                                         try
-                                                                email.link = link.split("https://pag.ae/")[1]
-                                                                url = '/mailer/send/boleto?'
-                                                                url += "curso=#{email.curso}"
-                                                                url += "&to=#{email.to}"
-                                                                url += "&nome=#{email.nome}"
-                                                                url += "&link=#{email.link}"
-                                                                Vue.http.post(url).then((response) ->
-                                                                        data = response.data
-                                                                        console.log data
-                                                                        db.ref("traces/#{self.t.id}/sent_mail").set(true)
-                                                                        toast root, {
-                                                                                title: "Email de cobrança"
-                                                                                msg: "#{data.id}\n#{data.message}",
-                                                                                clickClose: true
-                                                                                timeout: 200000
-                                                                                position: "toast-top-right",
-                                                                                type: "warning"
-                                                                        }
-                                                                ).catch((err) ->
-                                                                        toast root, {
-                                                                                title: err.code
-                                                                                msg: "#{err.message}\n#{err.stack}"
-                                                                                clickClose: true
-                                                                                timeout: 200000
-                                                                                position: "toast-top-right",
-                                                                                type: "warning"
-                                                                        }
-                                                                )
-                                                        catch err
-                                                                toast root, {
-                                                                        title: err.code
-                                                                        msg: "#{err.message}\n#{err.stack}"
-                                                                        clickClose: true
-                                                                        timeout: 200000
-                                                                        position: "toast-top-right",
-                                                                        type: "warning"
-                                                                }
-
-                                ).bind(t:t))
-                                promises.push p
+                                                                email.link = email.link.split("https://pag.ae/")[1]
+                                                                resolve email
+                                                        catch e
+                                                                reject e
+                                ).bind(t:t)).then((email)->
+                                        new Promise (resolve, reject) ->
+                                                url = '/mailer/send/boleto?'
+                                                url += "curso=#{email.curso}"
+                                                url += "&to=#{email.to}"
+                                                url += "&nome=#{email.nome}"
+                                                url += "&link=#{email.link}"
+                                                resolve url
+                                #).then((url)->
+                                #        Vue.http.post(url)
+                                ).then(((response) ->
+                                #        data = response.data
+                                #        console.log data
+                                        db.ref("traces/#{this.t.id}/sent_mail").set(true)
+                                        toast root, {
+                                                title: "Email de cobrança"
+                                                msg: "" # #{data.id}\n#{data.message}",
+                                                clickClose: true
+                                                timeout: 200000
+                                                position: "toast-top-right",
+                                                type: "warning"
+                                        }
+                                ).bind(t:t)).then(resolve).catch((err) ->
+                                        toast root, {
+                                                title: err.code
+                                                msg: "#{err.message}\n#{err.stack}"
+                                                clickClose: true
+                                                timeout: 200000
+                                                position: "toast-top-right",
+                                                type: "error"
+                                        }
+                                ))
                                 
                 Promise.all(promises).then(resolve).catch(reject)
 

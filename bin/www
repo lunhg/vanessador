@@ -1,5 +1,5 @@
 #!/usr/bin/env /home/pi/.nvm/versions/node/v8.0.0/bin/node
-var AppManager, ServerManager, body_parser, chalk, compression, connect_assets, express, foreach, fs, http, jstransformer_marked, keytar, morgan, node_schedule, node_uuid, nodemailer, nodemailer_mailgun_transport, onMsg, p, path, paypal_rest_sdk, pug, request, request_json, request_promise, testcafe, testcafe_vue_selectors, xml2js, xmlbuilder;
+var AppManager, ServerManager, body_parser, chalk, compression, connect_assets, dotenv, express, foreach, fs, http, jstransformer_marked, keytar, morgan, node_schedule, node_uuid, nodemailer, nodemailer_mailgun_transport, onMsg, p, path, paypal_rest_sdk, pug, request, request_json, request_promise, testcafe, testcafe_vue_selectors, xml2js, xmlbuilder;
 
 fs = require('fs');
 
@@ -14,6 +14,8 @@ chalk = require('chalk');
 compression = require('compression');
 
 connect_assets = require('connect-assets');
+
+dotenv = require('dotenv');
 
 express = require('express');
 
@@ -143,9 +145,10 @@ AppManager.prototype.index = function() {
 
 AppManager.prototype.config = function() {
   return this.app.get('/config', function(req, res) {
-    var prj, projectName;
+    var config, prj, projectName;
     projectName = require((path.join(__dirname)) + "/../package.json").firebase.project;
-    prj = projectName.development;
+    config = dotenv.config();
+    prj = projectName[process.env.VANESSADOR_ENV];
     return res.json({
       apiKey: process.env.FIREBASE_API_KEY,
       authDomain: prj + ".firebaseapp.com",

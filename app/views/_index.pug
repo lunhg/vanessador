@@ -20,12 +20,13 @@ div.jumbotron(v-else)
   accordion
     panel(header='Sobre o vanessador')
       :marked
-        O vanessador é um programa gerenciador de cadastros de cursos, matrículas de ex-alunos (Alumni) e novos alunos através de formulários de pré-matrícula.
+        O vanessador é um programa gerenciador de registros de cursos, matrículas de ex-alunos (Alumni) e novos alunos através de formulários de pré-matrículas. 
 
   accordion
     panel(header='Público alvo')
       :marked
         - administradores de documentos do ITS/Rio
+        - tecnólogos da informação do ITS/RIO
         - Desenvolvedores web do ITS/Rio
 
       accordion
@@ -46,6 +47,38 @@ div.jumbotron(v-else)
     panel(header='Conta')
       :marked
         Nesta página apresentamos dados básicos do usuário que administrará o sistema. Atualmente, algumas propriedades desta página, como o acesso aos links de edição de informações ou o _upload_ de uma foto de perfil, estão em desenvolvimento e podem não funcionar.
+
+  
+  accordion
+    panel(header='Cursos')
+      :marked
+        Um curso é um conjunto de aulas ministradas periodicamente até atingir uma determinada quantidade de horas. Cada curso tem um custo, uma data de início e uma data de fim.
+
+      accordion
+        panel(header='Como crio um ou mais cursos?')
+          :marked
+            Clique na aba [cursos](/#/cursos). Você verá dois campos: 
+
+            * um campo para adicionar novos cursos:
+              * manualmente (amarelo)
+              * através de uma planilha excel (verde)
+              * uma lista de cursos cadastrados em uma base de dados [Firebase](https://firebase.google.com/) (Azul)
+
+      accordion
+        panel(header='Adicionando cursos pelo excel')
+          :marked
+            - Clique no campo colunas e insira o conjunto de letras que correspondem às colunas da planilha nomeada como `cursos` em um arquivo excel com múltiplas planilhas. 
+
+            - Clique no campo `Linha Inicial` e insira a linha onde estão os campos/chaves apropriados para os valores da planilha `cursos`.
+
+            - Clique no campo `Linha Final` e insira a linha onde terminam os campos/valores apropriados para os valores da planilha `cursos`.
+
+            - Clique em `Escolher arquivo`
+
+            - Clique em outro item do menu e volte ao menu `cursos` para que os dados apresentem as informações atualizadas (pedimos desculpas pelo incoveniente e estamos trabalhando neste bug).
+
+      accordion
+        panel(header='Adicionando cursos manualmente')
 
   accordion
     panel(header='Estudantes')
@@ -81,38 +114,6 @@ div.jumbotron(v-else)
 
       accordion
         panel(header='Registrando Estudantes manualmente')
-
-
-  accordion
-    panel(header='Cursos')
-      :marked
-        Um curso é um conjunto de aulas ministradas periodicamente até atingir uma determinada quantidade de horas. Cada curso tem um custo, uma data de início e uma data de fim.
-
-      accordion
-        panel(header='Como crio um ou mais cursos?')
-          :marked
-            Clique na aba [cursos](/#/cursos). Você verá dois campos: 
-
-            * um campo para adicionar novos cursos:
-              * manualmente (amarelo)
-              * através de uma planilha excel (verde)
-              * uma lista de cursos cadastrados em uma base de dados [Firebase](https://firebase.google.com/) (Azul)
-
-      accordion
-        panel(header='Adicionando cursos pelo excel')
-          :marked
-            - Clique no campo colunas e insira o conjunto de letras que correspondem às colunas da planilha nomeada como `cursos` em um arquivo excel com múltiplas planilhas. 
-
-            - Clique no campo `Linha Inicial` e insira a linha onde estão os campos/chaves apropriados para os valores da planilha `cursos`.
-
-            - Clique no campo `Linha Final` e insira a linha onde terminam os campos/valores apropriados para os valores da planilha `cursos`.
-
-            - Clique em `Escolher arquivo`
-
-            - Clique em outro item do menu e volte ao menu `cursos` para que os dados apresentem as informações atualizadas (pedimos desculpas pelo incoveniente e estamos trabalhando neste bug).
-
-      accordion
-        panel(header='Adicionando cursos manualmente')
 
   accordion
     panel(header='Matrículas')

@@ -13,52 +13,6 @@ div.row
               span.navbar-brand Vanessador
             </router-link> 
           
-          // Search
-          a.btn.btn-default#search-trigger(data-toggle='collapse')
-            span.glyphicon.glyphicon-search
-          //Search Body
-          div#search.panel-collapse.collapse
-            div.panel-body
-              form.navbar-form(role="search")
-                div.form-group
-                  input#search-input.form-control(type="text" placeholder="Search" v-on:keyup.prevent='onSearch')
-                  
-    
-          //Search List
-          ul#search-list.list-group.scrollable-menu
-            li.list-group-item(v-for='(v,k) in searchList')
-              small
-                div(v-if='searchList[searchInput]')
-                  p {{ k }}
-                  
-                div(v-else)
-                  div(v-show='v["Nome"]') 
-                    b {{ v['Nome']+" "+v['Sobrenome'] }}
-                    p ID: {{ v['ID User'] }}
-                    p Alumni: {{ v['Alumini(Sim_Não)'] }}
-                    div Emails de contato: 
-                      span 
-                        a(:mailto='v["Email1"]' v-show='v["Email1"] !== "UNDEFINED"') {{ v['Email1'] }}
-                      span
-                        a(:mailto='v["Email2"]' v-show='v["Email2"] !== "UNDEFINED"') {{ v['Email2'] }}
-                      span 
-                        a(:mailto='v["Email3"]' v-show='v["Email3"] !== "UNDEFINED"') {{ v['Email3'] }}
-                      span(v-show='v["Email1"] === "UNDEFINED" && v["Email2"] === "UNDEFINED" && v["Email3"] === "UNDEFINED"') Nenhum email definido
-
-                  div(v-show='v["Nome do curso"]') 
-                    b {{ v['Nome do curso'] }}
-                    p ID: {{ v['ID do Curso'] }}
-                    p Carga: {{ v['Carga Horária'] }} ({{ v['Quantidade de aulas '] }} aulas)
-                    p Início: {{ v['Data de início'] }}
-                    p Valor: R$ {{ v['Valor Cheio '] }} 
-
-                  div(v-show='v["id_typeform"]')
-                    b Matrícula {{ k }}: 
-                    p Pré-matrícula: {{ v['id_typeform'] }}
-                  
-                  
-                  
-        
           // Main menu
           div.side-menu-container
             ul.nav.navbar-nav(v-if="!$parent.autorizado")
@@ -97,14 +51,7 @@ div.row
                   span Formulários 
                     small Pré-matrículas
                   br
-              li#matriculas-menu
-                div
-                  br
-                  <router-link id='matriculas-button' to="/matriculas">
-                    img(src="/assets/images/matriculas.png" width='28' height='28')
-                  </router-link>
-                  span Matrículas
-                  br
+      
 
               li#estudantes-menu
                 div
@@ -114,6 +61,15 @@ div.row
                   </router-link>
                   span Estudantes
                   br      
+
+              li#matriculas-menu
+                div
+                  br
+                  <router-link id='matriculas-button' to="/matriculas">
+                    img(src="/assets/images/matriculas.png" width='28' height='28')
+                  </router-link>
+                  span Matrículas
+                  br
 
               li#cobrancas-menu
                 div

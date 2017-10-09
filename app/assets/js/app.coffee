@@ -27,7 +27,7 @@ makeApp = (router) ->
                                 # typeform e pagseguro.
                                 data: ->
                                         o = results[1].data
-                                        o[e] = {} for e in ['responses', 'questions', 'formularios', 'estudantes', 'cursos', 'matriculas']
+                                        o[e] = {} for e in ['responses', 'questions', 'formularios', 'estudantes', 'cursos', 'matriculas', 'cobrancas']
                                         o
                                         
                                 # # Watch (variaveis)
