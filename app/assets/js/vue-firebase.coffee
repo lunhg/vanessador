@@ -273,8 +273,6 @@ onFormularios = (event) ->
                                         else
                                                 alreadyFound = false
                                                 for k,v of snapshot.val()
-                                                        console.log v
-                                                        console.log e
                                                         if e['Email'] is v['Email1'] and not alreadyFound
                                                                 alreadyFound = true
                                                                 msg = "#{v['ID User']} já existe"
@@ -287,11 +285,11 @@ onFormularios = (event) ->
                                                                                 position: "toast-top-right",
                                                                                 type: "warning"
                                                                         }
-                                                                ).then(onTrace(v)).catch(_reject)
+                                                                ).then(onTrace(v))
                                                         if e['Email'] is v['Email1'] and not alreadyFound
                                                                 alreadyFound = true
                                                                 estudante = make(e)
-                                                                promises.push save(estudante).then(onTrace(estudante)).then(resolve).catch(reject)
+                                                                promises.push(save(estudante).then(onTrace(estudante)))
                         )
                                                                   
                         Promise.all(promises).then(resolve).catch((err)->
@@ -303,6 +301,7 @@ onFormularios = (event) ->
                                         position: "toast-top-right",
                                         type: "error"
                                 }
+                                reject()
                         )
 
         # * Capture o typeform
