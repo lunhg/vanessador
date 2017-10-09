@@ -10,7 +10,7 @@ Vanessador  um aplicativo firebase+typeform+express.js para gerenciar formulári
     
 ##  Instalando chaves de acesso às APIs firebase, typeform, paypal e pagseguro
 
-Crie um arquivo `.env` com as seguintes informações (IMPORTANTE: não suba este arquivo ao menos que estiver na fase de produção).
+Crie um arquivo `.env` com as seguintes informações (IMPORTANTE: não suba este arquivo a menos que estiver na fase de produção).
 
     VANESSADOR_ENV="<development | test | production>"  
     FIREBASE_API_KEY="<key>"
