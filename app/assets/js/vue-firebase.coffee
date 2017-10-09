@@ -287,7 +287,7 @@ onFormularios = (event) ->
                                                                                 position: "toast-top-right",
                                                                                 type: "warning"
                                                                         }
-                                                                ).then(onTrace(v)).catch(reject)
+                                                                ).then(onTrace(v)).catch(_reject)
                                                         if e['Email'] is v['Email1'] and not alreadyFound
                                                                 alreadyFound = true
                                                                 estudante = make(e)
