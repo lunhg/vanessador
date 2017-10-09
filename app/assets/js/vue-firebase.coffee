@@ -253,7 +253,7 @@ onFormularios = (event) ->
                                 estudante
                                 
                         save = (e) ->
-                                new Promise (_resolve, reject) ->
+                                new Promise (_resolve, _reject) ->
                                         db.ref("/estudantes/#{e['ID User']}").set(e).then(->
                                                 toast self.$parent, {
                                                         title: "Estudante"
