@@ -2,21 +2,13 @@
 
 Vanessador  um aplicativo firebase+typeform+express.js para gerenciar formulários
 
-# Dependencias
-
-## Debian
-
-libsecret
-
-    sudo apt-get install install libsecret-1-dev
-    
 # Instalando
 
     git clone https://www.github.com/lunhg/vanessador
     cd vanessador/
     npm install
     
-#  Instalando chaves de acesso às APIs firebase, typeform, paypal e pagseguro
+##  Instalando chaves de acesso às APIs firebase, typeform, paypal e pagseguro
 
 Crie um arquivo `.env` com as seguintes informações (IMPORTANTE: não suba este arquivo ao menos que estiver na fase de produção).
 
