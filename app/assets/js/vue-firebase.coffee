@@ -231,7 +231,7 @@ onFormularios = (event) ->
                                                 position: "toast-top-right",
                                                 type: "warning"
                                         }
-                                ).then(resolve)
+                                ).then(resolve).catch(reject)
                         
                                 
         onCheckEstudantes = (estudantes) ->
@@ -285,7 +285,9 @@ onFormularios = (event) ->
                                                                                 position: "toast-top-right",
                                                                                 type: "warning"
                                                                         }
-                                                                ).then(onTrace(v))
+                                                                ).then(onTrace(v).catch((err) ->
+                                                                
+                                                                ))
                                                         if e['Email'] is v['Email1'] and not alreadyFound
                                                                 alreadyFound = true
                                                                 estudante = make(e)
@@ -378,15 +380,15 @@ onTraces = (traces, root) ->
                                                 url += "&nome=#{email.nome}"
                                                 url += "&link=#{email.link}"
                                                 resolve url
-                                #).then((url)->
-                                #        Vue.http.post(url)
+                                ).then((url)->
+                                        Vue.http.post(url)
                                 ).then(((response) ->
-                                #        data = response.data
-                                #        console.log data
+                                        data = response.data
+                                        console.log data
                                         db.ref("traces/#{this.t.id}/sent_mail").set(true)
                                         toast root, {
                                                 title: "Email de cobrança"
-                                                msg: "" # #{data.id}\n#{data.message}",
+                                                msg: "<span id='#{data.id}'>#{data.id}\n#{data.message}</span>",
                                                 clickClose: true
                                                 timeout: 200000
                                                 position: "toast-top-right",
@@ -401,6 +403,7 @@ onTraces = (traces, root) ->
                                                 position: "toast-top-right",
                                                 type: "error"
                                         }
+                                        console.log err
                                 ))
                                 
                 Promise.all(promises).then(resolve).catch(reject)
@@ -569,3 +572,30 @@ schedule = ->
                 onComputed('cursos')().then (q) ->
                         Vue.set(self, 'cursos', q)
         sob.timeout(fn, 1000)
+
+# https://stackoverflow.com/questions/400212/how-do-i-copy-to-the-clipboard-in-javascript
+copyToClipboard = ->
+        copyTextareaBtn = document.querySelector '.toast-container'
+        copyTextareaBtn.addEventListener 'click', (event) ->
+                copyTextarea = document.querySelector('##{data.id}')
+                copyTextarea.select()
+                try
+                        successful = document.execCommand 'copy'
+                        msg = if successful then 'successful' else 'unsuccessful'
+                        toast root, {
+                                title: "Texto copiado"
+                                clickClose: true
+                                timeout: 200000
+                                position: "toast-top-right",
+                                type: "warning"
+                        }
+                
+                catch err
+                        toast root, {
+                                title: "Não foi possível copiar o texto"
+                                msg: err
+                                clickClose: true
+                                timeout: 200000
+                                position: "toast-top-right",
+                                type: "error"
+                        }

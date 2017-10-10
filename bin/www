@@ -60,6 +60,7 @@ process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
 AppManager = (function() {
   function AppManager(app1) {
+    var config;
     this.app = app1;
     this.app.set('views', path.join(__dirname, '..', 'app/views/'));
     this.app.engine('pug', function(file_path, options, _callback) {
@@ -79,6 +80,7 @@ AppManager = (function() {
     });
     this.app.set('view engine', 'pug');
     this.app.set('assets path', [path.join(__dirname, '..', 'app/assets/fonts'), path.join(__dirname, '..', 'app/assets/doc'), path.join(__dirname, '..', 'app/assets/img'), path.join(__dirname, '..', 'app/assets/css'), path.join(__dirname, '..', 'app/assets/js'), path.join(__dirname, '..', 'app/assets/'), path.join(__dirname, '..', 'app/assets/favicon.ico')]);
+    config = dotenv.config();
     console.log(process.env.PORT);
     this.app.set('port', parseInt(process.env.PORT));
   }
@@ -506,6 +508,7 @@ AppManager.prototype.templates = function() {
 AppManager.prototype.typeform = function() {
   return this.app.get('/typeform/data-api', function(req, res) {
     var _url, onGet;
+    dotenv.config();
     _url = "form/" + req.query.uuid + "?key=" + process.env.TYPEFORM_API_KEY;
     _url += "&completed=true";
     onGet = function(err, _res, body) {
@@ -587,13 +590,11 @@ AppManager.prototype.mailer = function() {
         return res.json(r);
       })["catch"](function(error) {
         console.log(error);
-        res.status(500);
-        return res.send(error);
+        return res.json(error);
       });
     })["catch"](function(error) {
       console.log(error);
-      res.status(500);
-      return res.send(error);
+      return res.json(error);
     });
   });
 };

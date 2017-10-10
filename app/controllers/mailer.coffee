@@ -50,9 +50,7 @@ AppManager::mailer = ->
                                         res.json(r)
                                 .catch (error) ->
                                         console.log error
-                                        res.status(500)
-                                        res.send(error)
+                                        res.json(error)
                 .catch (error) ->
                         console.log error
-                        res.status(500)
-                        res.send(error)
+                        res.json(error)

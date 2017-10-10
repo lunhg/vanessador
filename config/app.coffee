@@ -23,5 +23,6 @@ class AppManager
                         path.join __dirname, '..', 'app/assets/favicon.ico'
                 ]
 
+                config = dotenv.config()
                 console.log process.env.PORT
                 @app.set 'port', parseInt(process.env.PORT)
