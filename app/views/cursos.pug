@@ -40,6 +40,7 @@ div.jumbotron(v-if='$parent.autorizado' style='background:transparent !important
         panel(v-for="(v,k) in cursos" :data="v" :key="k" :header="v['Nome do curso']")
           button.btn.btn-warning(v-show='!atualizar[k]' :name='k' v-on:click.prevent='edit') Atualizar
           button.btn.btn-success(v-show='atualizar[k]' :name='k' v-on:click.prevent='update') Enviar
+          button.btn.btn-danger(v-show='!atualizar[k]' :name='k' v-on:click.prevent='_delete') Deletar
           form
             fieldset
               div.form-group(v-for="(val,key) in v")

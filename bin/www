@@ -415,11 +415,6 @@ AppManager.prototype.templates = function() {
         'placeholder': 'nome',
         'label': 'Nome'
       },
-      input_typeform_code: {
-        'type': 'text',
-        'placeholder': 'E20qGg',
-        'label': 'Código typeform'
-      },
       input_inicio_matricula: {
         'type': 'date',
         'label': 'Início das matrículas'

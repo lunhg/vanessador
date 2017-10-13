@@ -27,6 +27,7 @@ makeRoutes = (results) ->
                                         getDocumentValue: (id) -> document.getElementById(id).value
                                         edit:edit       
                                         update: update
+                                        _delete: _delete
 
                                                 
                         if r.data.name is 'matriculas'

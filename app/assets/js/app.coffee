@@ -40,6 +40,9 @@ makeApp = (router) ->
                                                 self = this
 
                                                 if f is 'cobrancas'
+                                                        onComputed('cursos')().then (r) ->
+                                                                Vue.set(self, 'cursos', r)
+                                                                
                                                         onComputed('matriculas')().then (r) ->
                                                                 Vue.set(self, 'matriculas', r)
                                                                         
@@ -47,7 +50,6 @@ makeApp = (router) ->
                                                                 Vue.set(self, 'estudantes', r)
                                                                         
                                                         onComputed('traces')().then (traces) ->
-                                                                console.log traces
                                                                 Vue.set(self, 'cobrancas', traces)
                                                                 onTraces(traces, self).then ->
                                                                         

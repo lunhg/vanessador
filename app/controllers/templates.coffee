@@ -140,7 +140,6 @@ AppManager::templates = ->
 
                 cursos =
                         input_nome: {'type':'text', 'placeholder':'nome', 'label': 'Nome'}
-                        input_typeform_code: {'type':'text', 'placeholder':'E20qGg', 'label': 'Código typeform'}
                         input_inicio_matricula: {'type':'date', 'label': 'Início das matrículas'}
                         input_fim_matricula: {'type':'date', 'label': 'Fim das matrículas'}
                         input_carga_horaria: {'type':'text', 'placeholder':'6 hs', 'label': 'Carga Horária'}

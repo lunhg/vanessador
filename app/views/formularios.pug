@@ -43,7 +43,10 @@ div.jumbotron(v-if='$parent.autorizado' style='background:transparent !important
       br
       div(v-for="(v,k) in formularios" :key="k" :header="k")
         accordion(type="info" :one-at-time='true')  
-          panel(:header="cursos[formularios[k].curso]['Nome do curso']")
+          panel(:header="cursos[formularios[k].curso]['Nome do curso'] + ' - ' + k")
+            br
+            button.btn.btn-danger(v-show='!atualizar[k]' :name='k' v-on:click.prevent='_delete') Deletar
+            br
             accordion(type="warning" :one-at-time='true')
               panel(header="Respostas enviadas")    
                 div(v-for='(r,q) in responses[k]')

@@ -210,28 +210,71 @@ onFormularios = (event) ->
 
         onTrace = (estudante)->
                 new Promise (resolve, reject) ->
-                        _newid = uuid.v4()
-                        newid = uuid.v4()
-                        db.ref("traces/#{_newid}").set({
-                                # Pré-criar uma matrícula
-                                        id: _newid
-                                        estudante:estudante['ID User']
-                                        curso:curso
-                                        matricula:
-                                                id:newid
-                                                created:false
-                                        sent_mail: false
-                                        paid: false
-                                }).then(->
-                                        toast self.$parent, {
-                                                title: "Cobrança"
-                                                msg: "#{_newid} criada",
-                                                clickClose: true
-                                                timeout: 200000
-                                                position: "toast-top-right",
-                                                type: "warning"
-                                        }
-                                ).then(resolve).catch(reject)
+                        promises = []
+                        db.ref("traces/").once('value').then (snapshot) ->
+                                if snapshot.val() isnt null
+                                        alreadyFound = false
+                                        for k,v of snapshot.val()
+                                                b = v.estudante is estudante['ID User']
+                                                b = b and not v.matricula.created
+                                                if b
+                                                        _newid = uuid.v4()
+                                                        newid = uuid.v4()
+                                                        promises.push db.ref("traces/#{_newid}").set({
+                                                                # Pré-criar uma matrícula
+                                                                id: _newid
+                                                                estudante:estudante['ID User']
+                                                                curso:curso
+                                                                matricula:
+                                                                        id:newid
+                                                                        created:false
+                                                                sent_mail: false
+                                                                paid: false
+                                                        }).then(->
+                                                                toast self.$parent, {
+                                                                        title: "Cobrança"
+                                                                        msg: "#{_newid} criada",
+                                                                        clickClose: true
+                                                                        timeout: 200000
+                                                                        position: "toast-top-right",
+                                                                        type: "warning"
+                                                                }
+                                                        )
+                                else
+                                        _newid = uuid.v4()
+                                        newid = uuid.v4()
+                                        promises.push db.ref("traces/#{_newid}").set({
+                                                # Pré-criar uma matrícula
+                                                id: _newid
+                                                estudante:estudante['ID User']
+                                                curso:curso
+                                                matricula:
+                                                        id:newid
+                                                        created:false
+                                                sent_mail: false
+                                                paid: false
+                                        }).then(->
+                                                toast self.$parent, {
+                                                        title: "Cobrança"
+                                                        msg: "#{_newid} criada",
+                                                        clickClose: true
+                                                        timeout: 200000
+                                                        position: "toast-top-right",
+                                                        type: "warning"
+                                                }
+                                        )
+                                        
+                        Promise.all(promises).then(->
+                                toast self.$parent, {
+                                        title: "Cobrança"
+                                        msg: "#{promises.length} cobranças registradas",
+                                        clickClose: true
+                                        timeout: 200000
+                                        position: "toast-top-right",
+                                        type: "success"
+                                }
+                                resolve()
+                        ).catch(reject)
                         
                                 
         onCheckEstudantes = (estudantes) ->
@@ -269,10 +312,29 @@ onFormularios = (event) ->
                                 for e in estudantes
                                         if snapshot.val() is null
                                                 estudante = make(e)
-                                                promises.push save(estudante)
+                                                promises.push save(estudante).then(onTrace(estudante).then(->
+                                                        toast self.$parent, {
+                                                                title: "Cobrança/Matrícula"
+                                                                msg: "pré-registrada para estudante #{estudante['ID User']} ",
+                                                                clickClose: true
+                                                                timeout: 200000
+                                                                position: "toast-top-right",
+                                                                type: "success"
+                                                        }
+                                                ).catch((err) ->
+                                                        toast self.$parent, {
+                                                                title: err.code
+                                                                msg: err.message
+                                                                clickClose: true
+                                                                timeout: 200000
+                                                                position: "toast-top-right",
+                                                                type: "error"
+                                                        }
+                                                ))
                                         else
                                                 alreadyFound = false
                                                 for k,v of snapshot.val()
+                                                        
                                                         if e['Email'] is v['Email1'] and not alreadyFound
                                                                 alreadyFound = true
                                                                 msg = "#{v['ID User']} já existe"
@@ -285,13 +347,22 @@ onFormularios = (event) ->
                                                                                 position: "toast-top-right",
                                                                                 type: "warning"
                                                                         }
-                                                                ).then(onTrace(v).catch((err) ->
-                                                                
-                                                                ))
-                                                        if e['Email'] is v['Email1'] and not alreadyFound
+                                                                )
+                                                for k,v of snapshot.val()
+                                                        if e['Email'] isnt v['Email1'] and not alreadyFound
                                                                 alreadyFound = true
                                                                 estudante = make(e)
-                                                                promises.push(save(estudante).then(onTrace(estudante)))
+                                                                promises.push(save(estudante).then(onTrace(estudante).catch((err) ->
+                                                                        toast self.$parent, {
+                                                                                title: err.code
+                                                                                msg: err.message
+                                                                                clickClose: true
+                                                                                timeout: 200000
+                                                                                position: "toast-top-right",
+                                                                                type: "error"
+                                                                        }
+
+                                                                )))
                         )
                                                                   
                         Promise.all(promises).then(resolve).catch((err)->
@@ -368,10 +439,13 @@ onTraces = (traces, root) ->
                                                         else
                                                                 email.link = _curso['Código Pagseguro 3']
                                                         try
-                                                                email.link = email.link.split("https://pag.ae/")[1]
-                                                                resolve email
+                                                                if email.link.match /https:\/\/pag\.ae\/\w+/
+                                                                        email.link = email.link.split("https://pag.ae/")[1]
+                                                                        resolve email
+                                                                else
+                                                                        reject new Error("link pagseguro inválido: #{email.link}")
                                                         catch e
-                                                                reject e
+                                                                reject e 
                                 ).bind(t:t)).then((email)->
                                         new Promise (resolve, reject) ->
                                                 url = '/mailer/send/boleto?'
@@ -417,7 +491,29 @@ onMatriculas = (event) ->
                 o[k] = el.value
         o.certificado = false
         o.id = uuid.v4()
-        firebase.database().ref("matriculas/#{o.id}/").set o
+        self = this
+        firebase.database().ref("matriculas/#{o.id}/").set(o).then(->
+                firebase.database().ref("matriculas/").once('value').then((snapshot)->
+                        Vue.set self.$parent, 'matriculas', snapshot.val()
+                        toast self.$parent, {
+                                title: "Matrícula",
+                                msg: "#{o.id} registrada"
+                                clickClose: true
+                                timeout: 10000
+                                position: "toast-top-right",
+                                type: "success"
+                        }
+                )
+        ).catch((err)->
+                toast self.$parent, {
+                        title: err.code
+                        msg: err.message
+                        clickClose: true
+                        timeout: 10000
+                        position: "toast-top-right",
+                        type: "success"
+                }
+        )
 
 # Adiciona Estudante
 onEstudantes= (event) ->
@@ -441,12 +537,34 @@ onEstudantes= (event) ->
         delete o['estado']
         delete o['cidade']                     
         o['ID User'] = uuid.v4()
-        firebase.database().ref("estudantes/#{o['ID User']}").set o
+        self = this
+        firebase.database().ref("estudantes/#{o['ID User']}").set(o).then(->
+                firebase.database().ref("estudantes/").once('value').then((snapshot)->
+                        Vue.set self.$parent, 'estudantes', snapshot.val()
+                        toast self.$parent, {
+                                title: "Estudante",
+                                msg: "#{o['ID User']} registrado"
+                                clickClose: true
+                                timeout: 10000
+                                position: "toast-top-right",
+                                type: "success"
+                        }
+                )
+        ).catch((err)->
+                toast self.$parent, {
+                        title: err.code
+                        msg: err.message
+                        clickClose: true
+                        timeout: 10000
+                        position: "toast-top-right",
+                        type: "success"
+                }
+        )
         
 # Adiciona turmas
 onCursos= (event) ->
         o = {}
-        for e in ['nome', 'typeform_code', 'inicio_matricula','fim_matricula', 'carga_horaria','quantidade_aulas','data_inicio','data_inicio_valor1', 'data_inicio_valor2', 'data_inicio_valor3', 'valor_cheio', 'link_valor1', 'link_valor2', 'link_valor3']
+        for e in ['nome', 'inicio_matricula','fim_matricula', 'carga_horaria','quantidade_aulas','data_inicio','data_inicio_valor1', 'data_inicio_valor2', 'data_inicio_valor3', 'valor_cheio', 'link_valor1', 'link_valor2', 'link_valor3']
                 el = document.getElementById 'input_'+e
                 switch(e)
                         when 'nome' then o['Nome do curso'] = el.value or "UNDEFINED"
@@ -466,8 +584,29 @@ onCursos= (event) ->
                         
                 
         o['ID do Curso'] = uuid.v4()
-                
-        firebase.database().ref("cursos/#{o['ID do Curso']}").set o
+        self = this
+        firebase.database().ref("cursos/#{o['ID do Curso']}").set(o).then(->
+                firebase.database().ref("cursos/").once('value').then((snapshot)->
+                        Vue.set self.$parent, 'cursos', snapshot.val()
+                        toast self.$parent, {
+                                title: "Curso",
+                                msg: "#{o['ID do Curso']} registrado"
+                                clickClose: true
+                                timeout: 10000
+                                position: "toast-top-right",
+                                type: "success"
+                        }
+                )
+        ).catch((err)->
+                toast self.$parent, {
+                        title: err.code
+                        msg: err.message
+                        clickClose: true
+                        timeout: 10000
+                        position: "toast-top-right",
+                        type: "success"
+                }
+        )
 
 
 # Variáveis computáveis
@@ -530,6 +669,46 @@ update = (event) ->
 
         Vue.set self.atualizar, k, false
 
+# Editar ou atualizar campos de qq modelo
+_delete = (event) ->
+        k = event.target.getAttribute('name')
+        f = this.$route.path.split('/')[1]
+        if f is 'cobrancas'
+                f = 'traces'
+        console.log "Deleting #{f}/#{k}"
+        self = this
+        db = firebase.database()
+        
+        db.ref("#{f}/#{k}").set(null).then ->
+                if f is 'formularios'
+                        for e in ['questions', 'responses']
+                                db.ref("#{e}/#{k}").set(null).then(->
+                                        toast self.$parent, {
+                                                title: e,
+                                                msg: "#{k} deletado"
+                                                clickClose: true
+                                                timeout: 10000
+                                                position: "toast-top-right",
+                                                type: "success"
+                                        }
+                                )
+                toast self.$parent, {
+                        title: f,
+                        msg: "#{k} deletado"
+                        clickClose: true
+                        timeout: 10000
+                        position: "toast-top-right",
+                        type: "success"
+                }
+
+        firebase.database().ref("#{f}/").once('value').then((snapshot) ->       
+                Vue.nextTick ->
+                        if f is 'traces'
+                                f = 'cobrancas'
+                        Vue.set self.$parent, f, snapshot.val()
+        )
+               
+                
 # Quando firebase for criado ou montado
 onAuthStateChanged = ->
         self = this
@@ -556,7 +735,7 @@ schedule = ->
                
                 onComputed('traces')().then (r) ->
                         console.log r
-                        Vue.set(self, 'cobrancas', r)
+                        Vue.set(self.$parent, 'cobrancas', r)
                 onComputed('estudantes')().then (r) ->
                         Vue.set(self, 'estudantes', r)
         
