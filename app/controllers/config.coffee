@@ -8,8 +8,8 @@ AppManager::config = ->
                 res.json {
                         apiKey: process.env.FIREBASE_API_KEY,
                         authDomain: "#{prj}.firebaseapp.com",
-                        databaseURL: "https://#{prj}.firebaseio.com",
-                        projectId: prj
+                        databaseURL: "http://#{process.env.PROJECT_ID}.firebaseio.com",
+                        projectId: process.env.PROJECT_ID
                         storageBucket: "#{projectName}.appspot.com",
                         messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID
                 }
